@@ -1,0 +1,35 @@
+﻿@page "/audiotest"
+@inject IJSRuntime js;
+
+<h1>Play MP3 Files</h1>
+
+<button class="btn btn-primary" @onclick="PlayAudioFile1">Play A4</button>
+<span>&nbsp;</span>
+<button class="btn btn-primary" @onclick="PlayAudioFile2">Play Sg Start</button>
+<button class="btn btn-primary" @onclick="ClearAudio">Clear Audio</button>
+<button class="btn btn-primary" @onclick="StopAudio">Stop All Audio</button>
+
+@code
+{
+    async Task PlayAudioFile1()
+    {
+        await js.InvokeVoidAsync("PlayAudioFile", "/audio/a4.mp3");
+    }
+
+    async Task PlayAudioFile2()
+    {
+        await js.InvokeVoidAsync("PlayAudioFile", "/audio/SgStart.mp3");
+
+    }
+    async Task ClearAudio()
+    {
+        await js.InvokeVoidAsync("ClearAudio");
+
+    }
+     async Task StopAudio()
+    {
+        await js.InvokeVoidAsync("StopAllAudio");
+
+    }
+}
+

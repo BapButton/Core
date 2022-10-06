@@ -1,0 +1,68 @@
+version: '3.8'
+networks:
+    tinker:
+       driver: bridge
+volumes:
+    mosquitto:
+    mariaDbData:
+services:
+  bapwebapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Update 'VARIANT' to pick a version of .NET: 3.1, 6.0
+        VARIANT: "6.0"
+        # Optional version of Node.js
+        NODE_VERSION: "lts/*"
+    volumes:
+      - ..:/workspace:cached
+    networks:
+      - tinker
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+    environment:
+      - "TZ=America/Los_Angeles" 
+      - MosquittoAddress=mosquitto
+      - "DbConnectionString=server=db;database=buttons;user=root;password=10640b03-1020-4be6-a065-634ea64c33c4"
+    depends_on:
+      - db
+      - mosquitto
+      - opentts
+    # # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: service:db
+    
+    # Uncomment the next line to use a non-root user for all processes.
+    # user: vscode
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  db:
+    image: mariadb:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 10640b03-1020-4be6-a065-634ea64c33c4
+    volumes:  
+      - 'mariaDbData:/var/lib/mysql'
+    networks:
+      - tinker
+
+  mosquitto:
+    build: Mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - 1883:1883
+    networks:
+      - tinker
+  opentts:
+    image: synesthesiam/opentts:es
+    hostname: opentts
+    container_name: opentts
+    restart: unless-stopped
+    ports:
+      - 5500:5500
+    networks:
+      - tinker

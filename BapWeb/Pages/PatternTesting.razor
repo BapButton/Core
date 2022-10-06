@@ -1,0 +1,57 @@
+﻿@using BapShared;
+<h3>Pattern Testing</h3>
+<h5>@LastMessage</h5>
+@if (game.IsGameRunning)
+{
+	<button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+	<button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+<MudItem xs="12" sm="6" md="4">
+	<MudSelect Label="Minimum Log Level" @bind-Value="StartOfRange" HelperText="Start of Range"
+			   OffsetY="true" AdornmentColor="Color.Secondary">
+		@foreach (Patterns item in Enum.GetValues(typeof(Patterns)))
+		{
+			<MudSelectItem Value="@item">@item</MudSelectItem>
+		}
+	</MudSelect>
+</MudItem>
+<MudItem xs="12" sm="6" md="4">
+	<MudSelect Label="Minimum Log Level" @bind-Value="EndOfRange" HelperText="End of Range"
+			   OffsetY="true" AdornmentColor="Color.Secondary">
+		@foreach (Patterns item in Enum.GetValues(typeof(Patterns)))
+		{
+			<MudSelectItem Value="@item">@item</MudSelectItem>
+		}
+	</MudSelect>
+</MudItem>
+<MudItem xs="12" sm="6" md="4">
+	<MudSelect Label="Animation Speed" @bind-Value="transitionOrTransitionGroups" HelperText="Animation Speed"
+			   OffsetY="true" AdornmentColor="Color.Secondary">
+		<MudSelectItem Value="-2">Marquee</MudSelectItem>
+		<MudSelectItem Value="-1">AllTransitions</MudSelectItem>
+		@for (var i = 0; i <= (int)StandardTransitions.SlideOnScreenFromBottom; i++)
+		{
+			int temp = i;
+			string name = ((StandardTransitions)temp).ToString();
+			<MudSelectItem Value="@temp">@name</MudSelectItem>
+		}
+	</MudSelect>
+</MudItem>
+<MudItem xs="12" sm="6" md="4">
+	<MudSelect Label="Animation Speed" @bind-Value="AnimationSpeed" HelperText="Animation Speed"
+			   OffsetY="true" AdornmentColor="Color.Secondary">
+		<MudSelectItem Value="15">15</MudSelectItem>
+		<MudSelectItem Value="30">30</MudSelectItem>
+		@for (var i = 50; i < 500; i += 50)
+		{
+			int temp = i;
+			<MudSelectItem Value="@temp">@temp</MudSelectItem>
+		}
+	</MudSelect>
+</MudItem>
+
+
+<LogWindow />

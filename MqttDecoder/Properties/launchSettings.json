@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "MqttDecoder": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+﻿
+
+<div class="Center">
+	<MudText Typo="Typo.h1" Align="Align.Center"> @ScoreText</MudText>
+	<span></span>
+	<MudText Typo="Typo.h4" Align="Align.Center"> @ScoreDescriptionLineOne</MudText>
+	@if (ScoreDescriptionLineTwo != null && !String.IsNullOrEmpty(ScoreDescriptionLineTwo))
+	{
+		<div>
+			<MudText Typo="Typo.subtitle1" Align="Align.Center">
+				@ScoreDescriptionLineTwo
+			</MudText>
+		</div>
+
+
+	}
+
+</div>

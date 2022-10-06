@@ -1,0 +1,13 @@
+﻿<h5>@LastMessage</h5>
+@if (GameHandler.IsGameRunning)
+{
+    <button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+
+
+<LogWindow />
+

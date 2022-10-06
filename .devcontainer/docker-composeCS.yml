@@ -1,0 +1,48 @@
+version: '2.1'
+networks:
+    tinker:
+       driver: bridge
+volumes:
+    mosquitto:
+    mariaDbData:
+    blazor-data:
+    
+services:
+  opentts:
+    image: synesthesiam/opentts:es
+    hostname: opentts
+    container_name: opentts
+    restart: unless-stopped
+    ports:
+     - 5500:5500
+    networks:
+     - tinker
+  bapwebapp:
+    restart: unless-stopped
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    depends_on:
+      - db
+      - opentts
+    environment:
+      - "TZ=America/Los_Angeles" 
+      - MosquittoAddress=mosquitto
+      - "DbConnectionString=server=db;database=buttons;user=root;password=10640b03-1020-4be6-a065-634ea64c33c4"
+    volumes:  
+      - 'blazor-data:/data'
+    networks:
+    - tinker
+    ports:
+     - 3000:8080
+    labels:
+      io.balena.features.supervisor-api: '1'
+  db:
+    image: mariadb::10.5
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 10640b03-1020-4be6-a065-634ea64c33c4
+    volumes:  
+      - 'mariaDbData:/var/lib/mysql'
+    networks:
+     - tinker

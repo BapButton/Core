@@ -1,0 +1,104 @@
+﻿@using MockButtonCore;
+@using BapShared;
+
+
+
+<div style="display:inline-block;margin:25px;min-width:144px">
+	@if(HideButtonsWhenGameActive = false || GameHandler.IsGameRunning == false )
+	{
+		<button class="btn btn-primary removeButton" style="min-width:144px" @onclick="() => RemoveButton()">Remove  @NodeId</button>
+	}
+	<button class="mainButton" @onclick="ClickButton" style="display:block">
+		<table class="buttonTable">
+			@{
+				if (InternalCustomImage != null)
+				{
+					try
+					{
+						for (int i = 0; i < 8; i++)
+						{
+								<tr>
+									@for (int s = 0; s < 8; s++)
+								{
+									string backgroundStyle = "";
+
+									ulong currentColor = InternalCustomImage.Image[i, s];
+									if (currentColor > 0)
+									{
+										backgroundStyle = $"background-color:{(string.Format("#{0:X6}", currentColor))};)";
+									}
+									else
+									{
+										backgroundStyle = $"background-color:black";
+									}
+
+										<td style="@backgroundStyle">&nbsp;</td>
+								}
+								</tr>
+						}
+					}
+					catch (Exception ex)
+					{
+						Logger.LogDebug($"Mock button render Failed with exception {ex.Message}");
+					}
+				}
+				else
+				{
+					PatternHelper? checkPattern = CurrentDisplayedItem != null ? new PatternHelper((Patterns)CurrentDisplayedItem.Pattern) : null;
+					CheckImage? checkImage = null;
+					int imageId = (CurrentDisplayedItem?.ImageId ?? 0);
+					if (imageId > 0)
+					{
+						if (CustomImages.TryGetValue(imageId, out ulong[]? image))
+						{
+							checkImage = new CheckImage(image);
+						}
+						else
+						{
+							//Need to do some sort of errors here
+						}
+					}
+					for (int i = 0; i < 8; i++)
+					{
+							<tr>
+								@for (int s = 0; s < 8; s++)
+							{
+								string backgroundStyle = "";
+								int pixelNumber = i * 8 + s;
+								if (imageId > 0 && checkImage != null)
+								{
+									ulong currentColor = checkImage.CurrentColor(pixelNumber);
+									if (currentColor > 0)
+									{
+										backgroundStyle = $"background-color:{(string.Format("#{0:X}", currentColor))};filter: brightness({string.Format("{0:0.00}", (double)(CurrentDisplayedItem?.Brightness ?? 0) / 32.0 + 0.9)}%)";
+									}
+									else
+									{
+										backgroundStyle = $"background-color:black";
+									}
+								}
+
+
+								bool isPixelOn = checkPattern != null ? checkPattern.ShouldItBeOn(pixelNumber) : false;
+								if (isPixelOn)
+								{
+									//Over 100% is a valid option. So I am making use of that.
+									backgroundStyle = $"background-color:rgb({CurrentDisplayedItem?.Red ?? 0}, {CurrentDisplayedItem?.Green ?? 0}, {CurrentDisplayedItem?.Blue ?? 0});filter: brightness({string.Format("{0:0.00}", (double)(CurrentDisplayedItem?.Brightness ?? 0) / 32.0 + 0.9)})";
+								}
+								else if (imageId == 0)
+								{
+									backgroundStyle = $"background-color:black";
+								}
+
+
+									<td style="@backgroundStyle">&nbsp;</td>
+							}
+							</tr>
+					}
+				}
+
+			}
+
+		</table>
+	</button>
+</div>

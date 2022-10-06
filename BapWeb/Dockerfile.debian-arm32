@@ -1,0 +1,25 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.2-buster-slim-arm32v7 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
+WORKDIR /src
+COPY ["BapWeb/BapWeb.csproj", "BapWeb/"]
+COPY ["TinkerButton/BapButton.csproj", "TinkerButton/"]
+COPY ["BapShared/BapShared.csproj", "BapShared/"]
+RUN dotnet restore "BapWeb/BapWeb.csproj"
+COPY . .
+WORKDIR "/src/BapWeb"
+RUN dotnet build "BapWeb.csproj" -c Release -o /app/build -r linux-arm
+
+
+FROM build AS publish
+RUN dotnet publish "BapWeb.csproj" -c Release -o /app/publish -r linux-arm --self-contained false --no-restore
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "BapWeb.dll", "--server.urls", "http://0.0.0.0:5000"]

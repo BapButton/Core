@@ -1,0 +1,73 @@
+﻿@page "/upload"
+
+@using System.Linq
+@using Blazored.FluentValidation;
+
+
+
+@implements IDisposable
+
+<h3>File Upload Component</h3>
+
+<EditForm EditContext="editContext" OnValidSubmit="OnSubmit">
+    <DataAnnotationsValidator />
+    <FluentValidationValidator @ref="fluentValidationValidator" DisableAssemblyScanning="@true" />
+    <div class="form-group">
+        <p>
+            <label>
+                Version:
+                <InputText id="Version" @bind-Value="fileUpload.Version" />
+                <ValidationMessage For="@(() => fileUpload.Version)" />
+            </label>
+        </p>
+        <p>
+            <label>
+                Description:
+                <InputText id="Description" @bind-Value="fileUpload.Description" />
+            </label>
+        </p>
+        @if (fileUpload.ShowOverwriteButton)
+        {
+
+            <p style="color:red">Version already exists. Do you want to overwrite?</p>
+            <p>
+                <label>
+                    Overwrite current Firmware:
+                    <InputCheckbox id="Description" @bind-Value="fileUpload.OverWriteCurrentFirmware" />
+                </label>
+            </p>
+        }
+
+
+        Firmware: <InputFile OnChange="OnChange" class="form-control" />
+        <ValidationMessage For="() => fileUpload.Firmware" />
+    </div>
+
+    <button>Submit</button>
+</EditForm>
+
+<br />
+
+@foreach (var uploadInfo in allUploads.OrderByDescending(t => t.DateUploaded).Take(10))
+{
+    string uf = $"Firmware version {uploadInfo.FirmwareVersion} uploaded on {uploadInfo.DateUploaded.ToLocalTime()} with description {uploadInfo.Description}";
+    <p>
+        @if (uploadInfo.IsLatestVersion)
+        {
+            <b>@uf</b>
+        }
+        else
+        {
+            @uf
+        }
+    </p>
+}
+
+@code
+{
+
+
+
+
+}
+

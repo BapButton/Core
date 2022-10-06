@@ -1,0 +1,75 @@
+﻿@using Microsoft.Extensions.Logging
+
+
+@code {
+	private List<(string message, LogLevel logLevel)> Logs { get; set; }
+	private LogLevel MinLogLevel { get; set; }  = LogLevel.Information;
+	[ParameterAttribute]
+	public LogLevel? StartingLogLevel { get; set; } 
+	public int MinLogId { get; set; }
+
+	protected override void OnParametersSet()  
+    {  
+        if(StartingLogLevel.HasValue)
+		{
+			MinLogLevel = (LogLevel)StartingLogLevel;
+		}
+    } 
+	protected override void OnInitialized()
+	{
+		
+		base.OnInitialized();
+		LiveLogger.LogGenerated += LogUpdate;
+		Logs = LiveLogger.GetCurrentLogs().Where(t => t.source.StartsWith("Tinker")).Select(t => ($"{t.message}", t.level)).ToList();
+	}
+	void LogUpdate(object? sender, LogGeneratedEventArgs e)
+	{
+		if (e.Source.StartsWith("Tinker"))
+		{
+			Logs.Add(($"{e.Message}", e.Level));
+			InvokeAsync(() =>
+			{
+				StateHasChanged();
+			});
+		}
+
+	}
+	void ClearLog(MouseEventArgs e)
+	{
+		Logs = new();
+	}
+}
+
+
+<div style="margin-top:50px; height:400px;overflow-y:scroll">
+	<h4>Logs</h4>
+	    <MudItem xs="12" sm="6" md="4">
+        <MudSelect Label="Minimum Log Level" @bind-Value="MinLogLevel" HelperText="Log Level"
+                   OffsetY="true"  AdornmentColor="Color.Secondary">
+            @foreach (LogLevel item in Enum.GetValues(typeof(LogLevel)))
+            {
+                <MudSelectItem Value="@item">@item</MudSelectItem>
+            }
+        </MudSelect>
+		 <MudButton OnClick=@ClearLog>Clear Log</MudButton>
+    </MudItem>
+	<ol>
+		@foreach (var log in Enumerable.Reverse(Logs).Where(t => t.logLevel >= MinLogLevel))
+		{
+	  <li>
+				@if (log.logLevel == LogLevel.Error)
+				{
+		   <p style="color:red">@log.message</p>
+				}
+				else if (log.logLevel == LogLevel.Information)
+				{
+		   <p style="color:green">@log.message</p>
+				}
+				else
+				{
+		   <p>@log.message</p>
+				}
+	  </li>
+		}
+ </ol>
+</div>

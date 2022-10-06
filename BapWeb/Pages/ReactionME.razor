@@ -1,0 +1,49 @@
+﻿@inherits GamePage
+<h3>Reaction Game</h3>
+<h5>@message</h5>
+@if (game.IsGameRunning)
+{
+    <button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+
+
+<h5>@updateMessage</h5>
+@if (game.IsGameRunning || status.CorrectScore + status.WrongScore > 0)
+{
+
+    @if (game.IsGameRunning)
+    {
+        <h4>Time Remaining</h4>
+        <div class="countDownTimer">@status.TimeRemaining.Minutes : @status.TimeRemaining.Seconds.ToString("D2")</div>
+    }
+    <div class="Score">
+
+        <div class="left-half">
+            <p>Number Correct</p>
+            <p>@status.CorrectScore</p>
+        </div>
+        <div class="right-half">
+            <p>Number Wrong</p>
+            <p>@status.WrongScore</p>
+        </div>
+    </div>
+}
+else
+{
+    <h1>Rules</h1>
+    <ol>
+        <li>Press the buttons when they light up a solid as fast as you can</li>
+        <li>Press the Green Smily face for 3 bonus points. But be quick it disappears.</li>
+        <li><b>Don't hit the Yellow Frowny Face. You lose immediately.</b></li>
+        <li><b>If you get 5 wrong the game is over.</b></li>
+    </ol>
+}
+
+
+
+<LogWindow />
+

@@ -1,0 +1,58 @@
+﻿
+
+@code {
+	
+
+}
+@{
+	status = game.GetStatus();
+
+}
+
+<h3>Ethan's Sword Bonus Game</h3>
+<h5>@message</h5>
+@if (game.IsGameRunning)
+{
+	<button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+	<button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+
+
+<h5>@updateMessage</h5>
+@if (status.CorrectScore + status.WrongScore > 0)
+{
+	<div class="Score">
+
+	 <div class="left-half">
+	  <p>Number Correct</p>
+	  <p>@status.CorrectScore</p>
+	 </div>
+	 <div class="right-half">
+	  <p>Number Wrong</p>
+	  <p>@status.WrongScore</p>
+	 </div>
+	</div>
+}
+@if (game.IsGameRunning)
+{
+
+
+	<h4>Time Remaining</h4>
+	<div class="countDownTimer">@status.TimeRemaining.Minutes : @status.TimeRemaining.Seconds.ToString("D2")</div>
+}
+else
+{
+	<h1>Rules</h1>
+	<ol>
+	 <li>Press the buttons when they light up a solid as fast as you can</li>
+	 <li>They Disseaper Fast so you have to be quick</li>
+	 <li><b>Don't worry about bad things. Just be fast and hit anythign that lights up</b></li>
+	 <li><b>Look for the Crown it is worth 20 bonus points.</b></li>
+	</ol>
+}
+
+<LogWindow />
+

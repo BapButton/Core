@@ -1,0 +1,12 @@
+﻿
+<h3>Custom Image Testing</h3>
+<h5>@LastMessage</h5>
+@if (game.IsGameRunning)
+{
+    <button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+

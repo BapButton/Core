@@ -1,0 +1,176 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <nullable>enable</nullable>
+    <UserSecretsId>6f3a15f3-5c6c-46e1-9604-c65838c251ef</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.FluentValidation" Version="2.0.1" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.3.75" />
+    <PackageReference Include="MessagePipe" Version="1.6.1" />
+    <PackageReference Include="MessagePipe.Analyzer" Version="1.6.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0-preview.7.21378.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
+    <PackageReference Include="MudBlazor" Version="5.1.4" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
+    <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
+    <PackageReference Include="SpotifyAPI.Web" Version="6.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BapButton\BapButton.csproj" />
+    <ProjectReference Include="..\BapDb\BapDb.csproj" />
+    <ProjectReference Include="..\BapShared\BapShared.csproj" />
+    <ProjectReference Include="..\MockButtonCore\MockButtonCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Watch Include="..\**\*.razor" />
+    <Watch Include="..\**\*.scss" />
+    <Watch Include="..\**\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="wwwroot\sprites\Emoji.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Watch Remove="Controller\FirmwareController.cs" />
+    <Watch Remove="Controller\TTSController.cs" />
+    <Watch Remove="GamePAge.cs" />
+    <Watch Remove="Games\AdditionGame.cs" />
+    <Watch Remove="Games\CustomImageTest.cs" />
+    <Watch Remove="Games\DefaultKeyboard.cs" />
+    <Watch Remove="Games\ExplodingBapGame.cs" />
+    <Watch Remove="Games\KeyboardBase.cs" />
+    <Watch Remove="Games\LayoutSetupGame.cs" />
+    <Watch Remove="Games\LetterTest.cs" />
+    <Watch Remove="Games\MarqueGameBase.cs" />
+    <Watch Remove="Games\MathGameBase.cs" />
+    <Watch Remove="Games\MultiplicationGame.cs" />
+    <Watch Remove="Games\ReactionGameBase.cs" />
+    <Watch Remove="Games\ReactionGameEthan.cs" />
+    <Watch Remove="Games\ReactionGameME.cs" />
+    <Watch Remove="Games\ReactionSpeedup.cs" />
+    <Watch Remove="Games\SwordBonusGame.cs" />
+    <Watch Remove="Games\TextMarqueGame.cs" />
+    <Watch Remove="Games\VocabGame.cs" />
+    <Watch Remove="IDbSaver.cs" />
+    <Watch Remove="imports.cs" />
+    <Watch Remove="LiveLogger.cs" />
+    <Watch Remove="Models\FirmwareData.cs" />
+    <Watch Remove="Pages\Addition - Copy.razor.cs" />
+    <Watch Remove="Pages\Addition.razor" />
+    <Watch Remove="Pages\Addition.razor.cs" />
+    <Watch Remove="Pages\AllLogs.razor" />
+    <Watch Remove="Pages\AudioPlayer.razor" />
+    <Watch Remove="Pages\AudioPlayer.Razor.cs" />
+    <Watch Remove="Pages\AudioTest.razor" />
+    <Watch Remove="Pages\BasicGame.razor" />
+    <Watch Remove="Pages\BasicGame.razor.cs" />
+    <Watch Remove="Pages\BigScore.razor" />
+    <Watch Remove="Pages\BigScore.razor.cs" />
+    <Watch Remove="Pages\ButtonDetails.razor" />
+    <Watch Remove="Pages\ButtonDetails.razor.cs" />
+    <Watch Remove="Pages\ButtonMessageLog.razor" />
+    <Watch Remove="Pages\ButtonMessageLog.razor.cs" />
+    <Watch Remove="Pages\ButtonTesting.razor" />
+    <Watch Remove="Pages\ButtonTesting.razor.cs" />
+    <Watch Remove="Pages\Control.razor" />
+    <Watch Remove="Pages\Control.razor.cs" />
+    <Watch Remove="Pages\CountdownTimer.razor" />
+    <Watch Remove="Pages\CountdownTimer.razor.cs" />
+    <Watch Remove="Pages\CustomImageTesting.razor" />
+    <Watch Remove="Pages\CustomImageTesting.razor.cs" />
+    <Watch Remove="Pages\ExplodingBap.razor" />
+    <Watch Remove="Pages\HighScoreTable.razor" />
+    <Watch Remove="Pages\HighScoreTable.razor.cs" />
+    <Watch Remove="Pages\Index.razor" />
+    <Watch Remove="Pages\Index.razor.cs" />
+    <Watch Remove="Pages\LayoutSetup.razor" />
+    <Watch Remove="Pages\LayoutTopbarDisplay.razor" />
+    <Watch Remove="Pages\LayoutTopbarDisplay.razor.cs" />
+    <Watch Remove="Pages\LogWindow.razor" />
+    <Watch Remove="Pages\Marque.razor.cs" />
+    <Watch Remove="Pages\Marquee - Copy.razor.cs" />
+    <Watch Remove="Pages\Marquee.razor" />
+    <Watch Remove="Pages\MockButton.razor" />
+    <Watch Remove="Pages\MockButton.razor.cs" />
+    <Watch Remove="Pages\Multiplication.razor" />
+    <Watch Remove="Pages\PatternTesting.razor" />
+    <Watch Remove="Pages\PatternTesting.razor.cs" />
+    <Watch Remove="Pages\Reaction.razor" />
+    <Watch Remove="Pages\Reaction.razor.cs" />
+    <Watch Remove="Pages\ReactionEthan.razor" />
+    <Watch Remove="Pages\ReactionME - Copy.razor.cs" />
+    <Watch Remove="Pages\ReactionME.razor" />
+    <Watch Remove="Pages\ReactionME.razor.cs" />
+    <Watch Remove="Pages\SetupLayout.razor.cs" />
+    <Watch Remove="Pages\Simon.razor" />
+    <Watch Remove="Pages\Simon.razor.cs" />
+    <Watch Remove="Pages\SpeedUp.razor" />
+    <Watch Remove="Pages\Speedup.razor.cs" />
+    <Watch Remove="Pages\SpotifyCallback.razor" />
+    <Watch Remove="Pages\Supervisor.razor" />
+    <Watch Remove="Pages\Supervisor.razor.cs" />
+    <Watch Remove="Pages\SwordBonus.razor" />
+    <Watch Remove="Pages\SwordBonus.razor.cs" />
+    <Watch Remove="Pages\Upload.razor" />
+    <Watch Remove="Pages\Upload.razor.cs" />
+    <Watch Remove="Pages\Vocab.razor" />
+    <Watch Remove="Pages\Vocab.razor.cs" />
+    <Watch Remove="Pages\VocabGameSetup.razor" />
+    <Watch Remove="Pages\VocabGameSetup.razor.cs" />
+    <Watch Remove="Supervisor\Status.cs" />
+    <Watch Remove="TTS\TtsService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="wwwroot\audio\f4.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="wwwroot\audio\g4.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="wwwroot\audio\gb4.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <None Include="wwwroot\sprites\Emoji.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="wwwroot\audio\ab4.mp3" />
+    <Resource Include="wwwroot\audio\bb4.mp3" />
+    <Resource Include="wwwroot\audio\d4.mp3" />
+    <Resource Include="wwwroot\audio\eb4.mp3" />
+    <Resource Include="wwwroot\audio\error_004.mp3" />
+    <Resource Include="wwwroot\audio\madsfrowny.mp3" />
+    <Resource Include="wwwroot\audio\madsfrowny.wav" />
+    <Resource Include="wwwroot\audio\madstoomany.mp3" />
+    <Resource Include="wwwroot\audio\madstoomany.wav" />
+    <Resource Include="wwwroot\audio\open_001.mp3" />
+    <Resource Include="wwwroot\audio\open_001.wav" />
+    <Resource Include="wwwroot\audio\SgLost.mp3" />
+    <Resource Include="wwwroot\audio\SgLost.wav" />
+    <Resource Include="wwwroot\audio\SgLostTheEntireGame.mp3" />
+    <Resource Include="wwwroot\audio\SgStart.mp3" />
+    <Resource Include="wwwroot\audio\SgStartOfEntireGame.mp3" />
+    <Resource Include="wwwroot\audio\SgWonTheEntireGame.mp3" />
+    <Resource Include="wwwroot\audio\SqBeatTheBonusRound.mp3" />
+    <Resource Include="wwwroot\audio\SqHitTheCrown.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Pages\Vocab.razor.cs">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+</Project>

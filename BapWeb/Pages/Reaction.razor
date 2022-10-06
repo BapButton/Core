@@ -1,0 +1,29 @@
+﻿<h3>Reaction Game</h3>
+<h5>@message</h5>
+@if (game.IsGameRunning)
+{
+    <button class="btn btn-primary" @onclick="EndGame">End Game</button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+}
+
+
+<h5>@updateMessage</h5>
+@if (game.IsGameRunning)
+{
+    <h2>Score</h2>
+    <div>
+        <p>Number Correct</p>
+        <p>@game.correctScore</p>
+    </div>
+    <div>
+        <p>Number Wrong</p>
+        <p>@game.wrongScore</p>
+    </div>
+}
+
+
+<LogWindow />
+

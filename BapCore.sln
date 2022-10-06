@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31521.260
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MqttDecoder", "MqttDecoder\MqttDecoder.csproj", "{DD67459D-064B-4BA2-B477-B5A7996789ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B87CA40A-92D1-42EC-878F-5FF288D42739}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		ArmDocker-Compose.yml = ArmDocker-Compose.yml
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		DockerInstructions.txt = DockerInstructions.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockButtonCore", "MockButtonCore\MockButtonCore.csproj", "{B7C51122-891F-4D30-BA19-C92D45EC7380}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BapDb", "BapDb\BapDb.csproj", "{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BapWeb", "BapWeb\BapWeb.csproj", "{57C8BD74-83E8-4861-99A3-5B13C97F1237}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BapButton", "BapButton\BapButton.csproj", "{280361CA-5662-4004-BB4E-CDCF60058888}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BapTester", "BapTester\BapTester.csproj", "{26DFD36E-6CD1-419D-B53C-A5ED70330627}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BapShared", "BapShared\BapShared.csproj", "{F222348F-6C6A-47C2-843F-89211FFCCD0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD67459D-064B-4BA2-B477-B5A7996789ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD67459D-064B-4BA2-B477-B5A7996789ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD67459D-064B-4BA2-B477-B5A7996789ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD67459D-064B-4BA2-B477-B5A7996789ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{280361CA-5662-4004-BB4E-CDCF60058888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{280361CA-5662-4004-BB4E-CDCF60058888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{280361CA-5662-4004-BB4E-CDCF60058888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{280361CA-5662-4004-BB4E-CDCF60058888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26DFD36E-6CD1-419D-B53C-A5ED70330627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26DFD36E-6CD1-419D-B53C-A5ED70330627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26DFD36E-6CD1-419D-B53C-A5ED70330627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26DFD36E-6CD1-419D-B53C-A5ED70330627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F222348F-6C6A-47C2-843F-89211FFCCD0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F222348F-6C6A-47C2-843F-89211FFCCD0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F222348F-6C6A-47C2-843F-89211FFCCD0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F222348F-6C6A-47C2-843F-89211FFCCD0D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FC59B552-1C50-4550-B712-9A3619795755}
+	EndGlobalSection
+EndGlobal

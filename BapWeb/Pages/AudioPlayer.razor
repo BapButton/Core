@@ -1,0 +1,11 @@
+﻿
+<MudButton OnClick=@ToggleAudio>
+@if (VolumeMuted)
+{
+    <MudIcon Icon="@Icons.Material.Filled.VolumeMute"></MudIcon>
+}
+else
+{
+    <MudIcon Icon="@Icons.Material.Filled.VolumeUp"></MudIcon>
+}
+</MudButton>

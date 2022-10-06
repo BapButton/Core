@@ -1,0 +1,15 @@
+﻿@using System.Runtime.InteropServices
+<MudPaper Width="250px" Class="py-3" Square="true">
+	<MudNavMenu>
+		<MudNavLink Match="NavLinkMatch.All" Href="/">Games</MudNavLink>
+		@if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+		{
+			<MudNavLink Href="/buttontesting">Button Testing</MudNavLink>
+		}
+
+		<MudNavLink Href="/control">Control</MudNavLink>
+		<MudNavLink Href="/buttons">Button Details</MudNavLink>
+		<MudNavLink Href="/upload">Upload new Firmware</MudNavLink>
+		<MudNavLink Href="/layout">Button Layout</MudNavLink>
+	</MudNavMenu>
+</MudPaper>

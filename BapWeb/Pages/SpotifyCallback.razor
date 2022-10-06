@@ -1,0 +1,27 @@
+﻿@page "/spotifyCallback"
+@using Microsoft.AspNetCore.WebUtilities
+@using BapWeb.Games
+@inject NavigationManager NavManager
+@inject GameHandler GameHandler
+@inject ILogger<SpotifyCallback> logger
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out var authCode))
+        {
+            if (GameHandler.CurrentGame != null)
+            {
+                await ((VocabGame)GameHandler.CurrentGame).UpdateSpotifyCode(authCode);
+            }
+        }
+        else
+        {
+            logger.LogError("No code when trying to authenticate Spotify");
+        }
+
+        NavManager.NavigateTo("/");
+    }
+}

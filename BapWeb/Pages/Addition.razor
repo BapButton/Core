@@ -1,0 +1,95 @@
+﻿@inherits GamePage
+@if (game.IsGameRunning)
+{
+	<button class="btn btn-primary" @onclick="EndGame">End Game</button>
+
+}
+else
+{
+	<h3>Addition  --- Difficulty: @GetSimpleDifficulty()</h3>
+	<MudGrid>
+		<MudItem xs="12" sm="6" md="3">
+			<button class="btn btn-primary" @onclick="StartGame">Start Game</button>
+		</MudItem>
+		<MudItem xs="12" sm="6" md="3">
+			<MudButton @onclick="() => ShowHighScores()">High Scores</MudButton>
+		</MudItem>
+		<MudItem xs="12" sm="6" md="3">
+			<MudSwitch Color="Color.Primary" label="Spanish" @bind-Checked="@TempIsSpanish" />
+		</MudItem>
+		@if (IsTopRowButtonDisplayPossible())
+		{
+			<MudItem xs="12" sm="6" md="3">
+				<MudSwitch Color="Color.Secondary" label="Display problem on top row of buttons" @bind-Checked="@TempUseTopRowAsDisplay" />
+			</MudItem>
+		}
+	</MudGrid>
+	<MudGrid>
+		<MudItem xs="2" sm="2" md="2">
+			<MudGrid>
+				<MudItem xs="12" sm="12" md="12">
+					<MudSelect T="int" Label="Minimum Value" @bind-Value="TempMinAddend">
+						@foreach (var min in MinAddend)
+						{
+							<MudSelectItem T="int" value="@min">@min</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="12" sm="12" md="12">
+					<MudSelect T="int" Label="Max Value" @bind-Value="TempMaxAddend">
+						@foreach (var maxa in MaxAddend)
+						{
+							<MudSelectItem T="int" value="@maxa">@maxa</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="12" sm="12" md="12">
+					<MudSelect T="int" Label="Max Total" @bind-Value="TempMaxValue">
+						@foreach (var max in MaxValue)
+						{
+							<MudSelectItem T="int" value="@max">@max</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+				<MudItem xs="12" sm="12" md="12">
+					<MudSelect T="int" Label="Time limit" @bind-Value="TempTimeToPlay">
+						@foreach (var time in TimeToPlay)
+						{
+							<MudSelectItem T="int" value="@time">@TimeSpan.FromSeconds(time).ToString(@"mm\:ss")</MudSelectItem>
+						}
+					</MudSelect>
+				</MudItem>
+			</MudGrid>
+		</MudItem>
+	</MudGrid>
+}
+@if (GameHandler.CurrentButtonLayout == null)
+{
+	<MudText color=@Color.Error>No Layout selected. This game will not play well. </MudText>
+}
+
+
+
+@if (game.AddendOne + game.AddendTwo > -1)
+{
+	string message = $"Addition of numbers between {game.MinAddend} and {game.MaxAddend} and below {game.MaxAddend}";
+	@if (game.IsGameRunning)
+	{
+		<CountdownTimer TimeRemaining="@game.gameTimer.TimeRemaining()" />
+		<p>Problem</p>
+		<h1>@game.AddendOne + @game.AddendTwo  = </h1>
+	}
+
+
+	<div class="Score">
+
+		<div class="left-half">
+			<p>Number Correct</p>
+			<p>@game.correctScore</p>
+		</div>
+		<div class="right-half">
+			<p>Number Wrong</p>
+			<p>@game.wrongScore</p>
+		</div>
+	</div>
+}

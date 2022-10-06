@@ -1,0 +1,25 @@
+﻿table.buttonTable {
+    border-width: 5px;
+    border-color: black;
+    border-style: solid;
+}
+
+.buttonTable td {
+    height: 18px;
+    width: 18px;
+}
+
+.buttonTable tr {
+    max-height: 18px;
+    display: block;
+}
+
+button.removeButton {
+    display: block;
+}
+
+button.mainButton {
+    display: block;
+    border: none;
+    background-color: white;
+}

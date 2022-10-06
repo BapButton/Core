@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <nullable>enable</nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MessagePipe" Version="1.6.1" />
+    <PackageReference Include="MessagePipe.Analyzer" Version="1.6.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0-preview.7.21377.19" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BapButton\BapButton.csproj" />
+    <ProjectReference Include="..\BapShared\BapShared.csproj" />
+  </ItemGroup>
+
+</Project>

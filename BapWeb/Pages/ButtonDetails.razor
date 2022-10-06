@@ -1,0 +1,27 @@
+﻿@page "/buttons"
+
+
+
+<h3>ButtonDetails</h3>
+
+
+    @foreach (var button in msgSender.GetAllConnectedButtonInfo())
+{
+    string terminalUrl = $"http://{button.buttonStatus.IPAddress}/term.html";
+    <div>
+        <p>Buttton @button.nodeId</p>
+        <p>Firmware Version is @button.buttonStatus.VersionId</p>
+        <p>Ip Address is @button.buttonStatus.IPAddress</p>
+        <p>Battery Status is @button.buttonStatus.BatteryLevel </p>
+        <p>Wifi Strength is @button.buttonStatus.WifiStrength </p>
+        @if (!button.buttonStatus.IPAddress.StartsWith("0"))
+        {
+            <p><a target="_blank" href="@terminalUrl">View Terminal</a></p>
+        }
+        <MudButton OnClick="() => GetStatusOfNode(button.nodeId)">Status</MudButton>
+        <MudButton OnClick="() => IdentifyNode(button.nodeId)">Identify</MudButton>
+        <MudButton OnClick="() => ShutdownNode(button.nodeId)">Shutdown</MudButton>
+        <MudButton OnClick="() => RestartNode(button.nodeId)">Restart</MudButton>
+        <MudButton OnClick="() => SendBasicMessage(button.nodeId)">Send Tester Msg</MudButton>
+    </div>
+}

@@ -1,0 +1,35 @@
+﻿@page "/control"
+
+<h3>Control</h3>
+
+@using BapShared
+
+
+    There @(MsgSender.GetConnectedButtons().Count == 1 ? "is" : "are") @MsgSender.GetConnectedButtons().Count   Button connected.
+<div>
+    <button @onclick="CheckButtonStatus">Check Button Status</button>
+</div>
+<div>
+    <button @onclick="RestartButtons">Restart All Buttons</button>
+</div>
+<div>
+    <button @onclick="TurnOffButtons">Turn Off All Buttons</button>
+</div>
+
+<div>
+    <h4>Details</h4>
+    <p>Mosquitto Address: @mosquittoAddress</p>
+    <p>IsConnected: @isConnected.ToString()</p>
+    <p>IsStarted: @isStarted.ToString()</p>
+</div>
+
+<div>
+    <h2>Active Controller</h2>
+        <p>@CtrlHandler.CurrentController.ControllerName</p>
+    
+    <h4>Other Controllers</h4>
+    @foreach(var item in AllControllers.Where(t => t.GetType() != CtrlHandler.CurrentController.GetType()))
+    {
+        <p>@item.ControllerName</p><MudButton @onclick="() => SelectController(item.GetType())">Select</MudButton>
+    }
+</div>
