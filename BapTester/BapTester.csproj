@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <nullable>enable</nullable>
   </PropertyGroup>
 
@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="2.1.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BapButton\BapButton.csproj" />
+    <ProjectReference Include="..\BapHelpers\BAP.Helpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

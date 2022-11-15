@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BapButton;
-using BapShared;
+using BAP.Types;
+using BAP.Helpers;
 
 namespace BapTester
 {
     public class LetterTest
     {
-        public MessageSender MsgSender { get; internal set; }
-        public LetterTest(MessageSender msgSender)
+        public BapMessageSender MsgSender { get; internal set; }
+        public LetterTest(BapMessageSender msgSender)
         {
             MsgSender = msgSender;
         }

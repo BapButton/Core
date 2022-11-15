@@ -9,14 +9,15 @@ using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.ColorSpaces;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Linq;
-using BapShared;
+using BAP.Types;
+using BAP.Helpers;
 
 namespace BapTester
 {
     public class SendCustomImage
     {
-        MessageSender MsgSender;
-        SendCustomImage(MessageSender sender)
+        BapMessageSender MsgSender;
+        SendCustomImage(BapMessageSender sender)
         {
             MsgSender = sender;
         }

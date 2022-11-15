@@ -1,0 +1,50 @@
+﻿@using MockButtonCore;
+@using BapShared;
+
+
+
+<div style="display:inline-block;margin:25px;min-width:144px">
+    @if (HideButtonsWhenGameActive = false || GameHandler.IsGameRunning == false)
+    {
+        <button class="btn btn-primary removeButton" style="min-width:144px" @onclick="() => RemoveButton()">Remove  @NodeId</button>
+    }
+    <button class="mainButton" @onclick="ClickButton" style="display:block">
+        <table class="buttonTable">
+            @{
+                if (CurrentDisplayedItem != null)
+                {
+                    try
+                    {
+                        var imageMatrix = CurrentDisplayedItem.GetImageMatrix();
+                        for (int i = 0; i < 8; i++)
+                        {
+                            <tr>
+                                @for (int s = 0; s < 8; s++)
+                                {
+                                    string backgroundStyle = "";
+
+                                    ulong currentColor = imageMatrix[i, s];
+                                    if (currentColor > 0)
+                                    {
+                                        backgroundStyle = $"background-color:{(string.Format("#{0:X6}", currentColor))};)";
+                                    }
+                                    else
+                                    {
+                                        backgroundStyle = $"background-color:black";
+                                    }
+
+                                    <td style="@backgroundStyle">&nbsp;</td>
+                                }
+                            </tr>
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogDebug($"Mock button render Failed with exception {ex.Message}");
+                    }
+                }
+            }
+
+        </table>
+    </button>
+</div>

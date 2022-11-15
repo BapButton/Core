@@ -7,8 +7,6 @@ using BapShared;
 
 namespace MockButtonCore
 {
-
-   
     public class CheckImage
     {
         private Dictionary<int, ulong> _currentImage { get; set; }
