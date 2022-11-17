@@ -114,7 +114,7 @@ namespace BAP.Web.Pages
         private void DeselectGame()
         {
 
-            GameHandler.CurrentlySelectedGame = null;
+            GameHandler.CurrentlySelectedItem = null;
             GameHandler?.ForceGameEnd();
             msgSender.ClearAllCachedAudio();
             if (KeyboardHandler.CurrentKeyboard.IsEnabled)
@@ -131,7 +131,7 @@ namespace BAP.Web.Pages
         private async Task SelectGame(IBapGameDescription gameDescription)
         {
             await dba.AddGamePlayLog(gameDescription.UniqueId);
-            GameHandler.CurrentlySelectedGame = gameDescription;
+            GameHandler.CurrentlySelectedItem = gameDescription;
         }
         public void Dispose()
         {

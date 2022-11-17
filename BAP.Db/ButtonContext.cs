@@ -23,7 +23,7 @@ namespace BAP.Db
 			{
 				if (string.IsNullOrEmpty(conectionString))
 				{
-					options.UseMySql("server=localhost;database=buttons;user=root;password=10640b03-1020-4be6-a065-634ea64c33c4", MariaDbServerVersion.LatestSupportedServerVersion);
+					options.UseInMemoryDatabase(new Guid().ToString());
 				}
 				else
 				{

@@ -8,12 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using BAP.Types;
 
-namespace MockButtonCore
+namespace BAP.TestUtilities
 {
-	public class MockConnectionCore : IBapButtonProvider
+	public class MockButtonProvider : IBapButtonProvider
 	{
 		private const string buttonAddressBase = "AAA";
-		private readonly ILogger<MockConnectionCore> _logger;
+		private readonly ILogger<MockButtonProvider> _logger;
 		//public delegate void MyClickHandler(object sender, string myValue);
 		public ConcurrentDictionary<string, bool> ConnectedNodes = new();
 		public ConcurrentDictionary<string, ButtonStatus> AllButtonStatus = new();
@@ -21,9 +21,9 @@ namespace MockButtonCore
 		public ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
 		IDisposable subscriptions = default!;
 
-		public string Name => "Mock Controller";
+		public string Name => "Mock Buttons";
 
-		public MockConnectionCore(ILogger<MockConnectionCore> logger, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<NodeChangeMessage> nodeChangeSender)
+		public MockButtonProvider(ILogger<MockButtonProvider> logger, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<NodeChangeMessage> nodeChangeSender)
 		{
 			_logger = logger;
 			TurnOffButtonMessagePipe = turnOffButtonMessagePipe;
@@ -43,7 +43,6 @@ namespace MockButtonCore
 				{
 					RemoveNode(node.Key);
 				}
-
 			}
 			else
 			{

@@ -7,10 +7,15 @@ using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MockButtonCore;
 
-namespace BAP.Web.Pages
+namespace BAP.TestUtilities
 {
+    public class ButtonTestingMenuItem : IMainMenuItem
+    {
+        public Type TypeOfInitialDisplayComponent => typeof(ButtonTesting);
+        public string MenuItemName => "Button Testing";
+    }
+
     public partial class ButtonTesting : ComponentBase, IDisposable
     {
         [Parameter]
@@ -36,17 +41,17 @@ namespace BAP.Web.Pages
         [Inject]
         ISubscriber<LayoutChangeMessage> layoutChangePipe { get; set; } = default!;
 
-        MockConnectionCore Core { get; set; } = default!;
+        MockButtonProvider Core { get; set; } = default!;
 
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (CtrlHandler.CurrentButtonProvider == null || CtrlHandler.CurrentButtonProvider.GetType() != typeof(MockConnectionCore))
+            if (CtrlHandler.CurrentButtonProvider == null)
             {
-                CtrlHandler.ChangeButtonProvider(typeof(MockConnectionCore));
+                CtrlHandler.ChangeButtonProvider(typeof(MockButtonProvider));
             }
-            Core = (MockConnectionCore)CtrlHandler.CurrentButtonProvider!;
+            Core = (MockButtonProvider)CtrlHandler.CurrentButtonProvider!;
             var bag = DisposableBag.CreateBuilder();
             gameStateChangedPipe.Subscribe(async (x) => await Updates(x)).AddTo(bag);
             buttonPressedPipe.Subscribe(async (x) => await ButtonPressed(x)).AddTo(bag);

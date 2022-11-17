@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace BAP.Types
 {
-    internal class IMainMenuItem
-    {
-    }
+	public interface IMainMenuItem : IMainAreaItem
+	{
+		/// <summary>
+		/// Shown in the Menu
+		/// </summary>
+		public string MenuItemName { get; }
+	}
 }

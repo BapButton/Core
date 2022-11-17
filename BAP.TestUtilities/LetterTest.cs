@@ -1,17 +1,15 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.Logging;
-using MockButtonCore;
 using NLog.Common;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using BAP.Web.Pages;
 
-namespace BAP.Web.Games
+namespace BAP.TestUtilities
 {
     public class LetterTestDescription : IBapGameDescription
     {
-        public Type TypeOfInitialDisplayComponent => typeof(PatternTesting);
+        public Type TypeOfInitialDisplayComponent => typeof(LetterTest);
         public string Name => "Letter Test";
         public string Description => "Test out if all the patterns are working.";
 
@@ -67,7 +65,7 @@ namespace BAP.Web.Games
 
             AnimationHelper.MergeMatrices(sword, AnimationHelper.GetMatrix(Patterns.Border, StandardColorPalettes.Default[3]));
             MsgSender.SendUpdate("Displaying custom image on button", false);
-            MsgSender.SendInternalCustomImage("", new InternalCustomImage(sword));
+            MsgSender.SendImageToAllButtons(new ButtonImage(sword));
             //MsgSender.SendGeneralCommand(sbc);
 
             await Task.Delay(2000);

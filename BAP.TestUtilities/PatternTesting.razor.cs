@@ -7,7 +7,7 @@ using BAP.Web.Games;
 using BapShared;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BAP.Web.Pages
+namespace BAP.TestUtilities
 {
     public partial class PatternTesting : ComponentBase, IDisposable
     {

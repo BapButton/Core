@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BapShared;
 
-namespace MockButtonCore
+namespace BAP.TestUtilities
 {
     public class CheckImage
     {

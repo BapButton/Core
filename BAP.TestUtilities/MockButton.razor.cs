@@ -1,12 +1,11 @@
 ﻿using MessagePack.Resolvers;
 using MessagePipe;
 using Microsoft.AspNetCore.Components;
-using MockButtonCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BAP.Web.Pages
+namespace BAP.TestUtilities
 {
     public enum NextButtonDisplay
     {
@@ -74,9 +73,9 @@ namespace BAP.Web.Pages
         }
         protected void RemoveButton()
         {
-            if (CtrlHandler.CurrentButtonProvider.GetType() == typeof(MockConnectionCore))
+            if (CtrlHandler.CurrentButtonProvider.GetType() == typeof(MockButtonProvider))
             {
-                ((MockConnectionCore)CtrlHandler.CurrentButtonProvider).RemoveNode(NodeId);
+                ((MockButtonProvider)CtrlHandler.CurrentButtonProvider).RemoveNode(NodeId);
             }
         }
 

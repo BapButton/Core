@@ -18,7 +18,7 @@ namespace BAP.Web.Pages
 		[Inject]
 		ControlHandler CtrlHandler { get; set; } = default!;
 		[Inject]
-		BapMessageSender MsgSender { get; set; } = default!;
+		IBapMessageSender MsgSender { get; set; } = default!;
 		[Inject]
 		IEnumerable<IBapButtonProvider> AllControllers { get; set; } = default!;
 		IDisposable subscriptions = default!;

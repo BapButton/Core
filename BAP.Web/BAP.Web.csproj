@@ -23,6 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.10" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
@@ -34,9 +35,10 @@
   <ItemGroup>
     <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
     <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+    <ProjectReference Include="..\BAP.TestUtilities\BAP.TestUtilities.csproj" />
     <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
     <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
-    <ProjectReference Include="..\MockButtonCore\MockButtonCore.csproj" />
+    <ProjectReference Include="..\BasicMathGames\BAP.BasicMathGames.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Watch Include="..\**\*.razor" />
@@ -74,14 +76,13 @@
     <Watch Remove="Pages\LayoutTopbarDisplay.razor.cs" />
     <Watch Remove="Pages\Marque.razor.cs" />
     <Watch Remove="Pages\Marquee - Copy.razor.cs" />
-    <Watch Remove="Pages\MockButton.razor" />
-    <Watch Remove="Pages\MockButton.razor.cs" />
     <Watch Remove="Pages\ReactionME - Copy.razor.cs" />
     <Watch Remove="Pages\SetupLayout.razor.cs" />
     <Watch Remove="Pages\Supervisor.razor" />
     <Watch Remove="Pages\Supervisor.razor.cs" />
     <Watch Remove="Pages\Upload.razor" />
     <Watch Remove="Pages\Upload.razor.cs" />
+    <Watch Remove="Shared\NavMenu.razor.cs" />
     <Watch Remove="Supervisor\Status.cs" />
     <Watch Remove="TTS\TtsService.cs" />
   </ItemGroup>

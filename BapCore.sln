@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		DockerInstructions.txt = DockerInstructions.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockButtonCore", "MockButtonCore\MockButtonCore.csproj", "{B7C51122-891F-4D30-BA19-C92D45EC7380}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Db", "BAP.Db\BAP.Db.csproj", "{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Web", "BAP.Web\BAP.Web.csproj", "{57C8BD74-83E8-4861-99A3-5B13C97F1237}"
@@ -28,13 +26,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.UIHelpers", "BAP.UIHelp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.CoreWebUI", "BAP.CoreWebUI\BAP.CoreWebUI.csproj", "{8099742C-45DD-404D-BD78-7E238A522117}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.TextGames", "BAP.TextGames\BAP.TextGames.csproj", "{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TextGames", "BAP.TextGames\BAP.TextGames.csproj", "{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.TestUtilities", "BAP.TestUtilities\BAP.TestUtilities.csproj", "{ABC746B5-588A-4C6E-A50C-D2255CB6277A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TestUtilities", "BAP.TestUtilities\BAP.TestUtilities.csproj", "{ABC746B5-588A-4C6E-A50C-D2255CB6277A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.ReactionGames", "BAP.ReactionGames\BAP.ReactionGames.csproj", "{1A309328-1F62-446D-8C5A-C5CAE87C9E72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.ReactionGames", "BAP.ReactionGames\BAP.ReactionGames.csproj", "{1A309328-1F62-446D-8C5A-C5CAE87C9E72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.RazorDifference", "BAP.RazorDifference\BAP.RazorDifference.csproj", "{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,10 +42,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7C51122-891F-4D30-BA19-C92D45EC7380}.Release|Any CPU.Build.0 = Release|Any CPU
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +86,10 @@ Global
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

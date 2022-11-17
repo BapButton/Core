@@ -5,37 +5,39 @@
 {
     string buttonText = GameHandler.IsGameRunning ? "End Game and Go Back " : "Go Back to Game List";
 
-    <MudButton OnClick=@DeselectGame>@buttonText</MudButton>
-    @if(GameHandler?.CurrentlySelectedGame?.TypeOfInitialDisplayComponent != null)
+    @if (GameHandler.SelectedItemIsAGame)
     {
-        <DynamicComponent Type="GameHandler.CurrentlySelectedGame.TypeOfInitialDisplayComponent" @ref="dc"/>
+        <MudButton OnClick=@DeselectGame>@buttonText</MudButton>
     }
-    
-
+    <p>Stuff Goes here</p>
+    @if (GameHandler?.CurrentlySelectedItem?.TypeOfInitialDisplayComponent != null)
+    {
+        <DynamicComponent Type="GameHandler.CurrentlySelectedItem.TypeOfInitialDisplayComponent" @ref="dc" />
+    }
 }
 else
 {
     <MudGrid>
-       
+
         @foreach (var gameDesc in GetOrderedGameDescriptions())
         {
-            <MudItem xs = "12" sm="6" lg="3">
-                
+            <MudItem xs="12" sm="6" lg="3">
+
                 <MudCard>
-                     <button @onclick="() => SelectGame(gameDesc)">
-                     <MudCardContent>
-                        <MudText>@gameDesc.Name</MudText>
-                        <MudText Typo="Typo.body2">@gameDesc.Description</MudText>
-                    </MudCardContent>
-             </button>
-        <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="() => SelectGame(gameDesc)">Play!!!</MudButton>
-        </MudCardActions>
-            </MudCard>
-            
+                    <button @onclick="() => SelectGame(gameDesc)">
+                        <MudCardContent>
+                            <MudText>@gameDesc.Name</MudText>
+                            <MudText Typo="Typo.body2">@gameDesc.Description</MudText>
+                        </MudCardContent>
+                    </button>
+                    <MudCardActions>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="() => SelectGame(gameDesc)">Play!!!</MudButton>
+                    </MudCardActions>
+                </MudCard>
+
             </MudItem>
         }
-   </MudGrid>
+    </MudGrid>
 }
 
 
