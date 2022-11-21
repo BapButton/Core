@@ -13,7 +13,7 @@ namespace BAP.TextGames.Components
         [Inject]
         private IDialogService DialogService { get; set; } = default!;
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
         [Inject]
         private IBapMessageSender _messageSender { get; set; } = default!;
         internal SavedVocab _savedVocab { get; set; } = new();

@@ -16,11 +16,15 @@ namespace BAP.Web.Pages
         [Inject]
         DbAccessor dba { get; set; } = default!;
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
+        [Inject]
+        ILayoutHandler LayoutHandler { get; set; } = default!;
+        [Inject]
+        ILoadablePageHandler LoadablePageHandler { get; set; } = default!;
         [Inject]
         ISnackbar Snackbar { get; set; } = default!;
         [Inject]
-        KeyboardHandler KeyboardHandler { get; set; } = default!;
+        IKeyboardHandler KeyboardHandler { get; set; } = default!;
         [Inject]
         IBapMessageSender msgSender { get; set; } = default!;
         [Inject]
@@ -38,9 +42,22 @@ namespace BAP.Web.Pages
                 return GameHandler.IsGameSelected;
             }
         }
+        //This needs to go away. I need to write a find method and get rid of the DI stuff - it is just easy. 
         [Inject]
-        IEnumerable<IBapGameDescription> AllGames { get; set; } = default!;
+        IEnumerable<IBapGameDescription> DiGames { get; set; } = default!;
 
+        [Inject]
+        LoadedAddonHolder AddonHolder { get; set; } = default!;
+
+        List<IBapGameDescription> AllGames
+        {
+            get
+            {
+                List<IBapGameDescription> AllGames = AddonHolder.AllGames.ToList();
+                AllGames.AddRange(DiGames);
+                return AllGames;
+            }
+        }
 
         protected override async Task OnInitializedAsync()
         {
@@ -114,7 +131,7 @@ namespace BAP.Web.Pages
         private void DeselectGame()
         {
 
-            GameHandler.CurrentlySelectedItem = null;
+            LoadablePageHandler.CurrentlySelectedItem = null;
             GameHandler?.ForceGameEnd();
             msgSender.ClearAllCachedAudio();
             if (KeyboardHandler.CurrentKeyboard.IsEnabled)
@@ -131,7 +148,7 @@ namespace BAP.Web.Pages
         private async Task SelectGame(IBapGameDescription gameDescription)
         {
             await dba.AddGamePlayLog(gameDescription.UniqueId);
-            GameHandler.CurrentlySelectedItem = gameDescription;
+            LoadablePageHandler.CurrentlySelectedItem = gameDescription;
         }
         public void Dispose()
         {

@@ -3,16 +3,19 @@ using BAP.Web.Games;
 using System.Linq;
 using Blazored.FluentValidation;
 using BAP.Db;
-using SpotifyAPI.Web;
+using BAP.UIHelpers.Components;
+//using SpotifyAPI.Web;
 
 namespace BAP.TextGames.Components
 {
     public partial class Vocab : GamePage
     {
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
         [Inject]
-        NavigationManager NavManager { get; set; } = default!;
+        ILayoutHandler LayoutHandler { get; set; } = default!;
+        //[Inject]
+        //NavigationManager NavManager { get; set; } = default!;
 
         private VocabGame game { get; set; } = default!;
 
@@ -38,19 +41,19 @@ namespace BAP.TextGames.Components
             }
         }
 
-        private void AuthorizeSpotify()
-        {
-            var loginRequest = new LoginRequest(
-                  new Uri("https://localhost:5001/spotifyCallback/"),
-                  "4a9b9dab320240659583880719c5816d",
-                  LoginRequest.ResponseType.Code
-                )
-            {
-                Scope = new[] { Scopes.PlaylistReadPrivate, Scopes.UserReadCurrentlyPlaying, Scopes.UserReadPlaybackPosition, Scopes.UserReadPlaybackState, Scopes.UserModifyPlaybackState }
-            };
-            var uri = loginRequest.ToUri();
-            NavManager.NavigateTo(uri.ToString(), true);
-        }
+        //private void AuthorizeSpotify()
+        //{
+        //    var loginRequest = new LoginRequest(
+        //          new Uri("https://localhost:5001/spotifyCallback/"),
+        //          "4a9b9dab320240659583880719c5816d",
+        //          LoginRequest.ResponseType.Code
+        //        )
+        //    {
+        //        Scope = new[] { Scopes.PlaylistReadPrivate, Scopes.UserReadCurrentlyPlaying, Scopes.UserReadPlaybackPosition, Scopes.UserReadPlaybackState, Scopes.UserModifyPlaybackState }
+        //    };
+        //    var uri = loginRequest.ToUri();
+        //    NavManager.NavigateTo(uri.ToString(), true);
+        //}
 
         private void ShowHighScores(Score? newScore = null)
         {

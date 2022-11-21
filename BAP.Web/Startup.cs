@@ -1,28 +1,19 @@
 using BAP.Db;
 using FluentValidation;
-using MessagePipe;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NLog.Targets;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BAP.Web.Models;
 using BAP.Web.TTS;
 using Scrutor;
-using BAP.Web.Games;
 using MudBlazor.Services;
-using BAP.Types;
+using BAP.PrimaryHandlers;
 
 namespace BAP.Web
 {
@@ -46,7 +37,10 @@ namespace BAP.Web
             services.AddServerSideBlazor();
             //services.AddSingleton<IGameManager, CoreGameManager>();
             services.AddSingleton<AudioManager>();
-            services.AddSingleton<GameHandler>();
+            services.AddSingleton<IGameHandler, DefaultGameHandler>();
+            services.AddSingleton<ILoadablePageHandler, DefaultLoadablePageHandler>();
+            services.AddSingleton<ILayoutHandler, DefaultLayoutHandler>();
+            services.AddSingleton<IKeyboardHandler, DefaultKeyboardHandler>();
             services.AddSingleton<ControlHandler>();
             services.AddHostedService<ConnectionCoreHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -55,8 +49,8 @@ namespace BAP.Web
             services.AddDbContextFactory<ButtonContext>();
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
-            services.AddSingleton<KeyboardHandler>();
             services.AddSingleton<AnimationController>();
+            services.AddSingleton<LoadedAddonHolder>();
             services.AddMessagePipe();
             services.Scan(scan => scan.FromApplicationDependencies()
                     .AddClasses(t => { t.AssignableTo<IGameDataSaver>(); })
@@ -91,7 +85,7 @@ namespace BAP.Web
                     .AddClasses(t => { t.AssignableTo<IMainMenuItem>(); })
                          .AsImplementedInterfaces().WithSingletonLifetime());
 
-            //This makes the app not start. I don't have any idea why.
+            //This makes the app not start. I don't have any idea why.    
             services.Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(t => { t.AssignableTo<IBapKeyboardProvider>(); })
                   .AsImplementedInterfaces().WithTransientLifetime());
@@ -108,11 +102,12 @@ namespace BAP.Web
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
             services.AddLogging();
+            AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.MemoryGames\\bin\\Debug");
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ButtonContext db)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder)
         {
 
             if (env.IsDevelopment())
@@ -122,8 +117,6 @@ namespace BAP.Web
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
 
             app.UseStaticFiles();

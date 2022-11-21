@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -6,39 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="AllLogs.razor" />
-    <None Remove="BigScore.razor" />
-    <None Remove="ButtonMessageLog.razor" />
-    <None Remove="CountdownTimer.razor" />
-    <None Remove="HighScoreTable.razor" />
-    <None Remove="LogWindow.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="AllLogs.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="BigScore.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="ButtonMessageLog.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="CountdownTimer.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="HighScoreTable.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="LogWindow.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="5.1.4" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
+	<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

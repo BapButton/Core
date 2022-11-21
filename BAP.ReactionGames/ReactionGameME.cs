@@ -6,14 +6,13 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using BAP.Web.Games;
-using BAP.Web.Pages;
 using BapButton;
 using BAP.Types;
 using BAP.Helpers;
-using static BapButton.BapBasicGameHelper;
+using static BAP.Helpers.BapBasicGameHelper;
+using BAP.ReactionGames.Components;
 
-namespace BAP.Web
+namespace BAP.ReactionGames
 {
     public class ReactionGameMeDescription : IBapGameDescription
     {
@@ -32,6 +31,7 @@ namespace BAP.Web
         private const string FrownyFaceSound = "madsfrowny.wav";
         private const string TooManyWrong = "madstoomany.wav";
         internal override ILogger _logger { get; set; }
+        public ulong[] customImage { get; set; } = new ulong[64];
 
         public ReactionGameME(ILogger<ReactionGameBase> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender messageSender) : base(buttonPressed, messageSender)
         {
@@ -44,8 +44,7 @@ namespace BAP.Web
         {
             string path = Path.Combine(".", "wwwroot", "sprites", "Emoji.png");
             SpriteParser spriteParser = new SpriteParser(path);
-            var sprite = spriteParser.GetSprite(4, 5, 24, 20, 16, 2, 9);
-            MsgSender.SendCustomImage(new CustomImage() { ImageData = sprite, ImageId = 15 });
+            customImage = spriteParser.GetSprite(4, 5, 24, 20, 16, 2, 9);
             await Task.Delay(100);
             await base.Start(secondsToRun);
             lastFaceNodeId = "";
@@ -69,13 +68,13 @@ namespace BAP.Web
                 if (sendFrownyFace)
                 {
                     lastFaceWasAFrownyFace = true;
-                    MsgSender.SendCommand(faceNodeId, new StandardButtonCommand(new ButtonDisplay(0, 0, 0, Patterns.NoPattern, 15, 2000)));
+                    MsgSender.SendImage(faceNodeId, new ButtonImage(customImage));
 
                 }
                 else
                 {
                     lastFaceWasAFrownyFace = false;
-                    MsgSender.SendCommand(faceNodeId, new StandardButtonCommand(new ButtonDisplay(0, 255, 0, Patterns.PlainSmilyFace, 0, 2000)));
+                    MsgSender.SendImage(faceNodeId, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.PlainSmilyFace), new BapColor(0, 255, 0)));
                 }
             }
 
@@ -122,9 +121,9 @@ namespace BAP.Web
 
         }
 
-        public override ButtonDisplay GenerateNextButton()
+        public override ButtonImage GenerateNextButton()
         {
-            return new ButtonDisplay(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255));
+            return new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255)));
         }
     }
 

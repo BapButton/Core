@@ -19,3 +19,4 @@ global using Microsoft.JSInterop;
 global using BAP.Web;
 global using BAP.Web.Shared;
 global using MudBlazor;
+global using BAP.PrimayHandlers;

@@ -17,4 +17,6 @@ global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.AspNetCore.Components.Web.Virtualization;
 global using Microsoft.JSInterop;
 global using MudBlazor;
+global using Microsoft.AspNetCore.Components;
+global using BAP.UIHelpers.Components;
 

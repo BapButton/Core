@@ -3,9 +3,6 @@
 {
     <button class="btn btn-primary" @onclick="EndGame">End Game</button>
     <button class="btn btn-primary" @onclick="() => game.ReplayCurrentWord()">Replay Word</button>
-    <button class="btn btn-primary" @onclick="() => game.Pause()">Pause Player</button>
-    <button class="btn btn-primary" @onclick="() => game.Play()">Resume Player</button>
-    <button class="btn btn-primary" @onclick="async () => await game.Skip()">Skip 10 seconds</button>
 }
 else
 {
@@ -17,12 +14,6 @@ else
         <MudItem xs="12" sm="6" md="3">
             <MudButton @onclick="() => ShowHighScores()">High Scores</MudButton>
         </MudItem>
-        @if (!game.IsSpotifyAuthorized())
-        {
-            <MudItem xs="12" sm="6" md="3">
-                <MudButton @onclick="() => AuthorizeSpotify()">Authorize Spotify</MudButton>
-            </MudItem>
-        }
         <MudItem xs="12" sm="6" md="3">
             <MudButton @onclick="() => ShowVocabGameSetup()">Edit Vocab words</MudButton>
         </MudItem>
@@ -42,7 +33,7 @@ else
 
 
 }
-@if (GameHandler.CurrentButtonLayout == null)
+@if (LayoutHandler.CurrentButtonLayout == null)
 {
     <MudText color=@Color.Error>No Layout selected. This game will not play well. </MudText>
 }

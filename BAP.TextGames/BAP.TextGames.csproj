@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -6,26 +6,20 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Marquee.razor" />
-    <None Remove="SpotifyCallback.razor" />
-    <None Remove="Vocab.razor" />
-    <None Remove="VocabGameSetup.razor" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Components\Marquee.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="Components\Vocab.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="Components\VocabGameSetup.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="SpotifyCallback.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+	  <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
+	  <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
+	</ItemGroup>
 
 </Project>

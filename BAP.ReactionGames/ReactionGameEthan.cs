@@ -1,13 +1,14 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
-using BAP.Web.Games;
-using BAP.Web.Pages;
 using BapButton;
-using static BapButton.BapBasicGameHelper;
+using static BAP.Helpers.BapBasicGameHelper;
 using BAP.Types;
+using BAP.Helpers;
+using Microsoft.Extensions.Logging;
+using BAP.ReactionGames.Components;
 
-namespace BAP.Web
+namespace BAP.ReactionGames
 {
     public class ReactionGameEthanDescription : IBapGameDescription
     {
@@ -23,6 +24,8 @@ namespace BAP.Web
         string lastSwordNodeId = "";
         bool lastFaceWasAFrownyFace = false;
         int swordGameCount = 0;
+        ulong[] swordSprite = new ulong[64];
+        ulong[] frownyFace = new ulong[64];
         SwordBonusGame? bonusGame { get; set; } = null;
         private const string FrownyFaceSound = "SgLostTheEntireGame.mp3";
         private const string TooManyWrong = "SgLostTheEntireGame.mp3";
@@ -42,6 +45,10 @@ namespace BAP.Web
             InternalUpdatePipe.Subscribe(async (x) => await UpdateScoreFromInternalMessage(x)).AddTo(bag);
             subscriptions = bag.Build();
             _logger = logger;
+            string path = Path.Combine(".", "wwwroot", "sprites", "Emoji.png");
+            SpriteParser spriteParser = new SpriteParser(path);
+            swordSprite = spriteParser.GetSprite(4, 5, 24, 20, 16, 2, 9);
+            frownyFace = spriteParser.GetSprite(4, 5, 24, 20, 16, 6, 7);
         }
 
         public async Task UpdateScoreFromInternalMessage(InternalSimpleGameUpdates update)
@@ -60,15 +67,7 @@ namespace BAP.Web
 
         public override async Task<bool> Start(int secondsToRun)
         {
-            string path = Path.Combine(".", "wwwroot", "sprites", "Emoji.png");
-            SpriteParser spriteParser = new SpriteParser(path);
-
-            var sprite = spriteParser.GetSprite(4, 5, 24, 20, 16, 2, 9);
-            var sword = spriteParser.GetSprite(4, 5, 24, 20, 16, 6, 7);
-            MsgSender.SendCustomImage(new CustomImage() { ImageData = sprite, ImageId = 15 });
-            MsgSender.SendCustomImage(new CustomImage() { ImageData = sword, ImageId = 16 });
             bonusGame = Services.GetRequiredService<SwordBonusGame>();
-            await bonusGame.SendCustomImages();
             await Task.Delay(100);
             bonusGame.Dispose();
             await base.Start(secondsToRun);
@@ -98,7 +97,7 @@ namespace BAP.Web
                 swordGameCount++;
                 string swordNodeId = GetRandomNodeId(buttons, lastNodeId, 0);
                 lastSwordNodeId = swordNodeId;
-                MsgSender.SendCommand(swordNodeId, new StandardButtonCommand(new ButtonDisplay(0, 0, 0, Patterns.NoPattern, 16, 2000)));
+                MsgSender.SendImage(swordNodeId, new ButtonImage(swordSprite));
             }
             if (sendFace)
             {
@@ -109,13 +108,13 @@ namespace BAP.Web
                 if (sendFrownyFace)
                 {
                     lastFaceWasAFrownyFace = true;
-                    MsgSender.SendCommand(faceNodeId, new StandardButtonCommand(new ButtonDisplay(255, 255, 0, Patterns.NoPattern, 15, 2000)));
+                    MsgSender.SendImage(faceNodeId, new ButtonImage(frownyFace));
 
                 }
                 else
                 {
                     lastFaceWasAFrownyFace = false;
-                    MsgSender.SendCommand(faceNodeId, new StandardButtonCommand(new ButtonDisplay(0, 255, 0, Patterns.PlainSmilyFace, 0, 2000)));
+                    MsgSender.SendImage(faceNodeId, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.PlainSmilyFace), new BapColor(0, 255, 0)));
                 }
             }
 
@@ -211,9 +210,9 @@ namespace BAP.Web
 
         }
 
-        public override ButtonDisplay GenerateNextButton()
+        public override ButtonImage GenerateNextButton()
         {
-            return new ButtonDisplay(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255));
+            return new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255)));
         }
     }
 

@@ -19,7 +19,7 @@
        
         @foreach (var bl in PossibleButtonLayouts)
         {
-			bool outlined = bl.ButtonLayoutId == (GameHandler?.CurrentButtonLayout?.ButtonLayoutId ?? 0);
+			bool outlined = bl.ButtonLayoutId == (LayoutHandler?.CurrentButtonLayout?.ButtonLayoutId ?? 0);
 			int elevation = outlined ? 20 : 0;
 			<MudItem xs = "12" sm="6" lg="3">
 

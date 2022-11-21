@@ -8,8 +8,9 @@ using static BAP.Helpers.BapBasicGameHelper;
 using BAP.Types;
 using BAP.Helpers;
 using BAP.MemoryGames.Components;
+using MessagePipe;
 
-namespace BAP.Web
+namespace BAP.MemoryGames
 {
 
 
@@ -26,8 +27,8 @@ namespace BAP.Web
     public class SimonGame : IBapGame, IDisposable
     {
         private ILogger<SimonGame> _logger { get; set; }
-        public IGameDataSaver<MadQuickCatDescription> DbSaver { get; set; }
-        private GameHandler GameHandler { get; set; }
+        //public IGameDataSaver<MadQuickCatDescription> DbSaver { get; set; }
+        private ILayoutHandler LayoutHandler { get; set; }
         public bool IsGameRunning { get; internal set; }
         ISubscriber<ButtonPressedMessage> ButtonPressedMessages { get; set; } = default!;
         IDisposable subscriptions = default!;
@@ -55,15 +56,7 @@ namespace BAP.Web
         bool playingPattern = false;
         List<string> buttonsInUse = new List<string>();
         private static System.Timers.Timer gameTimer = default!;
-        //private readonly ITinkerSound _sound = null;
-
-
-        public async Task<bool> ForceEndGame()
-        {
-            return await EndGame("Game was force Closed", true);
-        }
-
-        public SimonGame(IGameDataSaver<MadQuickCatDescription> dbSaver, IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, GameHandler gameHandler)
+        public SimonGame(IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, ILayoutHandler layoutHandler)
         {
             _logger = logger;
             ButtonPressedMessages = buttonPressedMessages;
@@ -71,8 +64,8 @@ namespace BAP.Web
             var bag = DisposableBag.CreateBuilder();
             ButtonPressedMessages.Subscribe(async (x) => await OnButtonPressed(x)).AddTo(bag);
             subscriptions = bag.Build();
-            GameHandler = gameHandler;
-            DbSaver = dbSaver;
+            LayoutHandler = layoutHandler;
+            //DbSaver = dbSaver;
             if (buttonSounds.Count == 0)
             {
                 buttonSounds.Add("db4.mp3");
@@ -85,11 +78,18 @@ namespace BAP.Web
             }
         }
 
+        public async Task<bool> ForceEndGame()
+        {
+            return await EndGame("Game was force Closed", true);
+        }
+
+
+
         public void SetupGame(int buttonCountToUse, int rowIdToStartWith)
         {
-            if (GameHandler.CurrentButtonLayout != null && rowIdToStartWith > 0)
+            if (LayoutHandler.CurrentButtonLayout != null && rowIdToStartWith > 0)
             {
-                buttonsInUse = GameHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId >= rowIdToStartWith).OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Take(buttonCountToUse).Select(t => t.ButtonId).ToList();
+                buttonsInUse = LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId >= rowIdToStartWith).OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Take(buttonCountToUse).Select(t => t.ButtonId).ToList();
             }
             else
             {
@@ -118,8 +118,7 @@ namespace BAP.Web
                 DifficultyDescription = $"{buttonDifficulty.longVersion}",
                 ScoreData = $"{buttonsInUse.Count}|{ButtonOrder.Count}",
                 NormalizedScore = ButtonOrder.Count,
-                ScoreDescription = $"Completed {roundsCompleted} rounds",
-                ScoreFullDetails = $"Completed {roundsCompleted} rounds with {buttonsInUse.Count}"
+                ScoreDescription = $"Completed {roundsCompleted} rounds"
             };
             return score;
         }
@@ -153,7 +152,7 @@ namespace BAP.Web
                 return false;
             }
             int currentSoundCount = 0;
-            MsgSender.SendGeneralCommand(new StandardButtonCommand(new ButtonDisplay()));
+            MsgSender.SendImageToAllButtons(new ButtonImage());
             if (ButtonAssignments.Count != buttonCount)
             {
                 ButtonAssignments = new();
@@ -184,15 +183,15 @@ namespace BAP.Web
             {
                 return false;
             }
-            highScore = (await DbSaver.GetScoresWithNewScoreIfWarranted(GenerateScoreWithCurrentData())).Where(t => t.ScoreId == 0).Any();
+            highScore = false;//(await DbSaver.GetScoresWithNewScoreIfWarranted(GenerateScoreWithCurrentData())).Where(t => t.ScoreId == 0).Any();
             if (highScore)
             {
-                MsgSender.SendGeneralCommand(new StandardButtonCommand(new ButtonDisplay(new BapColor(0, 255, 0), Patterns.AllOneColor, 0, 6000)));
+
+                MsgSender.SendImageToAllButtons(new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(0, 255, 0)));
             }
             else
-            {
-
-                MsgSender.SendGeneralCommand(new StandardButtonCommand(new ButtonDisplay(255, 0, 0, Patterns.AllOneColor, 0, 6000)));
+            { //todo a timout of 6000 was lost here. 
+                MsgSender.SendImageToAllButtons(new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(255, 0, 0)));
             }
             MsgSender.SendUpdate($" You completed {RoundsCompleted} successful rounds", true, highScore);
 
@@ -248,10 +247,8 @@ namespace BAP.Web
                     {
                         var (color, soundFileName) = ButtonAssignments[button];
                         MsgSender.PlayAudio(soundFileName);
-                        //Original and on Press button are brighter.
-                        var originalButton = new ButtonDisplay(color.Red, color.Green, color.Blue, Patterns.AllOneColor, 0, 500, 16);
-                        var timeoutButton = new ButtonDisplay(color.Red, color.Green, color.Blue, Patterns.AllOneColor, 0, 0, 4);
-                        MsgSender.SendCommand(button, new StandardButtonCommand(originalButton, originalButton, timeoutButton));
+                        //todo - lost the brightness effect
+                        MsgSender.SendImage(button, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), color));
                         await Task.Delay(750);
                     }
                 }
@@ -270,11 +267,9 @@ namespace BAP.Web
 
                 if (IsGameRunning)
                 {
-                    var (color, soundFileName) = fullButton.Value;
-                    var originalButton = new ButtonDisplay(color.Red, color.Green, color.Blue, Patterns.AllOneColor, 0, 0, 4);
-                    var pressedButton = new ButtonDisplay(color.Red, color.Green, color.Blue, Patterns.AllOneColor, 0, 500, 16);
-                    //The timout is the original item. So we start with original, the button press takes us to button press which time's out back to original waiting for a button press.
-                    MsgSender.SendCommand(fullButton.Key, new StandardButtonCommand(originalButton, pressedButton, originalButton));
+                    var (color, _) = fullButton.Value;
+                    //Todo - Some timeout stuff has been lost
+                    MsgSender.SendImage(fullButton.Key, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), color));
 
                 }
             }

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components;
 using System.Threading;
 using BAP.Types;
 using MudBlazor;
-
 namespace BAP.UIHelpers;
 public abstract class GamePage : ComponentBase, IGamePage, IDisposable
 {

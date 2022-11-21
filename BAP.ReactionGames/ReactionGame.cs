@@ -1,14 +1,10 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.Logging;
 using System;
-using BAP.Web.Games;
-using BAP.Web.Pages;
-using BapButton;
-using BAP.Types;
-using BAP.Helpers;
-using static BapButton.BapBasicGameHelper;
+using static BAP.Helpers.BapBasicGameHelper;
+using BAP.ReactionGames.Components;
 
-namespace BAP.Web
+namespace BAP.ReactionGames
 {
 
     public class ReactionGameDescription : IBapGameDescription
@@ -29,9 +25,9 @@ namespace BAP.Web
             base.Initialize(minButtons: 3);
         }
 
-        public override ButtonDisplay GenerateNextButton()
+        public override ButtonImage GenerateNextButton()
         {
-            return new ButtonDisplay(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255));
+            return new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(GetRandomInt(0, 255), GetRandomInt(0, 255), GetRandomInt(0, 255)));
         }
     }
 

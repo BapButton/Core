@@ -1,19 +1,62 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Simon.razor" />
-  </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="Components\Simon.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-  </ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="wwwroot\audio\ab4.mp3" />
+		<Content Remove="wwwroot\audio\bb4.mp3" />
+		<Content Remove="wwwroot\audio\d4.mp3" />
+		<Content Remove="wwwroot\audio\eb4.mp3" />
+		<Content Remove="wwwroot\audio\f4.mp3" />
+		<Content Remove="wwwroot\audio\g4.mp3" />
+		<Content Remove="wwwroot\audio\gb4.mp3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0" />
+		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" >
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.Types\BAP.Types.csproj" >
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="wwwroot\audio\ab4.mp3" />
+		<Resource Include="wwwroot\audio\bb4.mp3" />
+		<Resource Include="wwwroot\audio\d4.mp3" />
+		<Resource Include="wwwroot\audio\eb4.mp3" />
+		<Resource Include="wwwroot\audio\f4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="wwwroot\audio\g4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="wwwroot\audio\gb4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
 
 </Project>

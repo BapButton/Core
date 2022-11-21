@@ -1,5 +1,4 @@
-﻿@namespace BAP.BasicMathGames
-@inherits GamePage
+﻿@inherits GamePage
 @if (game.IsGameRunning)
 {
 	<button class="btn btn-primary" @onclick="EndGame">End Game</button>
@@ -64,7 +63,7 @@ else
 		</MudItem>
 	</MudGrid>
 }
-@if (GameHandler.CurrentButtonLayout == null)
+@if (LayoutHandler.CurrentButtonLayout == null)
 {
 	<MudText color=@Color.Error>No Layout selected. This game will not play well. </MudText>
 }

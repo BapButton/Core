@@ -35,6 +35,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
     <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+    <ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
     <ProjectReference Include="..\BAP.TestUtilities\BAP.TestUtilities.csproj" />
     <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
     <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
@@ -46,9 +47,8 @@
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Remove="wwwroot\sprites\Emoji.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Watch Remove="AddonLoader.cs" />
+    <Watch Remove="BapPluginLoadContext.cs" />
     <Watch Remove="Controller\FirmwareController.cs" />
     <Watch Remove="Controller\TTSController.cs" />
     <Watch Remove="GamePage.cs" />
@@ -56,6 +56,7 @@
     <Watch Remove="Games\ExplodingBapGame.cs" />
     <Watch Remove="Games\LayoutSetupGame.cs" />
     <Watch Remove="imports.cs" />
+    <Watch Remove="LoadedAddonHolder.cs" />
     <Watch Remove="Models\FirmwareData.cs" />
     <Watch Remove="Pages\Addition - Copy.razor.cs" />
     <Watch Remove="Pages\AudioPlayer.razor" />
@@ -96,9 +97,6 @@
     <Resource Include="wwwroot\audio\gb4.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <None Include="wwwroot\sprites\Emoji.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="wwwroot\audio\ab4.mp3" />

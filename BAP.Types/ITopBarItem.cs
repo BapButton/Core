@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BAP.Types
 {
-    internal class ITopBarItem
+    public class ITopBarItem
     {
     }
 }

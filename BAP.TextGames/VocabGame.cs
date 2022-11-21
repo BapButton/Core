@@ -1,5 +1,4 @@
 ﻿using BAP.Db;
-using SpotifyAPI.Web;
 using BapButton;
 using BAP.Types;
 using BAP.Helpers;
@@ -12,7 +11,7 @@ namespace BAP.Web.Games
         public bool IsSpanish { get; set; } = true;
         public List<string> SavedWords { get; set; } = new();
         public DateTime DateSaved { get; set; }
-        public AuthorizationCodeTokenResponse SpotifyToken { get; set; } = new AuthorizationCodeTokenResponse();
+        //public AuthorizationCodeTokenResponse SpotifyToken { get; set; } = new AuthorizationCodeTokenResponse();
     }
 
     public class VocabGameDescription : IBapGameDescription
@@ -45,7 +44,7 @@ namespace BAP.Web.Games
 
     public class VocabGame : KeyboardGameBase, IBapGame, IDisposable
     {
-        private SpotifyClient? _spotifyClient { get; set; }
+        //private SpotifyClient? _spotifyClient { get; set; }
         public SavedVocab SavedVocab { get; set; }
         public Queue<int> WordOrder { get; set; } = new Queue<int>();
         public int CurrentWordNumber { get; set; } = -1;
@@ -64,10 +63,10 @@ namespace BAP.Web.Games
 
         }
 
-        public bool IsSpotifyAuthorized()
-        {
-            return _spotifyClient != null;
-        }
+        //public bool IsSpotifyAuthorized()
+        //{
+        //    return _spotifyClient != null;
+        //}
 
         public override Score GenerateScoreWithCurrentData()
         {
@@ -94,20 +93,20 @@ namespace BAP.Web.Games
             SavedVocab = AsyncHelpers.RunSync(() => DbSaver.GetGameStorage<SavedVocab>()) ?? new();
         }
 
-        public VocabGame(KeyboardHandler keyboardHandler, GameHandler gameHandler, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver<VocabGameDescription> dbSaver) : base(keyboardHandler, gameHandler, messageSender, keyPressed)
+        public VocabGame(IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILayoutHandler layoutHandler, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver<VocabGameDescription> dbSaver) : base(keyboardHandler, gameHandler, layoutHandler, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;
             RefreshSavedVocab();
-            if (SavedVocab?.SpotifyToken.ExpiresIn > 0)
-            {
-                AsyncHelpers.RunSync(() => CreateSpotifyClient());
-            }
+            //if (SavedVocab?.SpotifyToken.ExpiresIn > 0)
+            //{
+            //    AsyncHelpers.RunSync(() => CreateSpotifyClient());
+            //}
         }
 
         public override async Task<bool> WrongButtonPressed(bool setupNextMathProblem)
         {
-            await Skip();
+            //await Skip();
             return await base.WrongButtonPressed(setupNextMathProblem);
         }
 
@@ -115,7 +114,7 @@ namespace BAP.Web.Games
         {
             if (SavedVocab.IsSpanish)
             {
-                MsgSender.PlayTTSSpanish($"y {SavedVocab.SavedWords[CurrentWordNumber]}", true);
+                MsgSender.PlayTTS($"y {SavedVocab.SavedWords[CurrentWordNumber]}", true, TTSLanguage.Spanish);
             }
             else
             {
@@ -123,49 +122,49 @@ namespace BAP.Web.Games
             }
         }
 
-        public void Pause()
-        {
+        //public void Pause()
+        //{
 
-            _spotifyClient?.Player.PausePlayback();
+        //    _spotifyClient?.Player.PausePlayback();
 
-        }
+        //}
 
         public async Task<SavedVocab> GetSavedVocab()
         {
             return (await DbSaver.GetGameStorage<SavedVocab>()) ?? new SavedVocab();
         }
 
-        public async Task<bool> UpdateSpotifyCode(string spotifyCode)
-        {
-            var response = await new OAuthClient().RequestToken(
-                                new AuthorizationCodeTokenRequest("4a9b9dab320240659583880719c5816d", "e80134e65a46424d9475cf840fad12fd", spotifyCode, new Uri("https://localhost:5001/spotifyCallback/"))
-                              );
-            SavedVocab.SpotifyToken = response;
-            await DbSaver.UpdateGameStorage(SavedVocab);
-            await CreateSpotifyClient();
-            MsgSender.SendUpdate("Spotify Activated", pageRefreshRecommended: true);
-            return true;
-        }
+        //public async Task<bool> UpdateSpotifyCode(string spotifyCode)
+        //{
+        //    var response = await new OAuthClient().RequestToken(
+        //                        new AuthorizationCodeTokenRequest("4a9b9dab320240659583880719c5816d", "e80134e65a46424d9475cf840fad12fd", spotifyCode, new Uri("https://localhost:5001/spotifyCallback/"))
+        //                      );
+        //    SavedVocab.SpotifyToken = response;
+        //    await DbSaver.UpdateGameStorage(SavedVocab);
+        //    await CreateSpotifyClient();
+        //    MsgSender.SendUpdate("Spotify Activated", pageRefreshRecommended: true);
+        //    return true;
+        //}
 
-        public async Task<bool> CreateSpotifyClient()
-        {
-            try
-            {
-                var config = SpotifyClientConfig
-                  .CreateDefault()
-                  .WithAuthenticator(new AuthorizationCodeAuthenticator("4a9b9dab320240659583880719c5816d", "e80134e65a46424d9475cf840fad12fd", SavedVocab.SpotifyToken));
+        //public async Task<bool> CreateSpotifyClient()
+        //{
+        //    try
+        //    {
+        //        var config = SpotifyClientConfig
+        //          .CreateDefault()
+        //          .WithAuthenticator(new AuthorizationCodeAuthenticator("4a9b9dab320240659583880719c5816d", "e80134e65a46424d9475cf840fad12fd", SavedVocab.SpotifyToken));
 
-                _spotifyClient = new SpotifyClient(config);
-                await UpdateCurrentSongName();
-                await UpdatePlaylistInfo();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(new EventId(1, "Spotify Error"), ex, "Could not create spotify client");
-                return false;
-            }
-            return true;
-        }
+        //        _spotifyClient = new SpotifyClient(config);
+        //        await UpdateCurrentSongName();
+        //        await UpdatePlaylistInfo();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(new EventId(1, "Spotify Error"), ex, "Could not create spotify client");
+        //        return false;
+        //    }
+        //    return true;
+        //}
 
         public async Task<bool> SaveNewVocabWords(string seperatedWordsAsString, bool isSpanish)
         {
@@ -185,7 +184,7 @@ namespace BAP.Web.Games
                 IsSpanish = isSpanish,
                 DateSaved = DateTime.Now,
                 SavedWords = seperatedWordsAsString.Split(splitCharacter).Select(t => t.Trim()).ToList(),
-                SpotifyToken = SavedVocab.SpotifyToken
+                //SpotifyToken = SavedVocab.SpotifyToken
             };
             for (int i = 0; i < updatedWords.SavedWords.Count; i++)
             {
@@ -195,100 +194,100 @@ namespace BAP.Web.Games
             return true;
         }
 
-        public async Task<bool> Skip()
-        {
-            if (_spotifyClient != null)
-            {
-                var currentPlayBack = await _spotifyClient.Player.GetCurrentPlayback();
-                int currentPosition = currentPlayBack.ProgressMs;
-                await _spotifyClient.Player.SeekTo(new PlayerSeekToRequest(currentPosition + (10 * 1000)));
-            }
-            return true;
-        }
+        //public async Task<bool> Skip()
+        //{
+        //    if (_spotifyClient != null)
+        //    {
+        //        var currentPlayBack = await _spotifyClient.Player.GetCurrentPlayback();
+        //        int currentPosition = currentPlayBack.ProgressMs;
+        //        await _spotifyClient.Player.SeekTo(new PlayerSeekToRequest(currentPosition + (10 * 1000)));
+        //    }
+        //    return true;
+        //}
 
-        public void Play()
-        {
-            _spotifyClient?.Player.ResumePlayback();
-        }
-        public async Task<bool> UpdateCurrentSongName()
-        {
-            string tempSongName = "";
-            if (_spotifyClient != null)
-            {
-                var result = await _spotifyClient.Player.GetCurrentlyPlaying(new());
-                IPlayableItem? item = result?.Item;
-                if (item != null)
-                {
-                    if (item is FullTrack track)
-                    {
-                        tempSongName = track.Name;
-                    }
-                    if (item is FullEpisode episode)
-                    {
-                        tempSongName = episode.Name;
-                    }
-                }
-            }
-            if (CurrentSongName != tempSongName)
-            {
-                CurrentSongName = tempSongName;
-                MsgSender.SendUpdate("Song changed", pageRefreshRecommended: true);
-            }
-            return true;
-        }
+        //public void Play()
+        //{
+        //    _spotifyClient?.Player.ResumePlayback();
+        //}
+        //public async Task<bool> UpdateCurrentSongName()
+        //{
+        //    string tempSongName = "";
+        //    if (_spotifyClient != null)
+        //    {
+        //        var result = await _spotifyClient.Player.GetCurrentlyPlaying(new());
+        //        IPlayableItem? item = result?.Item;
+        //        if (item != null)
+        //        {
+        //            if (item is FullTrack track)
+        //            {
+        //                tempSongName = track.Name;
+        //            }
+        //            if (item is FullEpisode episode)
+        //            {
+        //                tempSongName = episode.Name;
+        //            }
+        //        }
+        //    }
+        //    if (CurrentSongName != tempSongName)
+        //    {
+        //        CurrentSongName = tempSongName;
+        //        MsgSender.SendUpdate("Song changed", pageRefreshRecommended: true);
+        //    }
+        //    return true;
+        //}
 
-        public async Task<bool> UpdatePlaylistInfo()
-        {
-            int playlistLength = 0;
-            int trackCount = 0;
-            if (_spotifyClient != null)
-            {
-                var result = await _spotifyClient.Player.GetCurrentlyPlaying(new());
-                if (result.Context.Type.Equals("playlist", StringComparison.OrdinalIgnoreCase))
-                {
-                    var playList = await _spotifyClient.Playlists.Get(result.Context.Uri.Split(':')[2]);
-                    trackCount = playList.Tracks.Total ?? 0;
-                    int calculatedLengthInSeconds = 0;
-                    foreach (var item in playList.Tracks.Items)
-                    {
+        //public async Task<bool> UpdatePlaylistInfo()
+        //{
+        //    int playlistLength = 0;
+        //    int trackCount = 0;
+        //    if (_spotifyClient != null)
+        //    {
+        //        var result = await _spotifyClient.Player.GetCurrentlyPlaying(new());
+        //        if (result.Context.Type.Equals("playlist", StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            var playList = await _spotifyClient.Playlists.Get(result.Context.Uri.Split(':')[2]);
+        //            trackCount = playList.Tracks.Total ?? 0;
+        //            int calculatedLengthInSeconds = 0;
+        //            foreach (var item in playList.Tracks.Items)
+        //            {
 
-                        if (item.Track is FullTrack track)
-                        {
-                            calculatedLengthInSeconds += track.DurationMs / 1000;
-                        }
-                        if (item.Track is FullEpisode episode)
-                        {
-                            calculatedLengthInSeconds += episode.DurationMs / 1000;
-                        }
-                    }
-                    playlistLength = calculatedLengthInSeconds;
-                }
-                else
-                {
-                    IPlayableItem? item = result?.Item;
-                    if (item != null)
-                    {
-                        if (item is FullTrack track)
-                        {
-                            playlistLength = track.DurationMs / 1000;
-                        }
-                        if (item is FullEpisode episode)
-                        {
-                            playlistLength = episode.DurationMs / 1000;
-                        }
-                    }
-                    trackCount = 1;
-                }
+        //                if (item.Track is FullTrack track)
+        //                {
+        //                    calculatedLengthInSeconds += track.DurationMs / 1000;
+        //                }
+        //                if (item.Track is FullEpisode episode)
+        //                {
+        //                    calculatedLengthInSeconds += episode.DurationMs / 1000;
+        //                }
+        //            }
+        //            playlistLength = calculatedLengthInSeconds;
+        //        }
+        //        else
+        //        {
+        //            IPlayableItem? item = result?.Item;
+        //            if (item != null)
+        //            {
+        //                if (item is FullTrack track)
+        //                {
+        //                    playlistLength = track.DurationMs / 1000;
+        //                }
+        //                if (item is FullEpisode episode)
+        //                {
+        //                    playlistLength = episode.DurationMs / 1000;
+        //                }
+        //            }
+        //            trackCount = 1;
+        //        }
 
-            }
-            if (trackCount != PlaylistCount || playlistLength != PlaylistTotalSeconds)
-            {
-                PlaylistCount = trackCount;
-                PlaylistTotalSeconds = playlistLength;
-                MsgSender.SendUpdate("Playlist changed", pageRefreshRecommended: true);
-            }
-            return true;
-        }
+        //    }
+        //    if (trackCount != PlaylistCount || playlistLength != PlaylistTotalSeconds)
+        //    {
+        //        PlaylistCount = trackCount;
+        //        PlaylistTotalSeconds = playlistLength;
+        //        MsgSender.SendUpdate("Playlist changed", pageRefreshRecommended: true);
+        //    }
+        //    return true;
+        //}
 
         public override async Task<bool> SetupNextMathProblem(bool wasLastPressCorrect)
         {
@@ -308,7 +307,7 @@ namespace BAP.Web.Games
             await Task.Delay(1000);
             if (SavedVocab.IsSpanish)
             {
-                MsgSender.PlayTTSSpanish(SavedVocab.SavedWords[CurrentWordNumber], true);
+                MsgSender.PlayTTS(SavedVocab.SavedWords[CurrentWordNumber], true, TTSLanguage.Spanish);
             }
             else
             {

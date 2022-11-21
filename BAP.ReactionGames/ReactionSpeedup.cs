@@ -1,10 +1,10 @@
 ﻿using BAP.Db;
-using BAP.Web.Pages;
 using BapButton;
 using BAP.Types;
 using BAP.Helpers;
+using BAP.ReactionGames.Components;
 
-namespace BAP.Web.Games
+namespace BAP.ReactionGames
 {
     public class ReactionSpeedupGameDescription : IBapGameDescription
     {
@@ -111,7 +111,7 @@ namespace BAP.Web.Games
                     {
                         GameEndedAt = DateTime.Now;
                         IsGameRunning = false;
-                        MsgSender.SendCommand(nextNodeId, new StandardButtonCommand(GenerateNextButton()));
+                        MsgSender.SendImage(nextNodeId, GenerateNextButton());
                         await Task.Delay(300);
                         await EndSpeedupGame("All of the nodes are showing something", true);
                     }
@@ -121,7 +121,7 @@ namespace BAP.Web.Games
                         NextButtonTimer.Elapsed += TimeForNextButton;
                         NextButtonTimer.Start();
 
-                        MsgSender.SendCommand(nextNodeId, new StandardButtonCommand(GenerateNextButton()));
+                        MsgSender.SendImage(nextNodeId, GenerateNextButton());
                     }
                 }
 
@@ -182,16 +182,17 @@ namespace BAP.Web.Games
             }
             if (isHighScore)
             {
-                ButtonDisplay standardButtonMessage = new(0, 255, 0, turnOffAfterMillis: 3000);
-                MsgSender.SendGeneralCommand(new StandardButtonCommand(standardButtonMessage));
+
+                MsgSender.SendImageToAllButtons(new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new(0, 255, 0)));
                 await Task.Delay(3000);
+                MsgSender.SendImageToAllButtons(new ButtonImage());
                 MsgSender.SendUpdate("Game Ended", true, true);
             }
             else
             {
-
-                ButtonDisplay standardButtonMessage = new ButtonDisplay(255, 0, 0, turnOffAfterMillis: 3000);
-                MsgSender.SendGeneralCommand(new StandardButtonCommand(standardButtonMessage));
+                MsgSender.SendImageToAllButtons(new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new(255, 0, 0)));
+                await Task.Delay(3000);
+                MsgSender.SendImageToAllButtons(new ButtonImage());
                 MsgSender.SendUpdate("Game Ended", true);
             }
             return true;
@@ -209,15 +210,14 @@ namespace BAP.Web.Games
                 DifficultyDescription = $"{buttonDifficulty.longVersion}",
                 ScoreData = $"{buttonCount}",
                 NormalizedScore = totalSeconds,
-                ScoreDescription = $"Kept buttons clear for {timeSpanString}",
-                ScoreFullDetails = $"Kept buttons clear for {timeSpanString} with {buttonCount}"
+                ScoreDescription = $"Kept buttons clear for {timeSpanString}"
             };
             return score;
         }
 
-        public override ButtonDisplay GenerateNextButton()
+        public override ButtonImage GenerateNextButton()
         {
-            return new ButtonDisplay(colorToUse);
+            return new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), colorToUse);
         }
 
         public override void Dispose()

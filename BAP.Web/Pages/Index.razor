@@ -5,14 +5,14 @@
 {
     string buttonText = GameHandler.IsGameRunning ? "End Game and Go Back " : "Go Back to Game List";
 
-    @if (GameHandler.SelectedItemIsAGame)
+    @if (LoadablePageHandler.SelectedItemIsAGame)
     {
         <MudButton OnClick=@DeselectGame>@buttonText</MudButton>
     }
     <p>Stuff Goes here</p>
-    @if (GameHandler?.CurrentlySelectedItem?.TypeOfInitialDisplayComponent != null)
+    @if (LoadablePageHandler?.CurrentlySelectedItem?.TypeOfInitialDisplayComponent != null)
     {
-        <DynamicComponent Type="GameHandler.CurrentlySelectedItem.TypeOfInitialDisplayComponent" @ref="dc" />
+        <DynamicComponent Type="LoadablePageHandler.CurrentlySelectedItem.TypeOfInitialDisplayComponent" @ref="dc" />
     }
 }
 else

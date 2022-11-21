@@ -17,7 +17,7 @@ namespace BAP.Web.Pages
         private string LastMessage = "";
         private bool showLogs { get; set; } = false;
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
         [Inject]
         ISubscriber<GameEventMessage> GameEventPipe { get; set; } = default!;
         IDisposable Subscriptions { get; set; } = default!;

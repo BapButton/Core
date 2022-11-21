@@ -14,13 +14,15 @@ namespace BAP.Web.Games
     }
     public class TextMarqueGame : MarqueGameBase
     {
-        GameHandler GameHandler { get; set; }
+        IGameHandler GameHandler { get; set; }
+        ILayoutHandler LayoutHandler { get; set; }
         public bool Repeat { get; set; } = true;
         public List<MarqueType> MarqueTypes { get; set; } = new();
         private int CurrentMarqueTypeLocation { get; set; } = 0;
-        public TextMarqueGame(GameHandler gameHandler, ILogger<TextMarqueGame> logger, IBapMessageSender messageSender, AnimationController animationController, ISubscriber<AnimationCompleteMessage> animationCompletePipe) : base(logger, messageSender, animationController, animationCompletePipe)
+        public TextMarqueGame(ILayoutHandler layoutHandler, IGameHandler gameHandler, ILogger<TextMarqueGame> logger, IBapMessageSender messageSender, AnimationController animationController, ISubscriber<AnimationCompleteMessage> animationCompletePipe) : base(logger, messageSender, animationController, animationCompletePipe)
         {
             GameHandler = gameHandler;
+            LayoutHandler = layoutHandler;
         }
 
         public async override Task<bool> Start()
@@ -30,7 +32,7 @@ namespace BAP.Web.Games
             {
                 MarqueTypes = new List<MarqueType>() { MarqueType.MultiLineScrollStaggered, MarqueType.AllButtonsSnakeScroll, MarqueType.MutliLineScrollEvenSpacing, MarqueType.MultiLineNoAdjustment };
             }
-            if (GameHandler == null || GameHandler.CurrentButtonLayout == null)
+            if (LayoutHandler == null || LayoutHandler.CurrentButtonLayout == null)
             {
                 MsgSender.SendUpdate($"Cannot Start - Without a layout this is just a garbled mess.", fatalError: true);
                 return false;
@@ -61,9 +63,9 @@ namespace BAP.Web.Games
             else
             {
                 List<string> textToDisplayList = textToDisplay.Split(' ').ToList();
-                if (GameHandler == null || GameHandler.CurrentButtonLayout == null || GameHandler.CurrentButtonLayout?.RowCount < 3)
+                if (LayoutHandler == null || LayoutHandler.CurrentButtonLayout == null || LayoutHandler.CurrentButtonLayout?.RowCount < 3)
                 {
-                    MsgSender.SendUpdate($"You need the same amount of words as Rows. You have {textToDisplayList.Count} words but only {(GameHandler?.CurrentButtonLayout?.RowCount ?? 0)} rows", fatalError: true);
+                    MsgSender.SendUpdate($"You need the same amount of words as Rows. You have {textToDisplayList.Count} words but only {(LayoutHandler?.CurrentButtonLayout?.RowCount ?? 0)} rows", fatalError: true);
                     return false;
                 }
                 int maxWordLength = textToDisplayList.Select(t => t.Length).Max();
@@ -104,7 +106,7 @@ namespace BAP.Web.Games
                         }
                     }
 
-                    Lines.Add(new MarqueLine() { Images = images, NodeIdsOrderedLeftToRight = GameHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == i + 1).OrderBy(t => t.ColumnId).Select(t => t.ButtonId).ToList() });
+                    Lines.Add(new MarqueLine() { Images = images, NodeIdsOrderedLeftToRight = LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == i + 1).OrderBy(t => t.ColumnId).Select(t => t.ButtonId).ToList() });
                 }
 
             }

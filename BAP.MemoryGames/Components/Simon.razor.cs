@@ -5,29 +5,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using BapButton;
-using BapShared;
 using Microsoft.Extensions.Logging;
 using MessagePipe;
 using MudBlazor;
 using BAP.Db;
 using BAP.Types;
-using BAP.Helpers;
-using BAP.Web.Games;
 using BAP.Web;
+using BAP.UIHelpers;
+using BAP.UIHelpers.Components;
 
 namespace BAP.MemoryGames.Components
 {
     public partial class Simon : GamePage
     {
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
-        //[Inject]
-        //ISubscriber<GameEventMessage> GameEventPipe { get; set; } = default!;
-        //[Inject]
-        //ISubscriber<LayoutChangeMessage> LayoutChangedPipe { get; set; } = default!;
-        //[Inject]
-        //ISubscriber<NodeChangeMessage> NodeChangePipe { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
+        [Inject]
+        ILayoutHandler LayoutHandler { get; set; } = default!;
         [Inject]
         IBapMessageSender msgSender { get; set; } = default!;
         private SimonGame simonGame { get; set; } = default!;
@@ -42,11 +36,6 @@ namespace BAP.MemoryGames.Components
             int buttonCount = msgSender.GetConnectedButtons().Count;
             GameHandler.UpdateToNewGameType(typeof(SimonGame));
             simonGame = (SimonGame)GameHandler.CurrentGame!;
-            //var bag = DisposableBag.CreateBuilder();
-            //GameEventPipe.Subscribe(async (x) => await GameUpdate(x)).AddTo(bag);
-            //LayoutChangedPipe.Subscribe(async (x) => await ValidateButtonCount()).AddTo(bag);
-            //NodeChangePipe.Subscribe(async (x) => await ValidateButtonCount()).AddTo(bag);
-            //subscriptions = bag.Build();
             await ValidateButtonCount();
         }
 
@@ -54,15 +43,15 @@ namespace BAP.MemoryGames.Components
         {
             if (!simonGame.IsGameRunning)
             {
-                var difficultyDetails = simonGame.GetDifficulty(simonGame.RoundsCompleted);
-                DialogParameters dialogParameters = new DialogParameters
-                {
-                    { "NewScore", newScore },
-                    { "GameDataSaver", simonGame?.DbSaver },
-                    { "Description", newScore?.DifficultyDescription ?? difficultyDetails.longVersion },
-                    { "Difficulty", newScore?.DifficultyName ?? difficultyDetails.shortVersion }
-                };
-                DialogService.Show<HighScoreTable>("High Scores", dialogParameters);
+                //var difficultyDetails = simonGame.GetDifficulty(simonGame.RoundsCompleted);
+                //DialogParameters dialogParameters = new DialogParameters
+                //{
+                //    { "NewScore", newScore },
+                //    { "GameDataSaver", simonGame?.DbSaver },
+                //    { "Description", newScore?.DifficultyDescription ?? difficultyDetails.longVersion },
+                //    { "Difficulty", newScore?.DifficultyName ?? difficultyDetails.shortVersion }
+                //};
+                //DialogService.Show<HighScoreTable>("High Scores", dialogParameters);
             }
 
         }
@@ -123,9 +112,9 @@ namespace BAP.MemoryGames.Components
             {
                 ButtonsToUse = maxButtons;
             }
-            if (GameHandler.CurrentButtonLayout != null)
+            if (LayoutHandler.CurrentButtonLayout != null)
             {
-                ButtonRowList = Enumerable.Range(1, GameHandler.CurrentButtonLayout.RowCount).ToList();
+                ButtonRowList = Enumerable.Range(1, LayoutHandler.CurrentButtonLayout.RowCount).ToList();
             }
             else
             {

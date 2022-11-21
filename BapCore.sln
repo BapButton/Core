@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.ReactionGames", "BAP.Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.RazorDifference", "BAP.RazorDifference\BAP.RazorDifference.csproj", "{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.PrimaryHandlers", "BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,10 +86,10 @@ Global
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1AEFB63-FFC9-406B-9FDA-63376804EFC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

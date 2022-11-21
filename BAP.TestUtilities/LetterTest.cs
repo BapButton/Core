@@ -188,7 +188,7 @@ namespace BAP.TestUtilities
         public async Task<bool> ForceEndGame()
         {
             End("Game was force Closed");
-            return true;
+            return await Task.FromResult(true);
         }
 
         public void Dispose()

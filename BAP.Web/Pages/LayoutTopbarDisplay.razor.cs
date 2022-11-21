@@ -7,7 +7,7 @@ namespace BAP.Web.Pages;
 public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 {
 	[Inject]
-	GameHandler GameHandler { get; set; } = default!;
+	ILayoutHandler LayoutHandler { get; set; } = default!;
 	[Inject]
 	IBapMessageSender MsgSender { get; set; } = default!;
 	[Inject]
@@ -60,9 +60,9 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 		List<int> viableButtonLayoutIds = PossibleButtonLayouts.Select(t => t.ButtonLayoutId).Distinct().ToList();
 		if (viableButtonLayoutIds.Count > 0)
 		{
-			if (!viableButtonLayoutIds.Contains((GameHandler.CurrentButtonLayout?.ButtonLayoutId ?? 0)))
+			if (!viableButtonLayoutIds.Contains((LayoutHandler.CurrentButtonLayout?.ButtonLayoutId ?? 0)))
 			{
-				GameHandler.SetNewButtonLayout(null);
+                LayoutHandler.SetNewButtonLayout(null);
 				MsgSender.SendLayoutUpdate(0);
 			}
 			var bestOption = Last30DaysOfButtonLayoutHistorys.Where(t => viableButtonLayoutIds.Contains(t.ButtonLayoutId)).OrderByDescending(t => t.DateUsed).FirstOrDefault();
@@ -71,7 +71,7 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 				var bl = PossibleButtonLayouts.FirstOrDefault(t => t.ButtonLayoutId == bestOption.ButtonLayoutId);
 				if (bl != null)
 				{
-					GameHandler.SetNewButtonLayout(bl);
+                    LayoutHandler.SetNewButtonLayout(bl);
 					MsgSender.SendLayoutUpdate(bl.ButtonLayoutId);
 				}
 				return true;
@@ -80,9 +80,9 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 		}
 		else
 		{
-			if (GameHandler.CurrentButtonLayout != null)
+			if (LayoutHandler.CurrentButtonLayout != null)
 			{
-				GameHandler.SetNewButtonLayout(null);
+                LayoutHandler.SetNewButtonLayout(null);
 				MsgSender.SendLayoutUpdate(0);
 			}
 		}

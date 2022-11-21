@@ -1,27 +1,12 @@
-﻿using Microsoft.JSInterop;
-using System.Net.NetworkInformation;
-using System;
-using BapShared;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using NLog;
-using System.Threading.Tasks;
-using MessagePipe;
-using MudBlazor;
-using BAP.Db;
-using System.Threading;
-using BAP.Types;
-using BAP.Helpers;
-using BAP.UIHelpers;
-
-namespace BAP.BasicMathGames
+﻿namespace BAP.BasicMathGames.Components
 {
     public partial class Multiplication : GamePage
     {
 
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
+        [Inject]
+        ILayoutHandler LayoutHandler { get; set; } = default!;
 
         private MultiplicationGame game { get; set; } = default!;
         private bool TempUseTopRowAsDisplay { get; set; } = true;
@@ -84,12 +69,12 @@ namespace BAP.BasicMathGames
 
         private bool IsTopRowButtonDisplayPossible()
         {
-            if (GameHandler.CurrentButtonLayout != null)
+            if (LayoutHandler.CurrentButtonLayout != null)
             {
-                var topRow = GameHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == 1).Count();
+                var topRow = LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == 1).Count();
                 if (topRow > 2)
                 {
-                    if (GameHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId != 1).Count() > 5)
+                    if (LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId != 1).Count() > 5)
                     {
                         return true;
                     }

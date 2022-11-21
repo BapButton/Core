@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using BapButton;
 using BAP.Types;
 using BAP.Helpers;
-using static BapButton.BapBasicGameHelper;
+using static BAP.Helpers.BapBasicGameHelper;
 
-namespace BAP.Web.Games
+namespace BAP.ReactionGames
 {
     public abstract class ReactionGameBase : IBapGame, IDisposable
     {
@@ -63,7 +63,7 @@ namespace BAP.Web.Games
             gameTimer = new();
         }
 
-        public abstract ButtonDisplay GenerateNextButton();
+        public abstract ButtonImage GenerateNextButton();
 
         public async virtual Task<bool> Start(int secondsToRun)
         {
@@ -94,7 +94,7 @@ namespace BAP.Web.Games
                 await EndGame($"Not enough Buttons. The game requires {_minButtons} buttons but there is only {buttonCount} connected");
                 return false;
             }
-            MsgSender.SendGeneralCommand(new StandardButtonCommand(new ButtonDisplay(0, 0, 0)));
+            MsgSender.SendImageToAllButtons(new ButtonImage());
             await NextCommand();
 
             return true;
@@ -115,8 +115,8 @@ namespace BAP.Web.Games
             {
                 ushort red = isFailure ? (ushort)255 : (ushort)0;
                 ushort blue = isFailure ? (ushort)0 : (ushort)255;
-                ButtonDisplay standardButtonMessage = new ButtonDisplay(red, (ushort)0, blue, turnOffAfterMillis: 3000);
-                MsgSender.SendCommand(button, new StandardButtonCommand(standardButtonMessage));
+                //todo a timeout was lost
+                MsgSender.SendImage(button, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(red, (ushort)0, blue)));
             }
 
             IsGameRunning = false;
@@ -128,7 +128,7 @@ namespace BAP.Web.Games
         {
             string nextNodeId = BapBasicGameHelper.GetRandomNodeId(buttons, lastNodeId, 4);
             lastNodeId = nextNodeId;
-            MsgSender.SendCommand(nextNodeId, new StandardButtonCommand(GenerateNextButton()));
+            MsgSender.SendImage(nextNodeId, GenerateNextButton());
             await CommandSent();
             return true;
 

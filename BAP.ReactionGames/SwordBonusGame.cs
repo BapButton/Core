@@ -9,7 +9,7 @@ using BapButton;
 using BAP.Types;
 using BAP.Helpers;
 
-namespace BAP.Web.Games
+namespace BAP.ReactionGames
 {
     public enum SBGCustomImages
     {
@@ -27,6 +27,8 @@ namespace BAP.Web.Games
         private const string WonEntireGame = "SgWonTheEntireGame.wav";
         private const string BeatTheBonusRound = "SqBeatTheBonusRound.wav";
         private const string HitTheCrown = "SqHitTheCrown.mp3";
+        private ulong[] SwordSprite { get; set; } = new ulong[64];
+        private ulong[] CrownSprite { get; set; } = new ulong[64];
         private int MsDelay { get; set; } = 1500;
         private int CrownDelay { get; set; } = 500;
         //This is just the super short timer that sends out the next button command. 
@@ -39,25 +41,19 @@ namespace BAP.Web.Games
             InternalGamePipe = internalGameUpdates;
             CrownNodeId = "";
             _logger = logger;
+
+            string path = Path.Combine(".", "wwwroot", "sprites", "SwordBonusGame.bmp");
+            SpriteParser spriteParser = new SpriteParser(path);
+            var sprites = spriteParser.GetCustomImagesFromCustomSprite();
+            SwordSprite = sprites[0];
+            CrownSprite = sprites[1];
             base.Initialize(minButtons: 2, useIfItWasLitForScoring: true);
 
         }
 
-        public async Task<bool> SendCustomImages()
+        public override ButtonImage GenerateNextButton()
         {
-            string path = Path.Combine(".", "wwwroot", "sprites", "SwordBonusGame.bmp");
-            SpriteParser spriteParser = new SpriteParser(path);
-            var sprites = spriteParser.GetCustomImagesFromCustomSprite();
-            foreach (var sprite in sprites)
-            {
-                MsgSender.SendCustomImage(new CustomImage() { ImageData = sprite.Value, ImageId = sprite.Key + 1 });
-                await Task.Delay(100);
-            }
-            return true;
-        }
-        public override ButtonDisplay GenerateNextButton()
-        {
-            return new ButtonDisplay(255, 120, 120, Patterns.AllOneColor, 0, MsDelay);
+            return new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), new BapColor(255, 120, 120));
         }
 
         private void BonusGameEnded()
@@ -96,13 +92,10 @@ namespace BAP.Web.Games
             {
                 if (BapBasicGameHelper.ShouldWePerformARandomAction(6))
                 {
-
-                    var crownImage = new ButtonDisplay(0, 0, 255, Patterns.NoPattern, (int)SBGCustomImages.Crown + 1, CrownDelay);
                     lastNodeId = BapBasicGameHelper.GetRandomNodeId(buttons, lastNodeId, 2);
                     CrownNodeId = lastNodeId;
-                    MsgSender.SendCommand(lastNodeId, new StandardButtonCommand(crownImage));
-                    //There is a change that the crown is instantly disabled by the next command. but by setting last nodeId it prefers not to. 
-                    //Also I have no way of knowing if the crown was the thing pressed. Need to save and solve that. 
+                    //Todo - A Timeout was lost
+                    MsgSender.SendImage(lastNodeId, new(CrownSprite));
                 }
                 bonusTimer.Start();
                 return await base.NextCommand();

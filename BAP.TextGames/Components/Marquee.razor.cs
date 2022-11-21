@@ -6,7 +6,7 @@ namespace BAP.TextGames.Components
     public partial class Marquee : ComponentBase, IDisposable
     {
         [Inject]
-        GameHandler GameHandler { get; set; } = default!;
+        IGameHandler GameHandler { get; set; } = default!;
 
         public void Dispose()
         {

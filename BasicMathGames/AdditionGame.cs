@@ -1,8 +1,4 @@
-﻿using MessagePipe;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
+﻿using BAP.BasicMathGames.Components;
 using static BAP.Helpers.BapBasicGameHelper;
 
 namespace BAP.BasicMathGames
@@ -27,7 +23,7 @@ namespace BAP.BasicMathGames
 		public int MaxValue { get; set; } = 100;
 		public bool IsSpanish { get; set; } = false;
 
-		public AdditionGame(KeyboardHandler keyboardHandler, GameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver<AdditionGameDescription> dbSaver) : base(keyboardHandler, gameHandler, messageSender, keyPressed)
+		public AdditionGame(ILayoutHandler layoutHandler, IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver<AdditionGameDescription> dbSaver) : base(keyboardHandler, gameHandler,layoutHandler, messageSender, keyPressed)
 		{
 			_logger = logger;
 			DbSaver = dbSaver;

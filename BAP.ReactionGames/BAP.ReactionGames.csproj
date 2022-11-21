@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -7,29 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Reaction.razor" />
-    <None Remove="ReactionEthan.razor" />
-    <None Remove="ReactionME.razor" />
-    <None Remove="SpeedUp.razor" />
-    <None Remove="SwordBonus.razor" />
+    <Content Remove="wwwroot\Emoji.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Reaction.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="ReactionEthan.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="ReactionME.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="SpeedUp.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
-    <Content Include="SwordBonus.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
+    <None Include="wwwroot\Emoji.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+    <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
+    <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
   </ItemGroup>
 
 </Project>

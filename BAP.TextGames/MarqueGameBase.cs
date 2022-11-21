@@ -1,11 +1,9 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.Logging;
-using MockButtonCore;
 using NLog.Common;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using BAP.Web.Pages;
 
 namespace BAP.Web.Games
 {
@@ -88,7 +86,7 @@ namespace BAP.Web.Games
             {
                 animations.AddRange(GenerateFramesForAllButtons(line));
             }
-            AnimationTickCountAtStartOfAnimation = Animate.CurrentFrameTickCount;
+            //AnimationTickCountAtStartOfAnimation = Animate.CurrentFrameTickCount;
             Animate.AddOrUpdateAnimations(animations);
 
             return true;
