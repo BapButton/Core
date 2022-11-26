@@ -16,9 +16,9 @@ namespace BAP.Types
 		Task<bool> UpdateGameStorage<T>(T itemToSave);
 		Task<List<Score>> GetScoresWithNewScoreIfWarranted(Score newScore, int topScoresToTake = 10, bool higherScoreIsBetter = true);
 	}
-	public interface IGameDataSaver<TGameDesc> : IGameDataSaver where TGameDesc : IBapGameDescription
-	{
+	//public interface IGameDataSaver<TGameDesc> : IGameDataSaver where TGameDesc : IBapGameDescription
+	//{
 
 
-	}
+	//}
 }

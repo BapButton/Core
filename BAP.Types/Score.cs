@@ -6,7 +6,6 @@ namespace BAP.Types
     {
         public int ScoreId { get; set; }
         public string GameId { get; set; } = "";
-        public string ScoringModelVersion { get; set; } = "";
         public string DifficultyName { get; set; } = "";
         public string DifficultyDescription { get; set; } = "";
         public string UserName { get; set; } = "";

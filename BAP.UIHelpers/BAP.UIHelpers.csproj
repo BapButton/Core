@@ -1,25 +1,35 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MudBlazor" Version="5.1.4" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
-	<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="MudBlazor" Version="5.1.4" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
-    <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
-    <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" >
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+
+		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" >
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.Types\BAP.Types.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+	</ItemGroup>
 
 </Project>

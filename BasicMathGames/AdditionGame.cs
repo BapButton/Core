@@ -23,7 +23,7 @@ namespace BAP.BasicMathGames
 		public int MaxValue { get; set; } = 100;
 		public bool IsSpanish { get; set; } = false;
 
-		public AdditionGame(ILayoutHandler layoutHandler, IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver<AdditionGameDescription> dbSaver) : base(keyboardHandler, gameHandler,layoutHandler, messageSender, keyPressed)
+		public AdditionGame(ILayoutHandler layoutHandler, IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardHandler, gameHandler,layoutHandler, messageSender, keyPressed)
 		{
 			_logger = logger;
 			DbSaver = dbSaver;

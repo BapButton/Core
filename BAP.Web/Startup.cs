@@ -14,6 +14,8 @@ using BAP.Web.TTS;
 using Scrutor;
 using MudBlazor.Services;
 using BAP.PrimaryHandlers;
+using System.Reflection;
+using System.Linq;
 
 namespace BAP.Web
 {
@@ -52,10 +54,11 @@ namespace BAP.Web
             services.AddSingleton<AnimationController>();
             services.AddSingleton<LoadedAddonHolder>();
             services.AddMessagePipe();
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IGameDataSaver>(); })
-                      .AsImplementedInterfaces()
-                      .WithTransientLifetime());
+            services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
+            //services.Scan(scan => scan.FromApplicationDependencies()
+            //        .AddClasses(t => { t.AssignableTo<IGameDataSaver>(); })
+            //          .AsImplementedInterfaces()
+            //          .WithTransientLifetime());
             services.Scan(scan => scan.FromApplicationDependencies()
                     .AddClasses(t => { t.AssignableTo<IBapMessageSender>(); })
                       .AsImplementedInterfaces()
@@ -102,13 +105,53 @@ namespace BAP.Web
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
             services.AddLogging();
-            AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.MemoryGames\\bin\\Debug");
 
+            LoadedAddonHolder addonHolder = new();
+            addonHolder.AllLoadedAssemblies = AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
+
+            services.AddSingleton<LoadedAddonHolder>(addonHolder);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger)
         {
+            List<(string routeName, string assemblyName)> currentlyAddedRoutes = new();
+            foreach (Assembly loadedAssembly in loadedAddonHolder.AllLoadedAssemblies)
+            {
+                List<string> routes = AddonLoader.PagesWithRouting(loadedAssembly);
+                if (routes.Count > 0)
+                {
+                    List<(string routeName, string assemblyName)> problemRoutes = new();
+                    List<(string routeName, string assemblyName)> goodRoutes = new();
+                    foreach (var page in routes)
+                    {
+                        (string routeName, string assemblyName) matchingRoute = currentlyAddedRoutes.FirstOrDefault(t => t.routeName.Equals(page, StringComparison.OrdinalIgnoreCase));
+                        if (matchingRoute != default)
+                        {
+                            problemRoutes.Add(matchingRoute);
+                        }
+                        else
+                        {
+                            goodRoutes.Add((page, loadedAssembly.FullName));
+                        }
+                    }
+                    if (problemRoutes.Count == 0)
+                    {
+                        currentlyAddedRoutes.AddRange(goodRoutes);
+                        loadedAddonHolder.AssembliesWithPages.Add(loadedAssembly);
+                    }
+                    else
+                    {
+                        foreach (var item in problemRoutes)
+                        {
+                            logger.LogError($"Could not load routes for Assembly {loadedAssembly.FullName} because it matches route {item.routeName} which is already prepared for loading from {item.assemblyName}");
+                        }
+
+                    }
+                }
+
+            }
+
 
             if (env.IsDevelopment())
             {

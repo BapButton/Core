@@ -20,6 +20,7 @@ namespace BAP.PrimayHandlers
 
         private IServiceProvider _services { get; set; }
         public IBapGame? CurrentGame { get; internal set; }
+        public string CurrentGameFullName { get; internal set; } = "";
 
         public ILogger<DefaultGameHandler> Logger { get; internal set; }
 
@@ -62,6 +63,7 @@ namespace BAP.PrimayHandlers
 
         }
 
+
         public IBapGame UpdateToNewGameType(Type gameType, bool createNewGameIfSameTypeLoaded = false)
         {
             if (CurrentGame != null && CurrentGame.GetType() == gameType && createNewGameIfSameTypeLoaded == false)
@@ -76,7 +78,8 @@ namespace BAP.PrimayHandlers
                     CurrentGame = null;
                 }
 
-                CurrentGame = (IBapGame)_services.GetRequiredService(gameType);
+                CurrentGame = (IBapGame)ActivatorUtilities.CreateInstance(_services, gameType);
+                CurrentGameFullName = gameType?.FullName ?? "";
                 return CurrentGame;
             }
             else

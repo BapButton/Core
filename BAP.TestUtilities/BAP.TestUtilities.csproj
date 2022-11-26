@@ -13,14 +13,28 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
-		<ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
+		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.Types\BAP.Types.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
+		<ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj">
+			<Private>false</Private>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</ProjectReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\" />
+		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
 </Project>

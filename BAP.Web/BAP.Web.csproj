@@ -36,7 +36,6 @@
     <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
     <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
     <ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
-    <ProjectReference Include="..\BAP.TestUtilities\BAP.TestUtilities.csproj" />
     <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
     <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
     <ProjectReference Include="..\BasicMathGames\BAP.BasicMathGames.csproj" />
@@ -48,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Watch Remove="AddonLoader.cs" />
+    <Watch Remove="App.razor.cs" />
     <Watch Remove="BapPluginLoadContext.cs" />
     <Watch Remove="Controller\FirmwareController.cs" />
     <Watch Remove="Controller\TTSController.cs" />

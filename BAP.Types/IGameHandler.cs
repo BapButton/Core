@@ -7,6 +7,14 @@ namespace BAP.Types
     public interface IGameHandler
     {
         IBapGame? CurrentGame { get; }
+        string GameFullName
+        {
+            get
+            {
+                return CurrentGame?.GetType().FullName ?? "No Game Loaded"
+;
+            }
+        }
         bool IsGameRunning { get; }
         bool IsGameSelected { get; }
         Task ForceGameEnd();

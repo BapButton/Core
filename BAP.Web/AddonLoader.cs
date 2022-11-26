@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Reflection;
 using System.Windows.Input;
@@ -9,8 +10,9 @@ namespace BAP.Web
     {
 
         //return true if a reload is needed.
-        public static bool AddAllAddonsToDI(this IServiceCollection serviceCollection, string basePath)
+        public static List<Assembly> AddAllAddonsToDI(this IServiceCollection serviceCollection, string basePath)
         {
+            List<Assembly> results = new List<Assembly>();
             try
             {
 
@@ -34,21 +36,24 @@ namespace BAP.Web
                 foreach (var pluginPath in baseDllPlugPaths)
                 {
                     Assembly pluginAssembly = LoadPlugin(pluginPath);
+                    results.Add(pluginAssembly);
                     var bapGames = GetBapGames(pluginAssembly);
                     foreach (var bapGame in bapGames)
                     {
                         serviceCollection.AddTransient(typeof(IBapGameDescription), bapGame);
-                    }
-                    var gamePages = GetGamePages(pluginAssembly);
-                    foreach (var gamePage in gamePages)
-                    {
-                        serviceCollection.AddTransient(gamePage);
-                    }
-                    var iBapGames = GetIBapGames(pluginAssembly);
-                    foreach (var bapGame in iBapGames)
-                    {
                         serviceCollection.AddTransient(bapGame);
                     }
+                    var buttonProviders = GetButtonProviders(pluginAssembly);
+                    foreach (var buttonProvider in buttonProviders)
+                    {
+                        serviceCollection.AddTransient(typeof(IBapButtonProvider), buttonProvider);
+                        serviceCollection.AddTransient(buttonProvider);
+                    }
+                    //var iBapGames = GetIBapGames(pluginAssembly);
+                    //foreach (var bapGame in iBapGames)
+                    //{
+                    //    serviceCollection.AddTransient(bapGame);
+                    //}
 
                 }
                 //If we found a MenuItem then we would need to return true;
@@ -57,12 +62,65 @@ namespace BAP.Web
             {
                 Console.WriteLine(ex);
             }
-            return false;
+            return results;
         }
+
+        //public static bool AddAllAddonsToDI(this IServiceCollection serviceCollection, string basePath)
+        //{
+        //    try
+        //    {
+
+        //        var directories = Directory.GetDirectories(basePath);
+        //        List<string> baseDllPlugPaths = new List<string>();
+        //        //search the directories for .deps.json because that is the only DLL we want to load. 
+        //        foreach (var directory in directories)
+        //        {
+        //            string[] depsFiles = Directory.GetFiles(directory, "*.deps.json");
+        //            foreach (var depFile in depsFiles)
+        //            {
+        //                string assumedDllFileName = $"{directory}\\{Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(depFile))}.dll";
+        //                if (File.Exists(assumedDllFileName))
+        //                {
+        //                    baseDllPlugPaths.Add(assumedDllFileName);
+        //                }
+        //            }
+
+        //        }
+
+        //        foreach (var pluginPath in baseDllPlugPaths)
+        //        {
+        //            Assembly pluginAssembly = LoadPlugin(pluginPath);
+        //            var bapGames = GetBapGames(pluginAssembly);
+        //            foreach (var bapGame in bapGames)
+        //            {
+        //                serviceCollection.AddTransient(typeof(IBapGameDescription), bapGame);
+        //                serviceCollection.AddTransient(bapGame);
+        //            }
+        //            //var gamePages = GetGamePages(pluginAssembly);
+        //            //foreach (var gamePage in gamePages)
+        //            //{
+        //            //    serviceCollection.AddTransient(gamePage);
+        //            //}
+        //            //var iBapGames = GetIBapGames(pluginAssembly);
+        //            //foreach (var bapGame in iBapGames)
+        //            //{
+        //            //    serviceCollection.AddTransient(bapGame);
+        //            //}
+
+        //        }
+        //        //If we found a MenuItem then we would need to return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex);
+        //    }
+        //    return false;
+        //}
 
 
         private static Assembly LoadPlugin(string relativePath)
         {
+            //todo - this seems terrible -there must be a betterway to build the path. 
             // Navigate up to the solution root
             string root = Path.GetFullPath(Path.Combine(
                 Path.GetDirectoryName(
@@ -76,6 +134,23 @@ namespace BAP.Web
             BapPluginLoadContext loadContext = new BapPluginLoadContext(pluginLocation);
             return loadContext.LoadFromAssemblyName(AssemblyName.GetAssemblyName(pluginLocation));
         }
+        public static List<string> PagesWithRouting(Assembly assembly)
+        {
+            List<string> results = new();
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (typeof(IComponent).IsAssignableFrom(type))
+                {
+                    var routeAtribute = type.GetCustomAttribute<RouteAttribute>();
+                    if (routeAtribute != null)
+                    {
+                        results.Add(routeAtribute.Template);
+                    }
+                }
+            }
+            return results;
+        }
+
         static IEnumerable<Type> GetBapGames(Assembly assembly)
         {
             int count = 0;
@@ -123,24 +198,15 @@ namespace BAP.Web
             }
         }
 
-        static IEnumerable<Type> GetGamePages(Assembly assembly)
+        static IEnumerable<Type> GetButtonProviders(Assembly assembly)
         {
             int count = 0;
 
             foreach (Type type in assembly.GetTypes())
             {
-                if (typeof(IGamePage).IsAssignableFrom(type))
+                if (typeof(IBapButtonProvider).IsAssignableFrom(type))
                 {
-                    IGamePage? result = Activator.CreateInstance(type) as IGamePage;
-                    if (result != null)
-                    {
-                        count++;
-                        yield return type;
-                    }
-                    else
-                    {
-                        Console.WriteLine("Well we could not activate it");
-                    }
+                    yield return type;
                 }
             }
 

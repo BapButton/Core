@@ -1,4 +1,5 @@
-<Router AppAssembly="@typeof(Program).Assembly" PreferExactMatches="@false">
+<Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="loadedAddons.AssembliesWithPages"
+        PreferExactMatches="@false">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>

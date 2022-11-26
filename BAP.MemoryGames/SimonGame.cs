@@ -27,7 +27,7 @@ namespace BAP.MemoryGames
     public class SimonGame : IBapGame, IDisposable
     {
         private ILogger<SimonGame> _logger { get; set; }
-        //public IGameDataSaver<MadQuickCatDescription> DbSaver { get; set; }
+        public IGameDataSaver DbSaver { get; set; }
         private ILayoutHandler LayoutHandler { get; set; }
         public bool IsGameRunning { get; internal set; }
         ISubscriber<ButtonPressedMessage> ButtonPressedMessages { get; set; } = default!;
@@ -56,9 +56,10 @@ namespace BAP.MemoryGames
         bool playingPattern = false;
         List<string> buttonsInUse = new List<string>();
         private static System.Timers.Timer gameTimer = default!;
-        public SimonGame(IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, ILayoutHandler layoutHandler)
+        public SimonGame(IGameDataSaver gameDataSaver, IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, ILayoutHandler layoutHandler)
         {
             _logger = logger;
+            DbSaver = gameDataSaver;
             ButtonPressedMessages = buttonPressedMessages;
             MsgSender = messageSender;
             var bag = DisposableBag.CreateBuilder();
