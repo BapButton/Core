@@ -44,16 +44,16 @@ namespace BAP.Web.Pages
         }
         //This needs to go away. I need to write a find method and get rid of the DI stuff - it is just easy. 
         [Inject]
-        IEnumerable<IBapGameDescription> DiGames { get; set; } = default!;
+        IEnumerable<GameDetail> DiGames { get; set; } = default!;
 
         [Inject]
         LoadedAddonHolder AddonHolder { get; set; } = default!;
 
-        List<IBapGameDescription> AllGames
+        List<GameDetail> AllGames
         {
             get
             {
-                List<IBapGameDescription> AllGames = AddonHolder.AllGames.ToList();
+                List<GameDetail> AllGames = AddonHolder.AllGames.ToList();
                 AllGames.AddRange(DiGames);
                 return AllGames;
             }
@@ -70,7 +70,7 @@ namespace BAP.Web.Pages
             GamePlayStatistics = await dba.GetGamePlayStatistics();
         }
 
-        List<IBapGameDescription> GetOrderedGameDescriptions()
+        List<GameDetail> GetOrderedGameDescriptions()
         {
 
             //Need to add some favorites functionality in here as well. 

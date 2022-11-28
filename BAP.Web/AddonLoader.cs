@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BAP.Types;
+using BAP.Web.Pages;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Reflection;
@@ -37,12 +39,12 @@ namespace BAP.Web
                 {
                     Assembly pluginAssembly = LoadPlugin(pluginPath);
                     results.Add(pluginAssembly);
-                    var bapGames = GetBapGames(pluginAssembly);
-                    foreach (var bapGame in bapGames)
-                    {
-                        serviceCollection.AddTransient(typeof(IBapGameDescription), bapGame);
-                        serviceCollection.AddTransient(bapGame);
-                    }
+                    //var bapGames = GetBapGames(pluginAssembly);
+                    //foreach (var bapGame in bapGames)
+                    //{
+                    //    serviceCollection.AddTransient(typeof(IBapGameDescription), bapGame);
+                    //    serviceCollection.AddTransient(bapGame);
+                    //}
                     var buttonProviders = GetButtonProviders(pluginAssembly);
                     foreach (var buttonProvider in buttonProviders)
                     {
@@ -56,7 +58,6 @@ namespace BAP.Web
                     //}
 
                 }
-                //If we found a MenuItem then we would need to return true;
             }
             catch (Exception ex)
             {
@@ -134,17 +135,48 @@ namespace BAP.Web
             BapPluginLoadContext loadContext = new BapPluginLoadContext(pluginLocation);
             return loadContext.LoadFromAssemblyName(AssemblyName.GetAssemblyName(pluginLocation));
         }
-        public static List<string> PagesWithRouting(Assembly assembly)
+        public static (List<string> routes, List<MenuItemDetail> menuItems, List<TopMenuItemDetail> topMenuItemDetails) GetLoadableComponents(Assembly assembly)
         {
-            List<string> results = new();
+            List<string> routes = new();
+            List<MenuItemDetail> menuItems = new();
+            List<TopMenuItemDetail> topMenuItemDetails = new();
             foreach (Type type in assembly.GetTypes())
             {
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
+
                     var routeAtribute = type.GetCustomAttribute<RouteAttribute>();
                     if (routeAtribute != null)
                     {
-                        results.Add(routeAtribute.Template);
+                        routes.Add(routeAtribute.Template);
+                        var menuItemAttribute = type.GetCustomAttribute<MenuItemAttribute>();
+                        if (menuItemAttribute != null)
+                        {
+                            menuItems.Add(new MenuItemDetail() { DisplayedLabel = menuItemAttribute.DisplayedLabel, MouseOver = menuItemAttribute.MouseOverText, Path = routeAtribute.Template });
+                        }
+                    }
+                    var topBarItemAtribute = type.GetCustomAttribute<TopMenuAttribute>();
+                    if (topBarItemAtribute != null)
+                    {
+                        topMenuItemDetails.Add(new TopMenuItemDetail() { DynamicComponentToLoad = type });
+                    }
+                }
+            }
+            return (routes, menuItems, topMenuItemDetails);
+        }
+
+        public static List<GameDetail> ComponentsWithBapGamePageAttribute(Assembly assembly)
+        {
+            List<GameDetail> results = new();
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (typeof(IComponent).IsAssignableFrom(type))
+                {
+                    //This needs to also check for the Custom attribute to indicate what it is for.
+                    var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
+                    if (gameAttribute != null)
+                    {
+                        results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = type?.FullName!, DynamicComponentToLoad = type! });
                     }
                 }
             }

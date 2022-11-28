@@ -118,7 +118,7 @@ namespace BAP.Web
             List<(string routeName, string assemblyName)> currentlyAddedRoutes = new();
             foreach (Assembly loadedAssembly in loadedAddonHolder.AllLoadedAssemblies)
             {
-                List<string> routes = AddonLoader.PagesWithRouting(loadedAssembly);
+                var (routes, menuItems, topMenuItemDetails) = AddonLoader.GetLoadableComponents(loadedAssembly);
                 if (routes.Count > 0)
                 {
                     List<(string routeName, string assemblyName)> problemRoutes = new();
@@ -147,6 +147,11 @@ namespace BAP.Web
                             logger.LogError($"Could not load routes for Assembly {loadedAssembly.FullName} because it matches route {item.routeName} which is already prepared for loading from {item.assemblyName}");
                         }
 
+                    }
+                    if (problemRoutes.Count == 0)
+                    {
+                        loadedAddonHolder.MainMenuItems = menuItems;
+                        loadedAddonHolder.TopBarItems = topMenuItemDetails;
                     }
                 }
 

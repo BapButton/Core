@@ -16,6 +16,7 @@ using BAP.UIHelpers.Components;
 
 namespace BAP.MemoryGames.Components
 {
+    [GamePage(Description = "A Memory game that gets a little harder each time.", Name = "Mad quickCat")]
     public partial class Simon : GamePage
     {
         [Inject]
