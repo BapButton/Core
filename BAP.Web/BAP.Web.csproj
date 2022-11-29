@@ -48,6 +48,7 @@
   <ItemGroup>
     <Watch Remove="AddonLoader.cs" />
     <Watch Remove="App.razor.cs" />
+    <Watch Remove="AssemblyScanner.cs" />
     <Watch Remove="BapPluginLoadContext.cs" />
     <Watch Remove="Controller\FirmwareController.cs" />
     <Watch Remove="Controller\TTSController.cs" />

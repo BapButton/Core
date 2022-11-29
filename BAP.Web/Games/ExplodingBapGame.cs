@@ -4,14 +4,7 @@ using BAP.Web.Pages.Games;
 
 namespace BAP.Web.Games
 {
-    public class ReactionGameDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(ExplodingBap);
-        public string Name => "Exploding Bap";
-        public string Description => "Can you hit the matching images before they explode?";
-        public string UniqueId => "f6858db1-2ee1-4921-a8de-f23ec3086818";
-        public string ScoringModelVersion => "1.0.0";
-    }
+
 
     internal class OverlappingImage
     {

@@ -87,7 +87,6 @@ namespace BAP.Web
             services.Scan(scan => scan.FromApplicationDependencies()
                     .AddClasses(t => { t.AssignableTo<IMainMenuItem>(); })
                          .AsImplementedInterfaces().WithSingletonLifetime());
-
             //This makes the app not start. I don't have any idea why.    
             services.Scan(scan => scan.FromApplicationDependencies()
                 .AddClasses(t => { t.AssignableTo<IBapKeyboardProvider>(); })
@@ -107,9 +106,9 @@ namespace BAP.Web
             services.AddLogging();
 
             LoadedAddonHolder addonHolder = new();
-            addonHolder.AllLoadedAssemblies = AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
-
-            services.AddSingleton<LoadedAddonHolder>(addonHolder);
+            addonHolder.AllAddonAssemblies = AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
+            addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
+            services.AddSingleton(addonHolder);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -150,8 +149,8 @@ namespace BAP.Web
                     }
                     if (problemRoutes.Count == 0)
                     {
-                        loadedAddonHolder.MainMenuItems = menuItems;
-                        loadedAddonHolder.TopBarItems = topMenuItemDetails;
+                        loadedAddonHolder.MainMenuItems.AddRange(menuItems);
+                        loadedAddonHolder.TopBarItems.AddRange(topMenuItemDetails);
                     }
                 }
 

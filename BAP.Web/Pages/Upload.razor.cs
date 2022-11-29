@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BAP.Web.Pages
 {
+    [MenuItem(DisplayedLabel = "Upload Firmware", MouseOverText = "Upload new firmware")]
     public partial class Upload
     {
         private List<FirmwareInfo> allUploads = new List<FirmwareInfo>();

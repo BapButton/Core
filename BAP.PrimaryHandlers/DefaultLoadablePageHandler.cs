@@ -30,14 +30,14 @@ namespace BAP.PrimaryHandlers
                 return true;
             }
             CurrentlySelectedItem = mainAreaItem;
-            if (mainAreaItem.TypeOfInitialDisplayComponent.GetInterfaces().Contains(typeof(IComponent)))
+            if (mainAreaItem.DynamicComponentToLoad.GetInterfaces().Contains(typeof(IComponent)))
             {
                 CurrentlySelectedItem = mainAreaItem;
                 return true;
             }
             else
             {
-                Logger.LogWarning($"{mainAreaItem.TypeOfInitialDisplayComponent.Name} does not implement interface IComponent so it could not be started.");
+                Logger.LogWarning($"{mainAreaItem.DynamicComponentToLoad.Name} does not implement interface IComponent so it could not be started.");
                 return false;
             }
             return true;

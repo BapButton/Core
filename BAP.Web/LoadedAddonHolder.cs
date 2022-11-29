@@ -8,10 +8,18 @@ namespace BAP.Web
         public List<MenuItemDetail> MainMenuItems { get; set; } = new();
         public List<TopMenuItemDetail> TopBarItems { get; set; } = new();
         public List<Assembly> AssembliesWithPages { get; set; } = new();
-        public List<Assembly> AllLoadedAssemblies { get; set; } = new();
+        public List<Assembly> AllAddonAssemblies { get; set; } = new();
+        public List<Assembly> AllCompiledAssembies { get; set; } = new();
+        public IEnumerable<Assembly> AllLoadedAssemblies
+        {
+            get
+            {
+                return AllCompiledAssembies.Concat(AllAddonAssemblies);
+            }
+        }
     }
 
-    public class GameDetail
+    public class GameDetail : IMainAreaItem
     {
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";

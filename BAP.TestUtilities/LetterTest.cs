@@ -7,16 +7,6 @@ using System.Threading.Tasks;
 
 namespace BAP.TestUtilities
 {
-    public class LetterTestDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(LetterTest);
-        public string Name => "Letter Test";
-        public string Description => "Test out if all the patterns are working.";
-
-        public string UniqueId => "32c358da-c92f-40bd-b147-d6477799d582";
-        public string ScoringModelVersion => "1.0.0";
-    }
-
     public class LetterTest : IBapGame
     {
         ILogger _logger { get; set; }

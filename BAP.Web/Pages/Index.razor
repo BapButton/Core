@@ -10,9 +10,9 @@
         <MudButton OnClick=@DeselectGame>@buttonText</MudButton>
     }
     <p>Stuff Goes here</p>
-    @if (LoadablePageHandler?.CurrentlySelectedItem?.TypeOfInitialDisplayComponent != null)
+    @if (LoadablePageHandler?.CurrentlySelectedItem?.DynamicComponentToLoad != null)
     {
-        <DynamicComponent Type="LoadablePageHandler.CurrentlySelectedItem.TypeOfInitialDisplayComponent" @ref="dc" />
+        <DynamicComponent Type="LoadablePageHandler.CurrentlySelectedItem.DynamicComponentToLoad" @ref="dc" />
     }
 }
 else

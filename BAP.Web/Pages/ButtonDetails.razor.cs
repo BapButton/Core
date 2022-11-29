@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace BAP.Web.Pages
 {
+    [MenuItem(DisplayedLabel = "Button Details", MouseOverText = "Info about connected buttons")]
     public partial class ButtonDetails : ComponentBase, IDisposable
     {
         [Inject]

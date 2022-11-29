@@ -12,10 +12,10 @@ namespace BAP.TestUtilities.Components
 {
     public class ButtonTestingMenuItem : IMainMenuItem
     {
-        public Type TypeOfInitialDisplayComponent => typeof(ButtonTesting);
+        public Type DynamicComponentToLoad => typeof(ButtonTesting);
         public string MenuItemName => "Button Testing";
     }
-
+    [MenuItem(DisplayedLabel = "Button Testing", MouseOverText = "Test out with fake buttons")]
     public partial class ButtonTesting : ComponentBase, IDisposable
     {
         [Parameter]
@@ -25,13 +25,13 @@ namespace BAP.TestUtilities.Components
         ControlHandler CtrlHandler { get; set; } = default!;
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
-		[Inject]
-		ILayoutHandler LayoutHandler { get; set; } = default!;
-		//[Inject]
-		//ILogger<MockConnectionCore> Logger { get; set; } = default!;
-		//[Inject]
-		//IServiceProvider Services { get; set; } = default!;
-		IDisposable subscriptions = default!;
+        [Inject]
+        ILayoutHandler LayoutHandler { get; set; } = default!;
+        //[Inject]
+        //ILogger<MockConnectionCore> Logger { get; set; } = default!;
+        //[Inject]
+        //IServiceProvider Services { get; set; } = default!;
+        IDisposable subscriptions = default!;
 
         [Inject]
         ISubscriber<GameStateChangedMessage> gameStateChangedPipe { get; set; } = default!;

@@ -3,15 +3,6 @@ using static BAP.Helpers.BapBasicGameHelper;
 
 namespace BAP.BasicMathGames
 {
-    public class MultiplicationGameDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(Multiplication);
-        public string Name => "Multiplication Game";
-        public string Description => "Multiplication Game with Adjustable Difficulty to practice quickly doing addition facts.";
-
-        public string UniqueId => "6356fc9d-abca-479e-9d0b-3519517ae169";
-        public string ScoringModelVersion => "1.0.1";
-    }
     public class MultiplicationGame : KeyboardGameBase
     {
         public override ILogger _logger { get; set; }

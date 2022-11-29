@@ -2,19 +2,13 @@
 
 <MudPaper Width="250px" Class="py-3" Square="true">
     <MudNavMenu>
-        <MudNavLink Match="NavLinkMatch.All" Href="/">Games</MudNavLink>
-        @if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            <MudNavLink Href="/buttontesting">Button Testing</MudNavLink>
-        }
 
-        <MudNavLink Href="/control">Control</MudNavLink>
-        <MudNavLink Href="/buttons">Button Details</MudNavLink>
-        <MudNavLink Href="/upload">Upload new Firmware</MudNavLink>
-        <MudNavLink Href="/layout">Button Layout</MudNavLink>
-        @foreach (var item in MenuItems)
+        <MudNavLink Match="NavLinkMatch.All" Href="/">Games</MudNavLink>
+        @foreach (var item in LoadedAddonHolder.MainMenuItems)
         {
-            <MudButton @onclick="() => ActivateItem(item)">@item.MenuItemName</MudButton>
+            <MudTooltip Text="@item.MouseOver">
+                <MudNavLink tooltip Href="@item.Path">@item.DisplayedLabel</MudNavLink>
+            </MudTooltip>
         }
     </MudNavMenu>
 </MudPaper>

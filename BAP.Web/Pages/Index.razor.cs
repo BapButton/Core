@@ -145,10 +145,10 @@ namespace BAP.Web.Pages
             });
         }
 
-        private async Task SelectGame(IBapGameDescription gameDescription)
+        private async Task SelectGame(GameDetail gameDetail)
         {
-            await dba.AddGamePlayLog(gameDescription.UniqueId);
-            LoadablePageHandler.CurrentlySelectedItem = gameDescription;
+            await dba.AddGamePlayLog(gameDetail.UniqueId);
+            LoadablePageHandler.CurrentlySelectedItem = gameDetail;
         }
         public void Dispose()
         {
