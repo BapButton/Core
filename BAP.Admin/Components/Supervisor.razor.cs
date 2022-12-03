@@ -1,9 +1,8 @@
 ﻿using System.Collections;
 using System.Text;
 using System.Text.Json;
-using BAP.Web.Supervisor;
 
-namespace BAP.Web.Pages
+namespace BAP.Admin.Components
 {
     public partial class Supervisor
     {

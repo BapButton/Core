@@ -13,17 +13,6 @@ using MessagePipe;
 namespace BAP.MemoryGames
 {
 
-
-    public class MadQuickCatDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(Simon);
-
-        public string Name => "Mad quickCat ";
-        public string Description => "A Memory game that gets a little harder each time.";
-        public string UniqueId => "0bb0b440-0497-4570-8df4-0e5a91239619";
-        public string ScoringModelVersion => "1.0.0";
-    }
-
     public class SimonGame : IBapGame, IDisposable
     {
         private ILogger<SimonGame> _logger { get; set; }

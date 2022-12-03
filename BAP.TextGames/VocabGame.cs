@@ -14,35 +14,7 @@ namespace BAP.Web.Games
         //public AuthorizationCodeTokenResponse SpotifyToken { get; set; } = new AuthorizationCodeTokenResponse();
     }
 
-    public class VocabGameDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(Vocab);
-        public string Name => "Vocabulary Game";
-        public string Description => "This weeks Vocabulary words for spelling practice";
-
-        public string UniqueId => "db35578b-a9a4-4314-9be9-194b68f09a07";
-        public string ScoringModelVersion => "1.0.0";
-    }
-
-    public static class ShuffleExtension
-    {
-        private static Random rng = new Random();
-
-        public static void Shuffle<T>(this IList<T> list)
-        {
-            int n = list.Count;
-            while (n > 1)
-            {
-                n--;
-                int k = rng.Next(n + 1);
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
-            }
-        }
-    }
-
-    public class VocabGame : KeyboardGameBase, IBapGame, IDisposable
+        public class VocabGame : KeyboardGameBase, IBapGame, IDisposable
     {
         //private SpotifyClient? _spotifyClient { get; set; }
         public SavedVocab SavedVocab { get; set; }

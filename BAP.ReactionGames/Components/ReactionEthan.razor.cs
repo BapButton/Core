@@ -10,6 +10,7 @@ using BAP.Web;
 
 namespace BAP.ReactionGames.Components
 {
+    [GamePage("Ethan Sword Game", "Ethans version of the Sword game with a special bonus round.", "0fe4493b-714d-465d-8425-f49b3bd91289")]
     public partial class ReactionEthan : GamePage
     {
         [Inject]

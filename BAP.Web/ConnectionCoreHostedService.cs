@@ -11,35 +11,35 @@ using BAP.Types;
 
 namespace BAP.Web
 {
-	public class ConnectionCoreHostedService : IHostedService
-	{
-		ControlHandler CtrlHandler { get; set; }
+    public class ConnectionCoreHostedService : IHostedService
+    {
+        IControlHandler CtrlHandler { get; set; }
 
-		public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, ControlHandler ctrlHandler)
-		{
-			CtrlHandler = ctrlHandler;
-		}
+        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IControlHandler ctrlHandler)
+        {
+            CtrlHandler = ctrlHandler;
+        }
 
-		public async Task StartAsync(CancellationToken cancellationToken)
-		{
-			Console.WriteLine("Migrating the database");
-			using ButtonContext db = new();
-			try
-			{
-				db.Database.Migrate();
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"error migrating the database {ex.Message} Inner exception {(ex?.InnerException?.Message ?? "")}");
-			}
+        public async Task StartAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("Migrating the database");
+            using ButtonContext db = new();
+            try
+            {
+                db.Database.Migrate();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"error migrating the database {ex.Message} Inner exception {(ex?.InnerException?.Message ?? "")}");
+            }
 
-			if (CtrlHandler.CurrentButtonProvider != null)
-			{
-				bool succesfullyInitialized = await CtrlHandler.CurrentButtonProvider.Initialize();
-			}
-		}
+            if (CtrlHandler.CurrentButtonProvider != null)
+            {
+                bool succesfullyInitialized = await CtrlHandler.CurrentButtonProvider.Initialize();
+            }
+        }
 
-		public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-	}
+        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+    }
 
 }

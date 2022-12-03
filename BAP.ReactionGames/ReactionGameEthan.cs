@@ -10,14 +10,7 @@ using BAP.ReactionGames.Components;
 
 namespace BAP.ReactionGames
 {
-    public class ReactionGameEthanDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(ReactionEthan);
-        public string Name => "Ethan Sword Game";
-        public string Description => "Ethans version of the Sword game with a special bonus round.";
-        public string UniqueId => "0fe4493b-714d-465d-8425-f49b3bd91289";
-        public string ScoringModelVersion => "1.0.0";
-    }
+
     public class ReactionGameEthan : ReactionGameBase
     {
         string lastFaceNodeId = "";

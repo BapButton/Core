@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BAP.Web.Pages
+namespace BAP.Admin.Components
 {
-    [MenuItem(DisplayedLabel = "Button Details", MouseOverText = "Info about connected buttons")]
+    [MenuItem("Button Details","Info about connected buttons", true, "7f5c91eb-105e-49c1-95bd-5c9bc96ec91d")]
     public partial class ButtonDetails : ComponentBase, IDisposable
     {
         [Inject]

@@ -6,15 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using BAP.Web.Models;
 using Blazored.FluentValidation;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Components;
 
-namespace BAP.Web.Pages
+namespace BAP.Admin.Components
 {
-    [MenuItem(DisplayedLabel = "Upload Firmware", MouseOverText = "Upload new firmware")]
-    public partial class Upload
+    [MenuItem("Upload Firmware", "Upload new firmware", false, "a732d108-9101-498a-8951-ef6a441bcf69")]
+    public partial class Upload : ComponentBase, IDisposable
     {
         private List<FirmwareInfo> allUploads = new List<FirmwareInfo>();
         private CancellationTokenSource cancelation { get; set; } = default!;

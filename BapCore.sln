@@ -24,8 +24,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.BasicMathGames", "Basic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.UIHelpers", "BAP.UIHelpers\BAP.UIHelpers.csproj", "{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.CoreWebUI", "BAP.CoreWebUI\BAP.CoreWebUI.csproj", "{8099742C-45DD-404D-BD78-7E238A522117}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TextGames", "BAP.TextGames\BAP.TextGames.csproj", "{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TestUtilities", "BAP.TestUtilities\BAP.TestUtilities.csproj", "{ABC746B5-588A-4C6E-A50C-D2255CB6277A}"
@@ -34,7 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.ReactionGames", "BAP.Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BAP.PrimaryHandlers", "BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.PrimaryHandlers", "BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Admin", "BAP.Admin\BAP.Admin.csproj", "{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,10 +66,6 @@ Global
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8099742C-45DD-404D-BD78-7E238A522117}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8099742C-45DD-404D-BD78-7E238A522117}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8099742C-45DD-404D-BD78-7E238A522117}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8099742C-45DD-404D-BD78-7E238A522117}.Release|Any CPU.Build.0 = Release|Any CPU
 		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +86,10 @@ Global
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

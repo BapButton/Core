@@ -31,7 +31,6 @@ namespace BAP.Web.Pages
         ISubscriber<NodeChangeMessage> NodeChangedPipe { get; set; } = default!;
         [Inject]
         ISubscriber<LayoutChangeMessage> LayoutChangePipe { get; set; } = default!;
-        int countOfGames { get; set; }
         DynamicComponent? dc { get; set; }
         List<(string uniqueId, int playCount)> GamePlayStatistics { get; set; } = new List<(string uniqueId, int playCount)>();
         IDisposable Subscriptions { get; set; } = default!;
@@ -42,10 +41,6 @@ namespace BAP.Web.Pages
                 return GameHandler.IsGameSelected;
             }
         }
-        //This needs to go away. I need to write a find method and get rid of the DI stuff - it is just easy. 
-        [Inject]
-        IEnumerable<GameDetail> DiGames { get; set; } = default!;
-
         [Inject]
         LoadedAddonHolder AddonHolder { get; set; } = default!;
 
@@ -54,14 +49,12 @@ namespace BAP.Web.Pages
             get
             {
                 List<GameDetail> AllGames = AddonHolder.AllGames.ToList();
-                AllGames.AddRange(DiGames);
                 return AllGames;
             }
         }
 
         protected override async Task OnInitializedAsync()
         {
-            countOfGames = AllGames.Count();
             var bag = DisposableBag.CreateBuilder();
             GameEventPipe.Subscribe(async (x) => await Updates(x)).AddTo(bag);
             NodeChangedPipe.Subscribe(async (x) => await NodeChanged(x)).AddTo(bag);

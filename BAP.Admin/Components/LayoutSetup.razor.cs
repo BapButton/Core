@@ -1,14 +1,13 @@
-﻿namespace BAP.Web.Pages;
+﻿namespace BAP.Admin.Components;
 
 using BAP.Db;
 using MessagePipe;
 using Microsoft.AspNetCore.Components;
-using BAP.Web.Games;
 using BAP.Types;
 using BAP.Helpers;
+using BAP.Admin;
 
-
-[MenuItem(DisplayedLabel = "Layout", MouseOverText = "Setup Layout for buttons")]
+[MenuItem("Layout", "Setup Layout for buttons", true, "0aca4ec6-6631-47ca-b54b-c52ea1ba53ec")]
 public partial class LayoutSetup : ComponentBase, IDisposable
 {
     [Inject]
@@ -36,7 +35,7 @@ public partial class LayoutSetup : ComponentBase, IDisposable
         {
             if (layoutGame != null)
             {
-                return (layoutGame)?.RowLayout ?? new();
+                return layoutGame?.RowLayout ?? new();
 
             }
             else

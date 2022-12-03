@@ -47,7 +47,8 @@ namespace BAP.PrimaryHandlers
         {
             get
             {
-                return CurrentlySelectedItem?.GetType()?.GetInterfaces().Contains(typeof(IBapGameDescription)) ?? false;
+                //Todo This probably does not work. 
+                return CurrentlySelectedItem?.GetType()?.GetInterfaces().Contains(typeof(IBapGame)) ?? false;
             }
         }
     }

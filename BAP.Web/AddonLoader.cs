@@ -12,12 +12,11 @@ namespace BAP.Web
     {
 
         //return true if a reload is needed.
-        public static List<Assembly> AddAllAddonsToDI(this IServiceCollection serviceCollection, string basePath)
+        public static List<Assembly> GetAllAddinAssemblies(this IServiceCollection serviceCollection, string basePath)
         {
             List<Assembly> results = new List<Assembly>();
             try
             {
-
                 var directories = Directory.GetDirectories(basePath);
                 List<string> baseDllPlugPaths = new List<string>();
                 //search the directories for .deps.json because that is the only DLL we want to load. 
@@ -39,24 +38,6 @@ namespace BAP.Web
                 {
                     Assembly pluginAssembly = LoadPlugin(pluginPath);
                     results.Add(pluginAssembly);
-                    //var bapGames = GetBapGames(pluginAssembly);
-                    //foreach (var bapGame in bapGames)
-                    //{
-                    //    serviceCollection.AddTransient(typeof(IBapGameDescription), bapGame);
-                    //    serviceCollection.AddTransient(bapGame);
-                    //}
-                    var buttonProviders = GetButtonProviders(pluginAssembly);
-                    foreach (var buttonProvider in buttonProviders)
-                    {
-                        serviceCollection.AddTransient(typeof(IBapButtonProvider), buttonProvider);
-                        serviceCollection.AddTransient(buttonProvider);
-                    }
-                    //var iBapGames = GetIBapGames(pluginAssembly);
-                    //foreach (var bapGame in iBapGames)
-                    //{
-                    //    serviceCollection.AddTransient(bapGame);
-                    //}
-
                 }
             }
             catch (Exception ex)
@@ -152,7 +133,7 @@ namespace BAP.Web
                         var menuItemAttribute = type.GetCustomAttribute<MenuItemAttribute>();
                         if (menuItemAttribute != null)
                         {
-                            menuItems.Add(new MenuItemDetail() { DisplayedLabel = menuItemAttribute.DisplayedLabel, MouseOver = menuItemAttribute.MouseOverText, Path = routeAtribute.Template });
+                            menuItems.Add(new MenuItemDetail() { UniqueId = menuItemAttribute.UniqueId, ShowByDefault = menuItemAttribute.ShowOnMenuByDefault, DisplayedLabel = menuItemAttribute.DisplayedLabel, MouseOver = menuItemAttribute.MouseOverText, Path = routeAtribute.Template });
                         }
                     }
                     var topBarItemAtribute = type.GetCustomAttribute<TopMenuAttribute>();
@@ -176,79 +157,26 @@ namespace BAP.Web
                     var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
                     if (gameAttribute != null)
                     {
-                        results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = type?.FullName!, DynamicComponentToLoad = type! });
+                        results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = gameAttribute.UniqueId, DynamicComponentToLoad = type! });
                     }
                 }
             }
             return results;
         }
 
-        static IEnumerable<Type> GetBapGames(Assembly assembly)
+        public static IEnumerable<Type> GetTypesThatImpementsInterface<T>(Assembly assembly) where T : class
         {
-            int count = 0;
-
             foreach (Type type in assembly.GetTypes())
             {
-                if (typeof(IBapGameDescription).IsAssignableFrom(type))
+                if (typeof(T).IsAssignableFrom(type) && type.IsClass)
                 {
-                    IBapGameDescription? result = Activator.CreateInstance(type) as IBapGameDescription;
-                    if (result != null)
-                    {
-                        count++;
-                        yield return type;
-                    }
-                }
-            }
 
-            if (count == 0)
-            {
-                string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
-                throw new ApplicationException(
-                    $"Can't find any type which implements IBapGameDescription in {assembly} from {assembly.Location}.\n" +
-                    $"Available types: {availableTypes}");
-            }
-        }
-
-        static IEnumerable<Type> GetIBapGames(Assembly assembly)
-        {
-            int count = 0;
-
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (typeof(IBapGame).IsAssignableFrom(type))
-                {
                     yield return type;
+
                 }
             }
 
-            if (count == 0)
-            {
-                string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
-                throw new ApplicationException(
-                    $"Can't find any type which implements IBapGameDescription in {assembly} from {assembly.Location}.\n" +
-                    $"Available types: {availableTypes}");
-            }
-        }
 
-        static IEnumerable<Type> GetButtonProviders(Assembly assembly)
-        {
-            int count = 0;
-
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (typeof(IBapButtonProvider).IsAssignableFrom(type))
-                {
-                    yield return type;
-                }
-            }
-
-            if (count == 0)
-            {
-                string availableTypes = string.Join(",", assembly.GetTypes().Select(t => t.FullName));
-                throw new ApplicationException(
-                    $"Can't find any type which implements IBapGameDescription in {assembly} from {assembly.Location}.\n" +
-                    $"Available types: {availableTypes}");
-            }
         }
     }
 }

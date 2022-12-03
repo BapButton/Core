@@ -3,13 +3,9 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
-using BapShared;
-using BAP.Types;
-
 namespace BapButton
 {
-	public class SoundCore : IBapAudioProvider
+	public class SoundCore : IAudioProvider
 	{
 		//This really works poorly.
 		//NetCoreAudio.Player player = new NetCoreAudio.Player();

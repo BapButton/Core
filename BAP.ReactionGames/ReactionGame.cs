@@ -7,7 +7,7 @@ using BAP.ReactionGames.Components;
 namespace BAP.ReactionGames
 {
 
-    public class ReactionGameDescription : IBapGameDescription
+    public class ReactionGameDescription
     {
         public Type TypeOfInitialDisplayComponent => typeof(Reaction);
         public string Name => "Reaction Game";
@@ -15,6 +15,7 @@ namespace BAP.ReactionGames
         public string UniqueId => "21bb7960-90d1-476e-8b1e-4a08ec082551";
         public string ScoringModelVersion => "1.0.0";
     }
+    [GamePage("Basic reaction game to see how many lights you can hit in a given amount of time.", "Reaction Game")]
     public class ReactionGame : ReactionGameBase
     {
         internal override ILogger _logger { get; set; }

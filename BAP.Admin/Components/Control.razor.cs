@@ -7,20 +7,20 @@ using System.Threading.Tasks;
 using BAP.Types;
 using BAP.Helpers;
 
-namespace BAP.Web.Pages
+namespace BAP.Admin.Components
 {
-    [MenuItem(DisplayedLabel = "Control", MouseOverText = "Controls and info about all buttons")]
+    [MenuItem("Control", "Controls and info about all buttons",true, "45944587-8f34-417a-9911-93d9a9297edd")]
     public partial class Control : ComponentBase, IDisposable
     {
 
         [Inject]
         ISubscriber<NodeChangeMessage> nodeChanged { get; set; } = default!;
         [Inject]
-        ControlHandler CtrlHandler { get; set; } = default!;
+        IControlHandler CtrlHandler { get; set; } = default!;
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        IEnumerable<IBapButtonProvider> AllControllers { get; set; } = default!;
+        IEnumerable<IButtonProvider> AllControllers { get; set; } = default!;
         IDisposable subscriptions = default!;
         string mosquittoAddress = "";
         bool isConnected = false;

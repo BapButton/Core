@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NLog.Targets;
-using BAP.Web.Models;
 using BAP.Web.TTS;
 using Scrutor;
 using MudBlazor.Services;
@@ -38,16 +37,10 @@ namespace BAP.Web
             services.AddRazorPages();
             services.AddServerSideBlazor();
             //services.AddSingleton<IGameManager, CoreGameManager>();
-            services.AddSingleton<AudioManager>();
-            services.AddSingleton<IGameHandler, DefaultGameHandler>();
-            services.AddSingleton<ILoadablePageHandler, DefaultLoadablePageHandler>();
-            services.AddSingleton<ILayoutHandler, DefaultLayoutHandler>();
-            services.AddSingleton<IKeyboardHandler, DefaultKeyboardHandler>();
-            services.AddSingleton<ControlHandler>();
+            //services.AddSingleton<AudioManager>();
             services.AddHostedService<ConnectionCoreHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpClient<ITtsService, TtsService>(client => client.BaseAddress = new Uri("http://localhost:5002/api/"));
-            services.AddTransient<IValidator<FileUpload>, FileUploadValidator>();
             services.AddDbContextFactory<ButtonContext>();
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
@@ -55,42 +48,6 @@ namespace BAP.Web
             services.AddSingleton<LoadedAddonHolder>();
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
-            //services.Scan(scan => scan.FromApplicationDependencies()
-            //        .AddClasses(t => { t.AssignableTo<IGameDataSaver>(); })
-            //          .AsImplementedInterfaces()
-            //          .WithTransientLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapMessageSender>(); })
-                      .AsImplementedInterfaces()
-                      .WithTransientLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapButtonProvider>(); })
-                      .AsImplementedInterfaces()
-                      .WithTransientLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapGame>(); })
-                      .AsSelf()
-                      .WithTransientLifetime());
-            //Todo - this seems totally wrong. Why would a GameDescription be a singleton. 
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapGameDescription>(); })
-                      .AsImplementedInterfaces().WithSingletonLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapGameDescription>(); })
-                      .AsSelf().WithSingletonLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IBapKeyboardProvider>(); })
-                        .AsSelf().WithTransientLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IMainMenuItem>(); })
-                        .AsSelf().WithSingletonLifetime());
-            services.Scan(scan => scan.FromApplicationDependencies()
-                    .AddClasses(t => { t.AssignableTo<IMainMenuItem>(); })
-                         .AsImplementedInterfaces().WithSingletonLifetime());
-            //This makes the app not start. I don't have any idea why.    
-            services.Scan(scan => scan.FromApplicationDependencies()
-                .AddClasses(t => { t.AssignableTo<IBapKeyboardProvider>(); })
-                  .AsImplementedInterfaces().WithTransientLifetime());
             services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
@@ -106,8 +63,44 @@ namespace BAP.Web
             services.AddLogging();
 
             LoadedAddonHolder addonHolder = new();
-            addonHolder.AllAddonAssemblies = AddonLoader.AddAllAddonsToDI(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
+            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
+            foreach (var assembly in addonHolder.AllLoadedAssemblies)
+            {
+                var buttonProviders = AddonLoader.GetTypesThatImpementsInterface<IButtonProvider>(assembly);
+                foreach (var buttonProvider in buttonProviders)
+                {
+                    services.AddTransient(typeof(IButtonProvider), buttonProvider);
+                    services.AddTransient(buttonProvider);
+                }
+                var keyboardProviders = AddonLoader.GetTypesThatImpementsInterface<IKeyboardHandler>(assembly);
+                foreach (var keyboardProvider in keyboardProviders)
+                {
+                    services.AddTransient(typeof(IKeyboardHandler), keyboardProvider);
+                    services.AddTransient(keyboardProvider);
+                }
+                var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
+                foreach (var messageSender in messageSenders)
+                {
+                    services.AddTransient(typeof(IBapMessageSender), messageSender);
+                    services.AddTransient(messageSender);
+                }
+                var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
+                foreach (var diSetup in diSetups)
+                {
+                    if (diSetup.IsClass)
+                    {
+                        IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup)Activator.CreateInstance(diSetup);
+                        if (dependencyInjectionSetup != null)
+                        {
+                            dependencyInjectionSetup.AddItemsToDi(services);
+                        }
+
+                    }
+
+                }
+
+            }
             services.AddSingleton(addonHolder);
         }
 

@@ -1,14 +1,14 @@
-﻿using MessagePipe;
+﻿using BAP.Types;
+using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
-using BapShared;
 
 
-namespace BAP.Web.Pages
+namespace BAP.Admin.Components
 {
     public partial class AudioPlayer : ComponentBase, IDisposable
     {

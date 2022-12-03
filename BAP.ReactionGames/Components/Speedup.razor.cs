@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BAP.ReactionGames.Components
 {
+    [GamePage("Speed Up", "Game slowly speeds up. How long can you keep the board from filling up without making too many mistakes?", "27f39a0a-914f-4563-bbb0-b8511474956f")]
     public partial class SpeedUp : GamePage
     {
         [Inject]

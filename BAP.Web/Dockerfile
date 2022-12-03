@@ -14,7 +14,6 @@ FROM mcr.microsoft.com/dotnet/nightly/sdk:6.0-bullseye-slim AS build
 WORKDIR /src
 COPY ["../BapWeb/BapWeb.csproj", "../BapWeb/"]
 COPY ["../TinkerButton/BapButton.csproj", "../TinkerButton/"]
-COPY ["../BapShared/BapShared.csproj", "../BapShared/"]
 COPY ["../MockButtonCore/MockButtonCore.csproj", "../MockButtonCore/"]
 COPY ["../BapDb/BapDb.csproj", "../BapDb/"]
 RUN dotnet restore "BapWeb/BapWeb.csproj"

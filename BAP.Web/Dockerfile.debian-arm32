@@ -7,7 +7,6 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0.102-ca-patch-buster-slim AS build
 WORKDIR /src
 COPY ["BapWeb/BapWeb.csproj", "BapWeb/"]
 COPY ["TinkerButton/BapButton.csproj", "TinkerButton/"]
-COPY ["BapShared/BapShared.csproj", "BapShared/"]
 RUN dotnet restore "BapWeb/BapWeb.csproj"
 COPY . .
 WORKDIR "/src/BapWeb"

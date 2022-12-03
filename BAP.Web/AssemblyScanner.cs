@@ -6,6 +6,8 @@ namespace BAP.Web
 {
     public class AssemblyScanner
     {
+        private static List<string> BuiltinStatingNames = new List<string>() { "System", "AspNetCore", "Microsoft", "mscorlib", "netstandard", "WindowsBase" };
+
         public static List<Assembly> GetAllDependentAssemblies()
         {
             var assembliesByName = DependencyContext.Default.RuntimeLibraries
@@ -22,15 +24,16 @@ namespace BAP.Web
 
             foreach (var assemblyName in assemblyNames)
             {
-                try
-                {
-                    // Try to load the referenced assembly...
-                    assemblies.Add(Assembly.Load(assemblyName));
-                }
-                catch
-                {
-                    // Failed to load assembly. Skip it.
-                }
+                if (!BuiltinStatingNames.Any(t => assemblyName.FullName.StartsWith(t, StringComparison.InvariantCulture)))
+                    try
+                    {
+                        // Try to load the referenced assembly...
+                        assemblies.Add(Assembly.Load(assemblyName));
+                    }
+                    catch
+                    {
+                        // Failed to load assembly. Skip it.
+                    }
             }
 
             return assemblies;

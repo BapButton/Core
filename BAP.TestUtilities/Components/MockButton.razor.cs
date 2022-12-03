@@ -26,7 +26,7 @@ namespace BAP.TestUtilities
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        ControlHandler CtrlHandler { get; set; } = default!;
+        IControlHandler CtrlHandler { get; set; } = default!;
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
@@ -62,7 +62,7 @@ namespace BAP.TestUtilities
 
         protected async Task<bool> ClickButton()
         {
-        
+
             ButtonPress bp = new()
             {
                 MillisSinceLight = 0,

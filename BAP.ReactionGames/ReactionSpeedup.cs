@@ -6,14 +6,6 @@ using BAP.ReactionGames.Components;
 
 namespace BAP.ReactionGames
 {
-    public class ReactionSpeedupGameDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(SpeedUp);
-        public string Name => "Speed Up";
-        public string Description => "Game slowly speeds up. How long can you keep the board from filling up without making too many mistakes?";
-        public string UniqueId => "27f39a0a-914f-4563-bbb0-b8511474956f";
-        public string ScoringModelVersion => "1.0.1";
-    }
     public class ReactionSpeedup : ReactionGameBase
     {
         internal override ILogger _logger { get; set; }

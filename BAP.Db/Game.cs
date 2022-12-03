@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BAP.Db
 {
@@ -20,5 +16,14 @@ namespace BAP.Db
         [StringLength(40)]
         public string GameUniqueId { get; set; } = "";
         public DateTime DateGameSelectedUTC { get; set; }
+    }
+    public class MenuItemStatus
+    {
+
+        public int MenuItemStatusId { get; set; }
+        [StringLength(80)]
+        public string MenuItemUniqueId { get; set; } = "";
+        public bool ShowInMainMenu { get; set; }
+        public int Order { get; set; }
     }
 }

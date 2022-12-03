@@ -19,7 +19,7 @@ using static BAP.Helpers.BapBasicGameHelper;
 
 namespace BAP.Helpers
 {
-    public class MqttBapButtonProvider : IBapButtonProvider
+    public class MqttBapButtonProvider : IButtonProvider
     {
         private readonly ILogger<MqttBapButtonProvider> _logger;
         public ConcurrentDictionary<string, bool> ConnectedNodes = new ConcurrentDictionary<string, bool>();

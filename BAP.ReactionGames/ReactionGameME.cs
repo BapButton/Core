@@ -14,16 +14,7 @@ using BAP.ReactionGames.Components;
 
 namespace BAP.ReactionGames
 {
-    public class ReactionGameMeDescription : IBapGameDescription
-    {
-        public Type TypeOfInitialDisplayComponent => typeof(ReactionME);
-        public string Name => "Mads and Ethan Reaction Game";
-        public string Description => "Mads and Ethan's version of a reaction game";
-        public string UniqueId => "bdf32580-a2e7-4b30-9e4b-42aa51f58a2c";
 
-        public string ScoringModelVersion => "1.0.0";
-
-    }
     public class ReactionGameME : ReactionGameBase
     {
         string lastFaceNodeId = "";

@@ -31,6 +31,8 @@ namespace BAP.Web
     {
         public string DisplayedLabel { get; set; } = "";
         public string MouseOver { get; set; } = "";
+        public string UniqueId { get; set; } = "";
+        public bool ShowByDefault { get; set; } = false;
         public string Path { get; set; } = "";
     }
 

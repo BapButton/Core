@@ -1,0 +1,27 @@
+﻿@page "/manage"
+
+@using Blazored.FluentValidation;
+
+<h1>Install additional games or features</h1>
+
+<h3>Download from Nuget</h3>
+<p>Feature not yet developed!</p>
+
+
+
+<h3>Upload nuget packages </h3>
+
+<EditForm EditContext="editContext" OnValidSubmit="OnSubmit">
+    <div>
+        <DataAnnotationsValidator />
+        <FluentValidationValidator @ref="fluentValidationValidator" DisableAssemblyScanning="@true" />
+        <div class="form-group">
+            Nuget or Zip: <InputFile OnChange="OnChange" class="form-control" />
+            <ValidationMessage For="() => packageUpload.Package" />
+        </div>
+
+        <button>Submit</button>
+    </div>
+</EditForm>
+
+

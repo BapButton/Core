@@ -1,10 +1,6 @@
 ﻿@page "/control"
 
 <h3>Control</h3>
-
-@using BapShared
-
-
     There @(MsgSender.GetConnectedButtons().Count == 1 ? "is" : "are") @MsgSender.GetConnectedButtons().Count   Button connected.
 <div>
     <button @onclick="CheckButtonStatus">Check Button Status</button>

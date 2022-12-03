@@ -8,7 +8,6 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0.100-preview.7-bullseye-slim AS build
 WORKDIR /src
 COPY ["BapWeb/BapWeb.csproj", "BapWeb/"]
 COPY ["TinkerButton/BapButton.csproj", "TinkerButton/"]
-COPY ["BapShared/BapShared.csproj", "BapShared/"]
 COPY ["MockButtonCore/MockButtonCore.csproj", "MockButtonCore/"]
 COPY ["BapDb/BapDb.csproj", "BapDb/"]
 RUN dotnet restore "BapWeb/BapWeb.csproj"

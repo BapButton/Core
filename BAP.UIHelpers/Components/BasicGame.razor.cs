@@ -1,16 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Threading.Tasks;
-using BapShared;
-using BAP.Web.Games;
-using MessagePipe;
-using BAP.Types;
-using BAP.Helpers;
 
-namespace BAP.Web.Pages
+namespace BAP.UIHelpers.Components
 {
     public partial class BasicGame : ComponentBase, IDisposable
     {
@@ -21,6 +11,11 @@ namespace BAP.Web.Pages
         [Inject]
         ISubscriber<GameEventMessage> GameEventPipe { get; set; } = default!;
         IDisposable Subscriptions { get; set; } = default!;
+        Type GameType { get; set; }
+        public void SetGameType(Type gameType)
+        {
+            GameType = gameType;
+        }
         protected override void OnInitialized()
         {
             var bag = DisposableBag.CreateBuilder();
@@ -53,7 +48,7 @@ namespace BAP.Web.Pages
         {
             if (GameHandler.CurrentGame == null)
             {
-                GameHandler.UpdateToNewGameType(typeof(ExplodingBapGame));
+                GameHandler.UpdateToNewGameType(GameType);
             }
             if (GameHandler.CurrentGame != null)
             {

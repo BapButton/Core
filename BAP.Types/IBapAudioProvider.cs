@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BAP.Types
 {
-    public interface IBapAudioProvider : IDisposable
+    public interface IAudioProvider : IDisposable
     {
         string Name { get; }
         Task<bool> Initialize();

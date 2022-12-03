@@ -15,14 +15,14 @@ namespace BAP.TestUtilities.Components
         public Type DynamicComponentToLoad => typeof(ButtonTesting);
         public string MenuItemName => "Button Testing";
     }
-    [MenuItem(DisplayedLabel = "Button Testing", MouseOverText = "Test out with fake buttons")]
+    [MenuItem("Button Testing", "Test out with fake buttons", false, "ea0d8577-609f-40e4-b05e-f02004b080a4")]
     public partial class ButtonTesting : ComponentBase, IDisposable
     {
         [Parameter]
         public bool HideButtonsWhenGameActive { get; set; } = false;
         private string lastButtonMessage = "";
         [Inject]
-        ControlHandler CtrlHandler { get; set; } = default!;
+        IControlHandler CtrlHandler { get; set; } = default!;
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]

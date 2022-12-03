@@ -1,8 +1,4 @@
 ﻿
-using BAP.Db;
-using BAP.Types;
-using BAP.Helpers;
-
 namespace BAP.Admin;
 
 public class LayoutSetupGame : IBapGame
@@ -22,7 +18,7 @@ public class LayoutSetupGame : IBapGame
     ISubscriber<ButtonPressedMessage> ButtonPressedPipe { get; set; } = default!;
     IDisposable subscriptions = default!;
 
-    public LayoutSetupGame(DbAccessor dbaccessor, ILogger<LayoutSetupGame> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender msgSender)
+    public LayoutSetupGame(DbAccessor dbaccessor, ILogger<KeyboardBase> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender msgSender)
     {
         _logger = logger;
         ButtonPressedPipe = buttonPressed;
@@ -54,7 +50,7 @@ public class LayoutSetupGame : IBapGame
         if (connectedButtons > 0)
         {
             RowLayout = new();
-            int minNumberPerRow = (int)Math.Floor((double)connectedButtons / (double)RowCount); // 12
+            int minNumberPerRow = (int)Math.Floor(connectedButtons / (double)RowCount); // 12
             int remainder = connectedButtons % RowCount;
             for (int i = 0; i < RowCount; i++)
             {

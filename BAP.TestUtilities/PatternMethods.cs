@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using BapShared;
-
 namespace BAP.TestUtilities
 {
     public class CheckImage
