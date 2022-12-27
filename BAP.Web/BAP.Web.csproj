@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BAP.Types" Version="0.1.6-beta" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
     <PackageReference Include="MessagePackAnalyzer" Version="2.4.35">
       <PrivateAssets>all</PrivateAssets>
@@ -36,8 +37,8 @@
     <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
     <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
     <ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
-    <ProjectReference Include="..\BAP.Types\BAP.Types.csproj" />
     <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
+    <ProjectReference Include="..\BAP.WebCore\BAP.WebCore.csproj" />
     <ProjectReference Include="..\BasicMathGames\BAP.BasicMathGames.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -46,26 +47,20 @@
     <Watch Include="..\**\*.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Watch Remove="AddonLoader.cs" />
     <Watch Remove="App.razor.cs" />
     <Watch Remove="AssemblyScanner.cs" />
-    <Watch Remove="BapPluginLoadContext.cs" />
     <Watch Remove="BapSettings.cs" />
     <Watch Remove="Controller\FirmwareController.cs" />
     <Watch Remove="Controller\TTSController.cs" />
     <Watch Remove="GamePage.cs" />
-    <Watch Remove="Games\DefaultKeyboard.cs" />
     <Watch Remove="Games\ExplodingBapGame.cs" />
-    <Watch Remove="Games\LayoutSetupGame.cs" />
     <Watch Remove="imports.cs" />
-    <Watch Remove="LoadedAddonHolder.cs" />
     <Watch Remove="Pages\Addition - Copy.razor.cs" />
     <Watch Remove="Pages\Error.cshtml.cs" />
     <Watch Remove="Pages\ExplodingBap.razor" />
     <Watch Remove="Pages\Index.razor" />
     <Watch Remove="Pages\Index.razor.cs" />
     <Watch Remove="Pages\ItemUpload.razor.cs" />
-    <Watch Remove="Pages\ManageContent.razor" />
     <Watch Remove="Pages\Marque.razor.cs" />
     <Watch Remove="Pages\Marquee - Copy.razor.cs" />
     <Watch Remove="Pages\ReactionME - Copy.razor.cs" />

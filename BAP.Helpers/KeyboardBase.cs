@@ -10,7 +10,7 @@ using ConcurrentCollections;
 
 namespace BAP.Helpers;
 
-public abstract class KeyboardBase : IBapKeyboardProvider
+public abstract class KeyboardBase : IKeyboardProvider
 {
     public ILogger _logger { get; set; }
     private List<string> NodeIdsToUse { get; set; } = new();
@@ -51,6 +51,8 @@ public abstract class KeyboardBase : IBapKeyboardProvider
     public List<string> ActiveNodes => NodeIdsToUse.ToList();
 
     public bool PlayDefaultSoundOnPress => PlayKeyPressSound;
+
+    public bool AllowMultiple { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public KeyboardBase(ILogger logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender msgSender, IPublisher<KeyboardKeyPressedMessage> keyboardKeyPressedSender)
     {
@@ -269,12 +271,6 @@ public abstract class KeyboardBase : IBapKeyboardProvider
         ValuesToDisplay = characters.ToCharArray().ToList();
     }
 
-    public Task<bool> Initialize()
-    {
-        Reset();
-        return Task.FromResult(true);
-    }
-
     public void Reset()
     {
         KeyboardValues = new Dictionary<string, char>();
@@ -317,5 +313,11 @@ public abstract class KeyboardBase : IBapKeyboardProvider
         var nodeId = GetNodeIdByChar(character);
     }
 
+    public Task<bool> InitializeAsync()
+    {
 
+        Reset();
+        return Task.FromResult(true);
+
+    }
 }

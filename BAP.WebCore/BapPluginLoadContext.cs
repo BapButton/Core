@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Loader;
 
-namespace BAP.Web
+namespace BAP.WebCore
 {
     public class BapPluginLoadContext : AssemblyLoadContext
     {

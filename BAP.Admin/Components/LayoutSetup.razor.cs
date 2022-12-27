@@ -13,7 +13,7 @@ public partial class LayoutSetup : ComponentBase, IDisposable
     [Inject]
     IGameHandler GameHandler { get; set; } = default!;
     [Inject]
-    ILayoutHandler LayoutHandler { get; set; } = default!;
+    ILayoutProvider LayoutProvider { get; set; } = default!;
     [Inject]
     IBapMessageSender MsgSender { get; set; } = default!;
     [Inject]
@@ -115,7 +115,7 @@ public partial class LayoutSetup : ComponentBase, IDisposable
 
     private async Task<bool> SetButtonLayout(ButtonLayout buttonLayout)
     {
-        LayoutHandler.SetNewButtonLayout(buttonLayout);
+        LayoutProvider.SetNewButtonLayout(buttonLayout);
         await dba.AddButtonLayoutHistory(buttonLayout.ButtonLayoutId);
         MsgSender.SendLayoutUpdate(buttonLayout.ButtonLayoutId);
         return true;

@@ -3,7 +3,7 @@ using BAP.Db;
 using BAP.Types;
 using BAP.Helpers;
 
-namespace BAP.Admin;
+namespace BAP.WebCore;
 
 public class LayoutSetupGame : IBapGame
 {

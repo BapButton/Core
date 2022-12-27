@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BAP.Types" Version="0.1.6-beta" />
 		<PackageReference Include="ConcurrentHashSet" Version="1.3.0" />
 		<PackageReference Include="MessagePack" Version="2.4.35" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
@@ -21,10 +22,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj">
-			<Private>false</Private>
-			<ExcludeAssets>runtime</ExcludeAssets>
-		</ProjectReference>
-		<ProjectReference Include="..\BAP.Types\BAP.Types.csproj">
 			<Private>false</Private>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</ProjectReference>

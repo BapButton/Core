@@ -13,11 +13,16 @@ namespace BAP.PrimaryHandlers
     {
         public void AddItemsToDi(IServiceCollection services)
         {
-            services.AddSingleton<IGameHandler, DefaultGameHandler>();
-            services.AddSingleton<ILoadablePageHandler, DefaultLoadablePageHandler>();
-            services.AddSingleton<ILayoutHandler, DefaultLayoutHandler>();
-            services.AddSingleton<IKeyboardHandler, DefaultKeyboardHandler>();
-            services.AddSingleton<IControlHandler, ControlHandler>();
+            //services.AddSingleton<IGameHandler, DefaultGameHandler>();
+            //services.AddSingleton<DefaultGameHandler>();
+            //services.AddSingleton<ILoadablePageHandler, DefaultLoadablePageHandler>();
+            //services.AddSingleton<DefaultLoadablePageHandler>();
+            //services.AddSingleton<ILayoutHandler, DefaultLayoutHandler>();
+            //services.AddSingleton<DefaultLayoutHandler>();
+            //services.AddSingleton<IKeyboardHandler, DefaultKeyboardHandler>();
+            //services.AddSingleton<DefaultKeyboardHandler>();
+            //services.AddSingleton<IControlHandler, ControlHandler>();
+            //services.AddSingleton<ControlHandler>();
         }
     }
 }

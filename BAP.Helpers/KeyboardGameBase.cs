@@ -21,8 +21,8 @@ namespace BAP.Helpers
 
         public int SecondsToRun { get; set; }
         public IBapMessageSender MsgSender { get; set; }
-        public IKeyboardHandler KeyboardHandler { get; set; }
-        public ILayoutHandler LayoutHandler { get; set; }
+        public IKeyboardProvider KeyboardProvider { get; set; }
+        public ILayoutProvider LayoutProvider { get; set; }
 
         public PausableTimer gameTimer = new PausableTimer();
         public char[] Answer { get; set; } = Array.Empty<char>();
@@ -32,21 +32,21 @@ namespace BAP.Helpers
         public int CurrentSpotInAnswerString = 0;
         public int ButtonCount { get; set; } = 0;
         internal char CurrentDigit => Answer[CurrentSpotInAnswerString];
-        IBapKeyboardProvider keyboard { get; set; }
+        IKeyboardProvider keyboard { get; set; }
 
-        public KeyboardGameBase(IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILayoutHandler layoutHandler, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
+        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
         {
-            KeyboardHandler = keyboardHandler;
+            KeyboardProvider = keyboardProvider;
             MsgSender = msgSender;
             KeyPressed = keyPressed;
             GameHandler = gameHandler;
-            LayoutHandler = layoutHandler;
+            LayoutProvider = layoutProvider;
 
-            if (keyboardHandler.CurrentKeyboard == null)
+            if (layoutProvider == null)
             {
                 throw new Exception("No keyboard is setup");
             }
-            keyboard = keyboardHandler.CurrentKeyboard;
+            keyboard = keyboardProvider;
             var bag = DisposableBag.CreateBuilder();
             KeyPressed.Subscribe(async (x) => await OnCharacterPressed(x)).AddTo(bag);
             subscriptions = bag.Build();
@@ -223,8 +223,8 @@ namespace BAP.Helpers
         {
             if (useTopRowForDisplay)
             {
-                ButtonCount = LayoutHandler?.CurrentButtonLayout?.ButtonPositions.Where(t => t.RowId != 1)?.Count() ?? MsgSender.GetConnectedButtons().Count;
-                nodeIdsToUseForDisplay = LayoutHandler?.CurrentButtonLayout?.ButtonPositions.Where(t => t.RowId == 1).Select(t => t.ButtonId).ToList() ?? new List<string>(); ;
+                ButtonCount = LayoutProvider?.CurrentButtonLayout?.ButtonPositions.Where(t => t.RowId != 1)?.Count() ?? MsgSender.GetConnectedButtons().Count;
+                nodeIdsToUseForDisplay = LayoutProvider?.CurrentButtonLayout?.ButtonPositions.Where(t => t.RowId == 1).Select(t => t.ButtonId).ToList() ?? new List<string>(); ;
                 if (nodeIdsToUseForDisplay.Count < 3)
                 {
                     nodeIdsToUseForDisplay = new List<string>();
@@ -269,7 +269,7 @@ namespace BAP.Helpers
                 await EndGame($"Not enough Buttons.");
                 return false;
             }
-            if (LayoutHandler?.CurrentButtonLayout == null)
+            if (LayoutProvider?.CurrentButtonLayout == null)
             {
                 MsgSender.SendUpdate($"No layout setup. Setup a layout for your buttons", true);
                 await EndGame($"No layout setup.");
@@ -277,7 +277,7 @@ namespace BAP.Helpers
             }
             MsgSender.SendImageToAllButtons(new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.NoPattern), new BapColor(0, 0, 0)));
             MsgSender.SendUpdate("Starting Game", false);
-            KeyboardHandler.CurrentKeyboard.ShowKeyboard();
+            KeyboardProvider.ShowKeyboard();
             await SetupNextMathProblem(false);
             return true;
         }

@@ -27,11 +27,11 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
     /// Todo try turning this into a record so comparison is easier.
     public async Task<List<(string difficulty, string difficultyDescription)>> GetCurrentScoreBoards()
     {
-        List<string> difficulties = await _db.Scores.Select(t => t.DifficultyName).ToListAsync();
+        List<string> difficulties = await _db.Scores.Select(t => t.DifficultyId).ToListAsync();
         List<(string difficulty, string difficultyDescription)> results = new List<(string difficulty, string difficultyDescription)>();
         foreach (var item in difficulties)
         {
-            string details = _db.Scores.OrderByDescending(t => t.ScoreId).First(t => t.DifficultyName == item).DifficultyDescription;
+            string details = _db.Scores.OrderByDescending(t => t.ScoreId).First(t => t.DifficultyId == item).DifficultyDescription;
             results.Add((item, details));
         }
         return results;
@@ -43,7 +43,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
     /// <returns></returns>
     public async Task<string> GetGameStorage()
     {
-        return (await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.GameFullName).FirstOrDefaultAsync())?.Data ?? "";
+        return (await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.CurrentGameUniqueId).FirstOrDefaultAsync())?.Data ?? "";
     }
 
 
@@ -66,10 +66,10 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<bool> UpdateGameStorage(string data)
     {
-        var currentGameStorage = await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.GameFullName).FirstOrDefaultAsync();
+        var currentGameStorage = await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.CurrentGameUniqueId).FirstOrDefaultAsync();
         if (currentGameStorage == null)
         {
-            _db.GameStorageVault.Add(new GameStorage() { GameUniqueId = _gameHandler.GameFullName, Data = data });
+            _db.GameStorageVault.Add(new GameStorage() { GameUniqueId = _gameHandler.CurrentGameUniqueId, Data = data });
         }
         else
         {
@@ -81,7 +81,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<List<Score>> GetScores(string difficulty, int topScoresToTake = 10, bool higherScoreIsBetter = true)
     {
-        var query = _db.Scores.Where(t => t.GameId == _gameHandler.GameFullName && t.DifficultyName == difficulty);
+        var query = _db.Scores.Where(t => t.GameId == _gameHandler.CurrentGameUniqueId && t.DifficultyId == difficulty);
         if (higherScoreIsBetter)
         {
             query = query.OrderByDescending(t => t.NormalizedScore);
@@ -95,7 +95,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<List<Score>> GetScoresWithNewScoreIfWarranted(Score newScore, int topScoresToTake = 10, bool higherScoreIsBetter = true)
     {
-        List<Score> currentScores = await GetScores(newScore.DifficultyName, topScoresToTake, higherScoreIsBetter);
+        List<Score> currentScores = await GetScores(newScore.DifficultyId, topScoresToTake, higherScoreIsBetter);
         if (newScore != null)
         {
 
@@ -115,7 +115,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<Score> AddScore(Score score)
     {
-        score.GameId = _gameHandler.GameFullName;
+        score.GameId = _gameHandler.CurrentGameUniqueId;
 
         _db.Scores.Add(score);
         await _db.SaveChangesAsync();

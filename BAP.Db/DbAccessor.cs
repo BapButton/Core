@@ -8,6 +8,7 @@ using BAP.Types;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Buffers;
+using System.Reflection;
 
 namespace BAP.Db
 {
@@ -137,25 +138,29 @@ namespace BAP.Db
         public async Task<List<string>> AddActiveProvider<T>(bool deactivateOtherProvider) where T : IBapProvider
         {
             using ButtonContext db = new();
-            ActiveProvider activeProvider = GenerateActiveProvider<T>();
-            List<ActiveProvider> currentActiveProviders = await db.ActiveProviders.Where(t => t.ProviderType == activeProvider.ProviderType).ToListAsync();
-            if (currentActiveProviders.Any(t => t.FullName == activeProvider.FullName))
+            ActiveProvider? activeProvider = GenerateActiveProvider<T>();
+            if (activeProvider != null)
             {
-                if (deactivateOtherProvider)
+                List<ActiveProvider> currentActiveProviders = await db.ActiveProviders.Where(t => t.ProviderInterfaceName == activeProvider.ProviderInterfaceName).ToListAsync();
+                if (currentActiveProviders.Any(t => t.ProviderUniqueId == activeProvider.ProviderUniqueId))
                 {
-                    db.ActiveProviders.RemoveRange(currentActiveProviders.Where(t => t.FullName != activeProvider.FullName));
+                    if (deactivateOtherProvider)
+                    {
+                        db.ActiveProviders.RemoveRange(currentActiveProviders.Where(t => t.ProviderUniqueId != activeProvider.ProviderUniqueId));
+                        await db.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    if (deactivateOtherProvider)
+                    {
+                        db.ActiveProviders.RemoveRange(currentActiveProviders);
+                    }
+                    db.ActiveProviders.Add(activeProvider);
                     await db.SaveChangesAsync();
                 }
             }
-            else
-            {
-                if (deactivateOtherProvider)
-                {
-                    db.ActiveProviders.RemoveRange(currentActiveProviders);
-                }
-                db.ActiveProviders.Add(activeProvider);
-                await db.SaveChangesAsync();
-            }
+
             return await GetRecentlyActiveProvider<T>();
         }
         /// <summary>
@@ -168,46 +173,47 @@ namespace BAP.Db
         public async Task<List<string>> RemoveActiveProvider<T>(T type, bool deactivateOtherProvider) where T : IBapProvider
         {
             using ButtonContext db = new();
-            ActiveProvider activeProvider = GenerateActiveProvider<T>();
-            ActiveProvider? currentProvider = await db.ActiveProviders.FirstOrDefaultAsync(t => t.FullName != activeProvider.FullName && t.ProviderType == activeProvider.ProviderType);
-            if (currentProvider != null)
+            ActiveProvider? activeProvider = GenerateActiveProvider<T>();
+            if (activeProvider != null)
             {
-                db.ActiveProviders.Remove(currentProvider);
-                await db.SaveChangesAsync();
+                ActiveProvider? currentProvider = await db.ActiveProviders.FirstOrDefaultAsync(t => t.ProviderUniqueId != activeProvider.ProviderUniqueId && t.ProviderInterfaceName == activeProvider.ProviderInterfaceName);
+                if (currentProvider != null)
+                {
+                    db.ActiveProviders.Remove(currentProvider);
+                    await db.SaveChangesAsync();
+                }
             }
+
             return await GetRecentlyActiveProvider<T>();
         }
 
-        private ActiveProvider GenerateActiveProvider<T>() where T : IBapProvider
+        private ActiveProvider? GenerateActiveProvider<T>() where T : IBapProvider
         {
-            ProviderType providerType = ProviderType.Unknown;
+
+            string providerName = "";
             Type t = typeof(T);
             if (t is null)
             {
                 throw new Exception("No type was passed in");
             }
             var implementedInterfaces = t.GetInterfaces();
-            //todo this really should check what interface it implements and see if it implemthe interface
-            if (t is IAudioProvider)
+            foreach (Type type in implementedInterfaces)
             {
-                providerType = ProviderType.Audio;
+                if (type.GetCustomAttribute<BapProviderInterfaceAttribute>() != null)
+                {
+                    providerName = type.Name;
+                }
             }
-            else if (t is IBapKeyboardProvider)
+            var bapProviderAttribute = t.GetCustomAttribute<BapProviderAttribute>();
+            if (bapProviderAttribute != null)
             {
-                providerType = ProviderType.Keyboard;
+                ActiveProvider activeProvider = new ActiveProvider();
+                activeProvider.ProviderInterfaceName = providerName;
+                activeProvider.ProviderUniqueId = bapProviderAttribute.UniqueId;
+                activeProvider.ProviderName = bapProviderAttribute.Name;
             }
-            else if (t is IButtonProvider)
-            {
-                providerType = ProviderType.Button;
-            }
-            if (providerType == ProviderType.Unknown)
-            {
-                throw new Exception("Unknown type {}");
-            }
-            ActiveProvider activeProvider = new ActiveProvider();
-            activeProvider.ProviderType = providerType;
-            activeProvider.FullName = t.FullName;
-            return activeProvider;
+
+            return null;
         }
 
         /// <summary>
@@ -220,7 +226,7 @@ namespace BAP.Db
 
             using ButtonContext db = new();
             ActiveProvider activeProvider = GenerateActiveProvider<T>();
-            return await db.ActiveProviders.Where(t => t.ProviderType == activeProvider.ProviderType).Select(t => t.FullName).ToListAsync();
+            return await db.ActiveProviders.Where(t => t.ProviderInterfaceName == activeProvider.ProviderInterfaceName).Select(t => t.ProviderName).ToListAsync();
         }
 
         public async Task<FirmwareInfo> AddLatestFirmware(FirmwareInfo latestFirmwareInfo)

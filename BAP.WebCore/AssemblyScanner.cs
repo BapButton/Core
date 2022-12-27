@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyModel;
-using Scrutor;
 using System.Reflection;
 
-namespace BAP.Web
+namespace BAP.WebCore
 {
     public class AssemblyScanner
     {

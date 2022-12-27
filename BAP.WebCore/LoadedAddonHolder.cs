@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 
-namespace BAP.Web
+namespace BAP.WebCore
 {
     public class LoadedAddonHolder
     {
         public List<GameDetail> AllGames { get; set; } = new();
         public List<MenuItemDetail> MainMenuItems { get; set; } = new();
         public List<TopMenuItemDetail> TopBarItems { get; set; } = new();
+        public List<BapProviderDetails> BapProviders { get; set; } = new();
         public List<Assembly> AssembliesWithPages { get; set; } = new();
         public List<Assembly> AllAddonAssemblies { get; set; } = new();
         public List<Assembly> AllCompiledAssembies { get; set; } = new();
@@ -19,12 +20,21 @@ namespace BAP.Web
         }
     }
 
-    public class GameDetail : IMainAreaItem
+    public class GameDetail
     {
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public string UniqueId { get; set; } = "";
         public Type DynamicComponentToLoad { get; set; } = default!;
+    }
+
+    public class BapProviderDetails
+    {
+        public Type BapProviderType { get; init; } = default!;
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string UniqueId { get; set; } = "";
+
     }
 
     public class MenuItemDetail

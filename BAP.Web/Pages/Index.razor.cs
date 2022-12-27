@@ -18,13 +18,11 @@ namespace BAP.Web.Pages
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
-        ILayoutHandler LayoutHandler { get; set; } = default!;
-        [Inject]
-        ILoadablePageHandler LoadablePageHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
         [Inject]
         ISnackbar Snackbar { get; set; } = default!;
         [Inject]
-        IKeyboardHandler KeyboardHandler { get; set; } = default!;
+        IKeyboardProvider KeyboardProvider { get; set; } = default!;
         [Inject]
         IBapMessageSender msgSender { get; set; } = default!;
         [Inject]
@@ -123,13 +121,12 @@ namespace BAP.Web.Pages
 
         private void DeselectGame()
         {
-
-            LoadablePageHandler.CurrentlySelectedItem = null;
+            //todo - Need to unload the game page so it goes back to default;
             GameHandler?.ForceGameEnd();
             msgSender.ClearAllCachedAudio();
-            if (KeyboardHandler.CurrentKeyboard.IsEnabled)
+            if (KeyboardProvider.IsEnabled)
             {
-                KeyboardHandler.CurrentKeyboard.Disable();
+                KeyboardProvider.Disable();
             }
 
             InvokeAsync(() =>

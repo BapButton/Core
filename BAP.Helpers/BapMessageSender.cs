@@ -18,27 +18,27 @@ namespace BAP.Helpers
         private IPublisher<GameEventMessage> GameEventMessageSender { get; set; } = default!;
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<LayoutChangeMessage> LayoutChangeSender { get; set; } = default!;
-        private IControlHandler ControlHandler { get; set; }
+        private IGameHandler GameHandler { get; set; }
+        private IButtonProvider ButtonProvider { get; set; }
         public int ButtonCount
         {
             get
             {
-                return ControlHandler.CurrentButtonProvider?.GetConnectedButtons().Count ?? 0;
+                return ButtonProvider.GetConnectedButtons().Count;
             }
         }
 
-        public BapMessageSender(IPublisher<ButtonPressedMessage> buttonPressed, IPublisher<StandardButtonImageMessage> standardButtonMessageSender, IPublisher<RestartButtonMessage> restartButtonMessageSender, IPublisher<StatusButtonMessage> statusButtonMessageSender, IPublisher<TurnOffButtonMessage> turnOffButtonMessageSender, IPublisher<GameEventMessage> gameEventMessageSender, IPublisher<PlayAudioMessage> playAudioMessageSender, IControlHandler control, IPublisher<LayoutChangeMessage> layoutChangeSender)
+        public BapMessageSender(IPublisher<ButtonPressedMessage> buttonPressed, IPublisher<StandardButtonImageMessage> standardButtonMessageSender, IPublisher<RestartButtonMessage> restartButtonMessageSender, IPublisher<StatusButtonMessage> statusButtonMessageSender, IPublisher<TurnOffButtonMessage> turnOffButtonMessageSender, IPublisher<GameEventMessage> gameEventMessageSender, IPublisher<PlayAudioMessage> playAudioMessageSender, IButtonProvider buttonProvider, IPublisher<LayoutChangeMessage> layoutChangeSender)
         {
 
             StandardButtonMessageSender = standardButtonMessageSender;
             RestartButtonMessageSender = restartButtonMessageSender;
             StatusButtonMessageSender = statusButtonMessageSender;
             ButtonPressedSender = buttonPressed;
-            ControlHandler = control;
             TurnOffButtonMessageSender = turnOffButtonMessageSender;
             GameEventMessageSender = gameEventMessageSender;
             PlayAudioMessageSender = playAudioMessageSender;
-            LayoutChangeSender = layoutChangeSender;
+            ButtonProvider = buttonProvider;
         }
 
         public void PlayAudio(string fileName, bool stopAllOtherAudio = false)
@@ -92,16 +92,16 @@ namespace BAP.Helpers
 
         public List<string> GetConnectedButtons()
         {
-            return ControlHandler.CurrentButtonProvider?.GetConnectedButtons() ?? new List<string>();
+            return ButtonProvider.GetConnectedButtons() ?? new List<string>();
         }
         public List<string> GetConnectedButtonsInOrder()
         {
-            return ControlHandler.CurrentButtonProvider?.GetConnectedButtonsInOrder() ?? new List<string>();
+            return ButtonProvider.GetConnectedButtonsInOrder() ?? new List<string>();
         }
 
         public List<(string nodeId, ButtonStatus buttonStatus)> GetAllConnectedButtonInfo()
         {
-            return ControlHandler.CurrentButtonProvider?.GetAllConnectedButtonInfo() ?? new List<(string nodeId, ButtonStatus buttonStatus)>();
+            return ButtonProvider.GetAllConnectedButtonInfo() ?? new List<(string nodeId, ButtonStatus buttonStatus)>();
         }
 
         public void MockClickButton(string nodeId, ButtonPress buttonPress)

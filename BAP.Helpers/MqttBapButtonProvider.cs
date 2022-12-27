@@ -29,29 +29,27 @@ namespace BAP.Helpers
         private ISubscriber<StandardButtonImageMessage> StandardButtonMessagePipe { get; set; }
         private ISubscriber<RestartButtonMessage> RestartButtonMessagePipe { get; set; }
         private ISubscriber<StatusButtonMessage> StatusButtonMessagePipe { get; set; }
-        private ISubscriber<ButtonImageMessage> ButtonImageMessagePipe { get; set; }
         //private ISubscriber<InternalCustomImageMessage> InternalCustomImagePipe { get; set; }
         private ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<ButtonPressedMessage> ButtonPressSender { get; set; } = default!;
         private IGameHandler GameHandler { get; init; }
-        private ILayoutHandler LayoutHandler { get; init; }
+        private ILayoutProvider LayoutProvider { get; init; }
         public string Name => "Mqtt Controller";
 
-        public MqttBapButtonProvider(ILogger<MqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<ButtonImageMessage> buttonImageMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
-     IGameHandler gameHandler, ILayoutHandler layoutHandler)
+        public MqttBapButtonProvider(ILogger<MqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
+     IGameHandler gameHandler, ILayoutProvider layoutProvider)
         {
             _logger = logger;
             StandardButtonMessagePipe = standardButtonMessagePipe;
             RestartButtonMessagePipe = restartButtonMessagePipe;
             StatusButtonMessagePipe = statusButtonMessagePipe;
-            ButtonImageMessagePipe = buttonImageMessagePipe;
             TurnOffButtonMessagePipe = turnOffButtonMessagePipe;
             //InternalCustomImagePipe = internalCustomImage;
             NodeChangeSender = nodeChangeSender;
             ButtonPressSender = buttonPressSender;
             GameHandler = gameHandler;
-            LayoutHandler = layoutHandler;
+            LayoutProvider = layoutProvider;
 
         }
 
@@ -99,7 +97,6 @@ namespace BAP.Helpers
             StatusButtonMessagePipe.Subscribe(async (x) => await GetStatusFromButttons(x.NodeId)).AddTo(bag);
             TurnOffButtonMessagePipe.Subscribe(async (x) => await TurnOffButton(x.NodeId)).AddTo(bag);
             RestartButtonMessagePipe.Subscribe(async (x) => await RestartAButton(x.NodeId)).AddTo(bag);
-            ButtonImageMessagePipe.Subscribe(async (x) => await SendButtonImage(x.NodeId, x.ButtonImage)).AddTo(bag);
             //InternalCustomImagePipe.Subscribe(async (x) => await SendInternalCustomImage(x.NodeId, x.CustomImage)).AddTo(bag);
             subscriptions = bag.Build();
 
@@ -166,7 +163,7 @@ namespace BAP.Helpers
         {
             return managedMqttClient;
         }
-        public async Task<bool> Initialize()
+        public async Task<bool> InitializeAsync()
         {
             string? mosquittoAddress = Environment.GetEnvironmentVariable("MosquittoAddress");
             return await Initialize(mosquittoAddress ?? "", null, "");
@@ -188,7 +185,7 @@ namespace BAP.Helpers
 
         public List<string> GetConnectedButtonsInOrder()
         {
-            ButtonLayout? currentLayout = LayoutHandler.CurrentButtonLayout;
+            ButtonLayout? currentLayout = LayoutProvider.CurrentButtonLayout;
             if (currentLayout != null)
             {
                 IEnumerable<string> buttons = currentLayout.ButtonPositions.OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Select(t => t.ButtonId).ToList();

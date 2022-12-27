@@ -1,12 +1,11 @@
 ﻿using BAP.Types;
-using BAP.Web.Pages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Reflection;
 using System.Windows.Input;
 
-namespace BAP.Web
+namespace BAP.WebCore
 {
     public static class AddonLoader
     {
@@ -109,7 +108,7 @@ namespace BAP.Web
                     Path.GetDirectoryName(
                         Path.GetDirectoryName(
                             Path.GetDirectoryName(
-                                Path.GetDirectoryName(typeof(Program).Assembly.Location)))))));
+                                Path.GetDirectoryName(AppContext.BaseDirectory)))))));
 
             string pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
             Console.WriteLine($"Loading commands from: {pluginLocation}");

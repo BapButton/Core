@@ -40,14 +40,8 @@ namespace BAP.Web
             //services.AddSingleton<AudioManager>();
             services.AddHostedService<ConnectionCoreHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddAllAddonsAndRequiredDiServices();
             services.AddHttpClient<ITtsService, TtsService>(client => client.BaseAddress = new Uri("http://localhost:5002/api/"));
-            services.AddDbContextFactory<ButtonContext>();
-            services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
-            services.AddTransient<DbAccessor>();
-            services.AddSingleton<AnimationController>();
-            services.AddSingleton<LoadedAddonHolder>();
-            services.AddMessagePipe();
-            services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddMudServices(config =>
             {
                 config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
@@ -62,93 +56,13 @@ namespace BAP.Web
             });
             services.AddLogging();
 
-            LoadedAddonHolder addonHolder = new();
-            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
-            addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
-            foreach (var assembly in addonHolder.AllLoadedAssemblies)
-            {
-                var buttonProviders = AddonLoader.GetTypesThatImpementsInterface<IButtonProvider>(assembly);
-                foreach (var buttonProvider in buttonProviders)
-                {
-                    services.AddTransient(typeof(IButtonProvider), buttonProvider);
-                    services.AddTransient(buttonProvider);
-                }
-                var keyboardProviders = AddonLoader.GetTypesThatImpementsInterface<IKeyboardHandler>(assembly);
-                foreach (var keyboardProvider in keyboardProviders)
-                {
-                    services.AddTransient(typeof(IKeyboardHandler), keyboardProvider);
-                    services.AddTransient(keyboardProvider);
-                }
-                var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
-                foreach (var messageSender in messageSenders)
-                {
-                    services.AddTransient(typeof(IBapMessageSender), messageSender);
-                    services.AddTransient(messageSender);
-                }
-                var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
-                foreach (var diSetup in diSetups)
-                {
-                    if (diSetup.IsClass)
-                    {
-                        IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup)Activator.CreateInstance(diSetup);
-                        if (dependencyInjectionSetup != null)
-                        {
-                            dependencyInjectionSetup.AddItemsToDi(services);
-                        }
 
-                    }
-
-                }
-
-            }
-            services.AddSingleton(addonHolder);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger)
         {
-            List<(string routeName, string assemblyName)> currentlyAddedRoutes = new();
-            foreach (Assembly loadedAssembly in loadedAddonHolder.AllLoadedAssemblies)
-            {
-                var (routes, menuItems, topMenuItemDetails) = AddonLoader.GetLoadableComponents(loadedAssembly);
-                if (routes.Count > 0)
-                {
-                    List<(string routeName, string assemblyName)> problemRoutes = new();
-                    List<(string routeName, string assemblyName)> goodRoutes = new();
-                    foreach (var page in routes)
-                    {
-                        (string routeName, string assemblyName) matchingRoute = currentlyAddedRoutes.FirstOrDefault(t => t.routeName.Equals(page, StringComparison.OrdinalIgnoreCase));
-                        if (matchingRoute != default)
-                        {
-                            problemRoutes.Add(matchingRoute);
-                        }
-                        else
-                        {
-                            goodRoutes.Add((page, loadedAssembly.FullName));
-                        }
-                    }
-                    if (problemRoutes.Count == 0)
-                    {
-                        currentlyAddedRoutes.AddRange(goodRoutes);
-                        loadedAddonHolder.AssembliesWithPages.Add(loadedAssembly);
-                    }
-                    else
-                    {
-                        foreach (var item in problemRoutes)
-                        {
-                            logger.LogError($"Could not load routes for Assembly {loadedAssembly.FullName} because it matches route {item.routeName} which is already prepared for loading from {item.assemblyName}");
-                        }
-
-                    }
-                    if (problemRoutes.Count == 0)
-                    {
-                        loadedAddonHolder.MainMenuItems.AddRange(menuItems);
-                        loadedAddonHolder.TopBarItems.AddRange(topMenuItemDetails);
-                    }
-                }
-
-            }
-
+            WebHostStartupMethods.SetupPages(loadedAddonHolder, logger);
 
             if (env.IsDevelopment())
             {
@@ -181,5 +95,7 @@ namespace BAP.Web
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Trace);
             //NLog.Config.SimpleConfigurator.ConfigureForConsoleLogging();
         }
+
+
     }
 }
