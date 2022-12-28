@@ -22,7 +22,7 @@ namespace BAP.MemoryGames.Components
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
-        ILayoutHandler LayoutHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
         [Inject]
         IBapMessageSender msgSender { get; set; } = default!;
         private SimonGame simonGame { get; set; } = default!;
@@ -113,9 +113,9 @@ namespace BAP.MemoryGames.Components
             {
                 ButtonsToUse = maxButtons;
             }
-            if (LayoutHandler.CurrentButtonLayout != null)
+            if (LayoutProvider.CurrentButtonLayout != null)
             {
-                ButtonRowList = Enumerable.Range(1, LayoutHandler.CurrentButtonLayout.RowCount).ToList();
+                ButtonRowList = Enumerable.Range(1, LayoutProvider.CurrentButtonLayout.RowCount).ToList();
             }
             else
             {

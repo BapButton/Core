@@ -28,18 +28,18 @@ namespace BAP.WebCore
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
-                var buttonProviders = AddonLoader.GetTypesThatImpementsInterface<IBapProvider>(assembly);
-                foreach (var buttonProvider in buttonProviders)
-                {
-                    services.AddTransient(typeof(IButtonProvider), buttonProvider);
-                    services.AddTransient(buttonProvider);
-                }
-                var keyboardProviders = AddonLoader.GetTypesThatImpementsInterface<IKeyboardHandler>(assembly);
-                foreach (var keyboardProvider in keyboardProviders)
-                {
-                    services.AddTransient(typeof(IKeyboardHandler), keyboardProvider);
-                    services.AddTransient(keyboardProvider);
-                }
+                //var buttonProviders = AddonLoader.GetTypesThatImpementsInterface<IBapProvider>(assembly);
+                //foreach (var buttonProvider in buttonProviders)
+                //{
+                //    services.AddTransient(typeof(IButtonProvider), buttonProvider);
+                //    services.AddTransient(buttonProvider);
+                //}
+                //var keyboardProviders = AddonLoader.GetTypesThatImpementsInterface<IKeyboardHandler>(assembly);
+                //foreach (var keyboardProvider in keyboardProviders)
+                //{
+                //    services.AddTransient(typeof(IKeyboardHandler), keyboardProvider);
+                //    services.AddTransient(keyboardProvider);
+                //}
                 var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
                 foreach (var messageSender in messageSenders)
                 {
@@ -51,7 +51,7 @@ namespace BAP.WebCore
                 {
                     if (diSetup.IsClass)
                     {
-                        IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup)Activator.CreateInstance(diSetup);
+                        IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup?)Activator.CreateInstance(diSetup);
                         if (dependencyInjectionSetup != null)
                         {
                             dependencyInjectionSetup.AddItemsToDi(services);

@@ -140,43 +140,32 @@ namespace BAP.ReactionGames
             {
                 if (lastSwordNodeId == e.NodeId)
                 {
-                    if (e.ButtonPress.TimeSinceLightTurnedOff < 150)
+                    //This use to use TimeSinceLightTurnedOff
+                    if (bonusGame != null)
                     {
-                        if (bonusGame != null)
-                        {
-                            bonusGame.Dispose();
-                        }
-                        bonusGame = Services.GetRequiredService<SwordBonusGame>();
-                        PauseGame(true);
-                        MsgSender.PlayAudio(StartOfBonusRound);
-                        await bonusGame.Start(20);
+                        bonusGame.Dispose();
                     }
-                    else
-                    {
-                        _logger.Log(LogLevel.Information, $"The sword was pressed but late. TimeSinceLightTurnedOff was {e.ButtonPress.TimeSinceLightTurnedOff}");
+                    bonusGame = Services.GetRequiredService<SwordBonusGame>();
+                    PauseGame(true);
+                    MsgSender.PlayAudio(StartOfBonusRound);
+                    await bonusGame.Start(20);
 
-                    }
 
 
                 }
                 else if (lastFaceNodeId == e.NodeId)
                 {
-                    if (e.ButtonPress.TimeSinceLightTurnedOff < 150)
+                    //This use to use TimeSinceLightTurnedOff
+                    if (lastFaceWasAFrownyFace)
                     {
-                        if (lastFaceWasAFrownyFace)
-                        {
-                            await EndGame("It was a frowny Face", true);
-                            MsgSender.PlayAudio(FrownyFaceSound);
-                        }
-                        else
-                        {
-                            //this increments the score by 3 total because rightbuttonpressed does one.;
-                            correctScore += 3;
-                            await RightButtonPressed(e.ButtonPress, false, false);
-                        }
+                        await EndGame("It was a frowny Face", true);
+                        MsgSender.PlayAudio(FrownyFaceSound);
                     }
+                    else
                     {
-                        _logger.Log(LogLevel.Information, $"The smiley was pressed but late. TimeSinceLightTurnedOff was {e.ButtonPress.TimeSinceLightTurnedOff}");
+                        //this increments the score by 3 total because rightbuttonpressed does one.;
+                        correctScore += 3;
+                        await RightButtonPressed(e.ButtonPress, false, false);
                     }
 
                 }

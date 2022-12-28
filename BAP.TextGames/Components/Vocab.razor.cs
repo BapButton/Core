@@ -13,7 +13,7 @@ namespace BAP.TextGames.Components
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
-        ILayoutHandler LayoutHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
         //[Inject]
         //NavigationManager NavManager { get; set; } = default!;
 
@@ -69,7 +69,7 @@ namespace BAP.TextGames.Components
                 dialogParameters.Add("NewScore", newScore);
                 dialogParameters.Add("GameDataSaver", game?.DbSaver);
                 dialogParameters.Add("Description", newScore?.DifficultyDescription ?? "");
-                dialogParameters.Add("Difficulty", newScore?.DifficultyName ?? "");
+                dialogParameters.Add("Difficulty", newScore?.DifficultyId ?? "");
                 DialogService.Show<HighScoreTable>("High Scores", dialogParameters, dialogOptions);
             }
         }

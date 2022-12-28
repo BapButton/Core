@@ -26,7 +26,9 @@ namespace BAP.TestUtilities
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        IControlHandler CtrlHandler { get; set; } = default!;
+        IBapProviderChanger BapProviderChanger { get; set; } = default!;
+        [Inject]
+        IButtonProvider ButtonProvider { get; set; } = default!;
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
@@ -63,19 +65,16 @@ namespace BAP.TestUtilities
         protected async Task<bool> ClickButton()
         {
 
-            ButtonPress bp = new()
-            {
-                MillisSinceLight = 0,
-                TimeSinceLightTurnedOff = 0
-            };
+            ButtonPress bp = new();
             MsgSender.MockClickButton(NodeId, bp);
             return true;
         }
         protected void RemoveButton()
         {
-            if (CtrlHandler.CurrentButtonProvider.GetType() == typeof(MockButtonProvider))
+            var currentButtonProvider = BapProviderChanger.GetCurrentBapProvider<IButtonProvider>();
+            if (currentButtonProvider.GetType() == typeof(MockButtonProvider))
             {
-                ((MockButtonProvider)CtrlHandler.CurrentButtonProvider).RemoveNode(NodeId);
+                ((MockButtonProvider)currentButtonProvider).RemoveNode(NodeId);
             }
         }
 

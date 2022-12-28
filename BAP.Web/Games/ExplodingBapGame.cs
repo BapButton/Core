@@ -42,7 +42,7 @@ namespace BAP.Web.Games
         public int FrameSpacing { get; set; } = 0;
         List<ulong[,]> PossibleImages { get; set; } = new();
         IGameHandler GameHandler { get; set; } = default!;
-        ILayoutHandler LayoutHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
         bool ExplosionInProcess;
         ExplosionTracker? currentExplosionTracker = null;
         CancellationTokenSource timerTokenSource = new();
@@ -56,7 +56,7 @@ namespace BAP.Web.Games
 
         //int minOverlap = 1;
         readonly int failOverlap = 8;
-        public ExplodingBapGame(ILogger<ExplodingBapGame> logger, IBapMessageSender messageSender, IGameHandler gameHandler, ILayoutHandler layoutHandler, ISubscriber<ButtonPressedMessage> buttonPressedPipe)
+        public ExplodingBapGame(ILogger<ExplodingBapGame> logger, IBapMessageSender messageSender, IGameHandler gameHandler, ILayoutProvider layoutProvider, ISubscriber<ButtonPressedMessage> buttonPressedPipe)
         {
             Logger = logger;
             MsgSender = messageSender;
@@ -77,13 +77,13 @@ namespace BAP.Web.Games
                 string path = Path.Combine(".", "wwwroot", "sprites", "ExplodingBap.bmp");
                 PossibleImages = new SpriteParser(path).GetCustomMatricesFromCustomSprite();
             }
-            if (LayoutHandler == null || LayoutHandler?.CurrentButtonLayout == null)
+            if (LayoutProvider == null || LayoutProvider?.CurrentButtonLayout == null)
             {
                 MsgSender.SendUpdate("Exploding Bap requires a button Layout", fatalError: true);
                 await ForceEndGame();
                 return false;
             }
-            foreach (var row in LayoutHandler.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
+            foreach (var row in LayoutProvider.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
             {
                 firstAndLastColumnNodeIds.Add(row.OrderBy(t => t.ColumnId).First().ButtonId);
                 firstAndLastColumnNodeIds.Add(row.OrderByDescending(t => t.ColumnId).First().ButtonId);

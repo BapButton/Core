@@ -1,9 +1,9 @@
 ﻿<div>
     <MudTypography>@MsgSender.GetConnectedButtons().Count</MudTypography>
-    @if (LayoutHandler.CurrentButtonLayout != null)
+    @if (LayoutProvider.CurrentButtonLayout != null)
     {
         <MudButton @onclick="() => NavigateToLayout()">
-            <MudIcon Title="@LayoutHandler.CurrentButtonLayout.Description" Icon="@Icons.Material.Filled.CheckBox" />
+            <MudIcon Title="@LayoutProvider.CurrentButtonLayout.Description" Icon="@Icons.Material.Filled.CheckBox" />
         </MudButton>
     }
     else

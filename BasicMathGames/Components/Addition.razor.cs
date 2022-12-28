@@ -10,7 +10,7 @@ namespace BAP.BasicMathGames.Components
         IGameHandler GameHandler { get; set; } = default!;
 
         [Inject]
-        ILayoutHandler LayoutHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
 
         private AdditionGame game { get; set; } = default!;
         private bool TempUseTopRowAsDisplay { get; set; } = true;
@@ -73,12 +73,12 @@ namespace BAP.BasicMathGames.Components
 
         private bool IsTopRowButtonDisplayPossible()
         {
-            if (LayoutHandler.CurrentButtonLayout != null)
+            if (LayoutProvider.CurrentButtonLayout != null)
             {
-                var topRow = LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == 1).Count();
+                var topRow = LayoutProvider.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId == 1).Count();
                 if (topRow > 2)
                 {
-                    if (LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId != 1).Count() > 5)
+                    if (LayoutProvider.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId != 1).Count() > 5)
                     {
                         return true;
                     }
@@ -107,7 +107,7 @@ namespace BAP.BasicMathGames.Components
                 dialogParameters.Add("NewScore", newScore);
                 dialogParameters.Add("GameDataSaver", game?.DbSaver);
                 dialogParameters.Add("Description", newScore?.DifficultyDescription ?? difficultyDetails.longVersion);
-                dialogParameters.Add("Difficulty", newScore?.DifficultyName ?? difficultyDetails.shortVersion);
+                dialogParameters.Add("Difficulty", newScore?.DifficultyId ?? difficultyDetails.shortVersion);
                 DialogService.Show<HighScoreTable>("High Scores", dialogParameters, dialogOptions);
             }
 

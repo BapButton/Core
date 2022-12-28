@@ -7,16 +7,18 @@ using System.Threading.Tasks;
 using BAP.Types;
 using BAP.Helpers;
 
-namespace BAP.Admin.Components
+namespace BAP.WebCore.Components
 {
-    [MenuItem("Control", "Controls and info about all buttons",true, "45944587-8f34-417a-9911-93d9a9297edd")]
+    [MenuItem("Control", "Controls and info about all buttons", true, "45944587-8f34-417a-9911-93d9a9297edd")]
     public partial class Control : ComponentBase, IDisposable
     {
 
         [Inject]
         ISubscriber<NodeChangeMessage> nodeChanged { get; set; } = default!;
         [Inject]
-        IControlHandler CtrlHandler { get; set; } = default!;
+        IBapProviderChanger BapProviderChanger { get; set; } = default!;
+        [Inject]
+        IButtonProvider ButtonProvider { get; set; } = default!;
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
@@ -35,9 +37,9 @@ namespace BAP.Admin.Components
             mosquittoAddress = Environment.GetEnvironmentVariable("MosquittoAddress") ?? "";
 
 
-            if (CtrlHandler.CurrentButtonProvider.GetType() == typeof(MqttBapButtonProvider))
+            if (BapProviderChanger.GetCurrentBapProvider<IButtonProvider>().GetType() == typeof(MqttBapButtonProvider))
             {
-                var client = ((MqttBapButtonProvider)CtrlHandler.CurrentButtonProvider).managedMqttClient;
+                var client = ((MqttBapButtonProvider)ButtonProvider).managedMqttClient;
                 isConnected = client?.IsConnected ?? false;
                 isStarted = client?.IsStarted ?? false;
             }
@@ -56,9 +58,9 @@ namespace BAP.Admin.Components
             MsgSender.TurnOffAllButtons();
         }
 
-        private void SelectController(Type controllerType)
+        private void SelectProvider(Type controllerType)
         {
-            CtrlHandler.ChangeButtonProvider(controllerType);
+            BapProviderChanger.SetNewBapProvider<IButtonProvider>(controllerType);
         }
         private async Task ButtonCountChanged(NodeChangeMessage e)
         {

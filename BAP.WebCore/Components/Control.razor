@@ -21,13 +21,13 @@
 
 <div>
     <h2>Active Controller</h2>
-    <p>@CtrlHandler.CurrentButtonProvider.Name</p>
+    <p>@ButtonProvider.GetType().FullName</p>
 
     <h4>Other Controllers</h4>
-    @foreach (var item in AllControllers.Where(t => t.GetType() != CtrlHandler.CurrentButtonProvider.GetType()))
+    @foreach (var item in AllControllers.Where(t => t.GetType() != ButtonProvider.GetType()))
     {
-        <p>@item.Name</p>
+        <p>Well it is harder to get the name now. what we have is @ButtonProvider.GetType().FullName </p>
 
-        <MudButton @onclick="() => SelectController(item.GetType())">Select</MudButton>
+        <MudButton @onclick="() => SelectProvider(item.GetType())">Select</MudButton>
     }
 </div>

@@ -17,7 +17,7 @@ namespace BAP.MemoryGames
     {
         private ILogger<SimonGame> _logger { get; set; }
         public IGameDataSaver DbSaver { get; set; }
-        private ILayoutHandler LayoutHandler { get; set; }
+        private ILayoutProvider LayoutProvider { get; set; }
         public bool IsGameRunning { get; internal set; }
         ISubscriber<ButtonPressedMessage> ButtonPressedMessages { get; set; } = default!;
         IDisposable subscriptions = default!;
@@ -45,7 +45,7 @@ namespace BAP.MemoryGames
         bool playingPattern = false;
         List<string> buttonsInUse = new List<string>();
         private static System.Timers.Timer gameTimer = default!;
-        public SimonGame(IGameDataSaver gameDataSaver, IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, ILayoutHandler layoutHandler)
+        public SimonGame(IGameDataSaver gameDataSaver, IBapMessageSender messageSender, ILogger<SimonGame> logger, ISubscriber<ButtonPressedMessage> buttonPressedMessages, ILayoutProvider layoutProvider)
         {
             _logger = logger;
             DbSaver = gameDataSaver;
@@ -54,7 +54,7 @@ namespace BAP.MemoryGames
             var bag = DisposableBag.CreateBuilder();
             ButtonPressedMessages.Subscribe(async (x) => await OnButtonPressed(x)).AddTo(bag);
             subscriptions = bag.Build();
-            LayoutHandler = layoutHandler;
+            LayoutProvider = layoutProvider;
             //DbSaver = dbSaver;
             if (buttonSounds.Count == 0)
             {
@@ -77,9 +77,9 @@ namespace BAP.MemoryGames
 
         public void SetupGame(int buttonCountToUse, int rowIdToStartWith)
         {
-            if (LayoutHandler.CurrentButtonLayout != null && rowIdToStartWith > 0)
+            if (LayoutProvider != null && rowIdToStartWith > 0)
             {
-                buttonsInUse = LayoutHandler.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId >= rowIdToStartWith).OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Take(buttonCountToUse).Select(t => t.ButtonId).ToList();
+                buttonsInUse = LayoutProvider?.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId >= rowIdToStartWith).OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Take(buttonCountToUse).Select(t => t.ButtonId).ToList() ?? new();
             }
             else
             {
@@ -104,7 +104,7 @@ namespace BAP.MemoryGames
             int roundsCompleted = RoundsCompleted;
             Score score = new Score()
             {
-                DifficultyName = buttonDifficulty.shortVersion,
+                DifficultyId = buttonDifficulty.shortVersion,
                 DifficultyDescription = $"{buttonDifficulty.longVersion}",
                 ScoreData = $"{buttonsInUse.Count}|{ButtonOrder.Count}",
                 NormalizedScore = ButtonOrder.Count,

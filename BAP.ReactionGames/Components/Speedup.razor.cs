@@ -37,7 +37,7 @@ namespace BAP.ReactionGames.Components
                     { "NewScore", newScore },
                     { "GameDataSaver", game?.DbSaver },
                     { "Description", newScore?.DifficultyDescription ?? longVersion },
-                    { "Difficulty", newScore?.DifficultyName ?? shortVersion }
+                    { "Difficulty", newScore?.DifficultyDescription ?? shortVersion }
                 };
                 DialogService.Show<HighScoreTable>("High Scores", dialogParameters, dialogOptions);
             }

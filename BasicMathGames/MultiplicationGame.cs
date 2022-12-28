@@ -16,7 +16,7 @@ namespace BAP.BasicMathGames
 
 
 
-        public MultiplicationGame(IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILayoutHandler layoutHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardHandler, gameHandler, layoutHandler, messageSender, keyPressed)
+        public MultiplicationGame(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;
@@ -101,7 +101,7 @@ namespace BAP.BasicMathGames
             }
             Score score = new Score()
             {
-                DifficultyName = shortVersion,
+                DifficultyId = shortVersion,
                 DifficultyDescription = longVersion,
                 ScoreData = $"{correctScore}|{wrongScore}|{MinNumber}|{MaxNumber}|{MaxValue}|{SecondsToRun}",
                 NormalizedScore = normalizedScore,

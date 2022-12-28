@@ -6,7 +6,7 @@ namespace BAP.Admin.Components;
 public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    ILayoutHandler LayoutHandler { get; set; } = default!;
+    ILayoutProvider LayoutProvider { get; set; } = default!;
     [Inject]
     IBapMessageSender MsgSender { get; set; } = default!;
     [Inject]
@@ -59,9 +59,9 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
         List<int> viableButtonLayoutIds = PossibleButtonLayouts.Select(t => t.ButtonLayoutId).Distinct().ToList();
         if (viableButtonLayoutIds.Count > 0)
         {
-            if (!viableButtonLayoutIds.Contains(LayoutHandler.CurrentButtonLayout?.ButtonLayoutId ?? 0))
+            if (!viableButtonLayoutIds.Contains(LayoutProvider.CurrentButtonLayout?.ButtonLayoutId ?? 0))
             {
-                LayoutHandler.SetNewButtonLayout(null);
+                LayoutProvider.SetNewButtonLayout(null);
                 MsgSender.SendLayoutUpdate(0);
             }
             var bestOption = Last30DaysOfButtonLayoutHistorys.Where(t => viableButtonLayoutIds.Contains(t.ButtonLayoutId)).OrderByDescending(t => t.DateUsed).FirstOrDefault();
@@ -70,7 +70,7 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
                 var bl = PossibleButtonLayouts.FirstOrDefault(t => t.ButtonLayoutId == bestOption.ButtonLayoutId);
                 if (bl != null)
                 {
-                    LayoutHandler.SetNewButtonLayout(bl);
+                    LayoutProvider.SetNewButtonLayout(bl);
                     MsgSender.SendLayoutUpdate(bl.ButtonLayoutId);
                 }
                 return true;
@@ -79,9 +79,9 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
         }
         else
         {
-            if (LayoutHandler.CurrentButtonLayout != null)
+            if (LayoutProvider.CurrentButtonLayout != null)
             {
-                LayoutHandler.SetNewButtonLayout(null);
+                LayoutProvider.SetNewButtonLayout(null);
                 MsgSender.SendLayoutUpdate(0);
             }
         }

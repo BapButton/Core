@@ -10,11 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BAP.TestUtilities.Components
 {
-    public class ButtonTestingMenuItem : IMainMenuItem
-    {
-        public Type DynamicComponentToLoad => typeof(ButtonTesting);
-        public string MenuItemName => "Button Testing";
-    }
+
     [MenuItem("Button Testing", "Test out with fake buttons", false, "ea0d8577-609f-40e4-b05e-f02004b080a4")]
     public partial class ButtonTesting : ComponentBase, IDisposable
     {
@@ -22,11 +18,11 @@ namespace BAP.TestUtilities.Components
         public bool HideButtonsWhenGameActive { get; set; } = false;
         private string lastButtonMessage = "";
         [Inject]
-        IControlHandler CtrlHandler { get; set; } = default!;
+        IButtonProvider ButtonProvider { get; set; } = default!;
         [Inject]
         IGameHandler GameHandler { get; set; } = default!;
         [Inject]
-        ILayoutHandler LayoutHandler { get; set; } = default!;
+        ILayoutProvider LayoutProvider { get; set; } = default!;
         //[Inject]
         //ILogger<MockConnectionCore> Logger { get; set; } = default!;
         //[Inject]
@@ -34,7 +30,7 @@ namespace BAP.TestUtilities.Components
         IDisposable subscriptions = default!;
 
         [Inject]
-        ISubscriber<GameStateChangedMessage> gameStateChangedPipe { get; set; } = default!;
+        ISubscriber<GameEventMessage> gameStateChangedPipe { get; set; } = default!;
         [Inject]
         ISubscriber<ButtonPressedMessage> buttonPressedPipe { get; set; } = default!;
         [Inject]
@@ -49,11 +45,7 @@ namespace BAP.TestUtilities.Components
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            if (CtrlHandler.CurrentButtonProvider == null)
-            {
-                CtrlHandler.ChangeButtonProvider(typeof(MockButtonProvider));
-            }
-            Core = (MockButtonProvider)CtrlHandler.CurrentButtonProvider!;
+            Core = (MockButtonProvider)ButtonProvider!;
             var bag = DisposableBag.CreateBuilder();
             gameStateChangedPipe.Subscribe(async (x) => await Updates(x)).AddTo(bag);
             buttonPressedPipe.Subscribe(async (x) => await ButtonPressed(x)).AddTo(bag);
@@ -63,7 +55,7 @@ namespace BAP.TestUtilities.Components
 
         }
 
-        async Task Updates(GameStateChangedMessage e)
+        async Task Updates(GameEventMessage e)
         {
             await InvokeAsync(() =>
              {
@@ -72,7 +64,7 @@ namespace BAP.TestUtilities.Components
         }
         async Task ButtonPressed(ButtonPressedMessage e)
         {
-            lastButtonMessage = $"{e.NodeId} - {e.ButtonPress.MillisSinceLight}";
+            lastButtonMessage = $"{e.NodeId}";
             await InvokeAsync(() =>
             {
                 StateHasChanged();

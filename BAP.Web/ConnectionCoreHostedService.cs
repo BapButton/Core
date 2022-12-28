@@ -13,11 +13,11 @@ namespace BAP.Web
 {
     public class ConnectionCoreHostedService : IHostedService
     {
-        IControlHandler CtrlHandler { get; set; }
+        IButtonProvider ButtonProvider { get; set; }
 
-        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IControlHandler ctrlHandler)
+        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IButtonProvider buttonProvider)
         {
-            CtrlHandler = ctrlHandler;
+            ButtonProvider = buttonProvider;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -33,9 +33,9 @@ namespace BAP.Web
                 Console.WriteLine($"error migrating the database {ex.Message} Inner exception {(ex?.InnerException?.Message ?? "")}");
             }
 
-            if (CtrlHandler.CurrentButtonProvider != null)
+            if (ButtonProvider != null)
             {
-                bool succesfullyInitialized = await CtrlHandler.CurrentButtonProvider.Initialize();
+                bool succesfullyInitialized = await ButtonProvider.InitializeAsync();
             }
         }
 

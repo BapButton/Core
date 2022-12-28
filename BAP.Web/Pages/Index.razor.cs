@@ -138,7 +138,7 @@ namespace BAP.Web.Pages
         private async Task SelectGame(GameDetail gameDetail)
         {
             await dba.AddGamePlayLog(gameDetail.UniqueId);
-            LoadablePageHandler.CurrentlySelectedItem = gameDetail;
+            GameHandler.UpdateDynamicComponentToLoad(gameDetail.DynamicComponentToLoad, gameDetail.Name, gameDetail.Description, gameDetail.UniqueId);
         }
         public void Dispose()
         {

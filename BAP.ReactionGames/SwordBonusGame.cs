@@ -58,13 +58,13 @@ namespace BAP.ReactionGames
 
         private void BonusGameEnded()
         {
-            InternalGamePipe.Publish(new InternalSimpleGameUpdates(0, 0, true));
+            InternalGamePipe.Publish(new InternalSimpleGameUpdates(0, 0, true, ""));
         }
         public override async Task<bool> RightButtonPressed(ButtonPress bp, bool runNextCommand = true, bool updateScore = true, int amountToAdd = 1)
         {
 
             await base.RightButtonPressed(bp, true, false);
-            InternalGamePipe.Publish(new InternalSimpleGameUpdates(2, 0, false));
+            InternalGamePipe.Publish(new InternalSimpleGameUpdates(2, 0, false, ""));
             return true;
         }
         public override async Task<bool> EndGame(string message, bool isFailure = false)
@@ -73,7 +73,7 @@ namespace BAP.ReactionGames
             base.gameTimer.Dispose();
 
             IsGameRunning = false;
-            InternalGamePipe.Publish(new InternalSimpleGameUpdates(0, 0, true));
+            InternalGamePipe.Publish(new InternalSimpleGameUpdates(0, 0, true, ""));
             return true;
         }
         public override async Task<bool> WrongButtonPressed(ButtonPress bp, bool runNextCommand = false, bool updateScore = true, int amountToAdd = 1)
@@ -114,7 +114,8 @@ namespace BAP.ReactionGames
         }
         public async override Task OnButtonPressed(ButtonPressedMessage e)
         {
-            if (e.NodeId == CrownNodeId && e.ButtonPress.TimeSinceLightTurnedOff < 120)
+            //This use to use TimeSinceLightTurnedOff
+            if (e.NodeId == CrownNodeId)
             {
                 correctScore += 20;
                 MsgSender.PlayAudio(HitTheCrown);

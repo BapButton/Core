@@ -41,12 +41,12 @@ namespace BAP.Admin.Components
                     await js.InvokeVoidAsync("ClearAudio");
                 }
 
-                if (!string.IsNullOrEmpty(e.FileName))
+                if (!string.IsNullOrEmpty(e.FullPathToAudioFileWithFileName))
                 {
-                    string fullFileName = e.FileName.StartsWith("/api") ? e.FileName : $"/audio/{e.FileName}";
+                    string fullFileName = e.FullPathToAudioFileWithFileName.StartsWith("/api") ? e.FullPathToAudioFileWithFileName : $"/audio/{e.FullPathToAudioFileWithFileName}";
                     try
                     {
-                        if (!string.IsNullOrEmpty(e.FileName) && !VolumeMuted)
+                        if (!string.IsNullOrEmpty(e.FullPathToAudioFileWithFileName) && !VolumeMuted)
                         {
                             await js.InvokeVoidAsync("PlayAudioFile", fullFileName);
                         }

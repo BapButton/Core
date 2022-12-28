@@ -23,7 +23,7 @@ public partial class HighScoreTable : ComponentBase, IDisposable
     [Parameter]
     public bool? HigherScoreIsBetter { get; set; } = true;
     [Inject]
-    public IKeyboardHandler KeyboardHandler { get; set; } = default!;
+    public IKeyboardProvider KeyboardProvider { get; set; } = default!;
     [Inject]
     ISubscriber<KeyboardKeyPressedMessage> KeyboardKeyPipe { get; set; } = default!;
     [Inject]
@@ -52,9 +52,9 @@ public partial class HighScoreTable : ComponentBase, IDisposable
             Scores = await GameDataSaver.GetScoresWithNewScoreIfWarranted(NewScore, 10, HigherScoreIsBetter ?? true);
             if (Scores.Where(t => t.ScoreId == 0).Any())
             {
-                KeyboardHandler.CurrentKeyboard.SetCharacters(BasicKeyboardLetters.EnglishUpperCaseLetters);
-                KeyboardHandler.CurrentKeyboard.Reset();
-                KeyboardHandler.CurrentKeyboard.ShowKeyboard();
+                KeyboardProvider.SetCharacters(BasicKeyboardLetters.EnglishUpperCaseLetters);
+                KeyboardProvider.Reset();
+                KeyboardProvider.ShowKeyboard();
             }
         }
         CurrentScoreBoards = await GameDataSaver.GetCurrentScoreBoards();
@@ -101,7 +101,7 @@ public partial class HighScoreTable : ComponentBase, IDisposable
             {
                 scoreToSave.UserName = NewUserName;
                 await GameDataSaver.AddScore(scoreToSave);
-                KeyboardHandler.CurrentKeyboard.Disable(true);
+                KeyboardProvider.Disable(true);
                 await InvokeAsync(() =>
                 {
                     StateHasChanged();
@@ -112,8 +112,8 @@ public partial class HighScoreTable : ComponentBase, IDisposable
     }
     public void Dispose()
     {
-        KeyboardHandler.CurrentKeyboard.Disable(true);
-        KeyboardHandler.CurrentKeyboard.Reset();
+        KeyboardProvider.Disable(true);
+        KeyboardProvider.Reset();
 
         if (Subscriptions != null)
         {

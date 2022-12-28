@@ -10,9 +10,9 @@
 </div>
 <div>
 
-    @if (LayoutHandler.CurrentButtonLayout != null)
+    @if (LayoutProvider.CurrentButtonLayout != null)
     {
-        @foreach (var row in LayoutHandler.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
+        @foreach (var row in LayoutProvider.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
         {
             <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
                 @foreach (var button in row.OrderBy(t => t.ColumnId))

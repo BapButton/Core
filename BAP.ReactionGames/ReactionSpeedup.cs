@@ -198,7 +198,7 @@ namespace BAP.ReactionGames
             string timeSpanString = (GameEndedAt - GameStartedAt).ToString("mm\\:ss");
             Score score = new Score()
             {
-                DifficultyName = buttonDifficulty.shortVersion,
+                DifficultyId = buttonDifficulty.shortVersion,
                 DifficultyDescription = $"{buttonDifficulty.longVersion}",
                 ScoreData = $"{buttonCount}",
                 NormalizedScore = totalSeconds,

@@ -5,39 +5,42 @@
 {
     string buttonText = GameHandler.IsGameRunning ? "End Game and Go Back " : "Go Back to Game List";
 
-    @if (LoadablePageHandler.SelectedItemIsAGame)
+    @if (GameHandler.CurrentGame != null)
     {
         <MudButton OnClick=@DeselectGame>@buttonText</MudButton>
     }
-    <p>Stuff Goes here</p>
-    @if (LoadablePageHandler?.CurrentlySelectedItem?.DynamicComponentToLoad != null)
-    {
-        <DynamicComponent Type="LoadablePageHandler.CurrentlySelectedItem.DynamicComponentToLoad" @ref="dc" />
-    }
+
+
+}
+<p>Stuff Goes here</p>
+@if (GameHandler?.DynamicComponentToLoad != null)
+{
+    <DynamicComponent Type="GameHandler.DynamicComponentToLoad" @ref="dc" />
+}
 }
 else
 {
-    <MudGrid>
+<MudGrid>
 
-        @foreach (var gameDesc in GetOrderedGameDescriptions())
-        {
-            <MudItem xs="12" sm="6" lg="3">
+    @foreach (var gameDesc in GetOrderedGameDescriptions())
+    {
+        <MudItem xs="12" sm="6" lg="3">
 
-                <MudCard>
-                    <button @onclick="() => SelectGame(gameDesc)">
-                        <MudCardContent>
-                            <MudText>@gameDesc.Name</MudText>
-                            <MudText Typo="Typo.body2">@gameDesc.Description</MudText>
-                        </MudCardContent>
-                    </button>
-                    <MudCardActions>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="() => SelectGame(gameDesc)">Play!!!</MudButton>
-                    </MudCardActions>
-                </MudCard>
+            <MudCard>
+                <button @onclick="() => SelectGame(gameDesc)">
+                    <MudCardContent>
+                        <MudText>@gameDesc.Name</MudText>
+                        <MudText Typo="Typo.body2">@gameDesc.Description</MudText>
+                    </MudCardContent>
+                </button>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="() => SelectGame(gameDesc)">Play!!!</MudButton>
+                </MudCardActions>
+            </MudCard>
 
-            </MudItem>
-        }
-    </MudGrid>
+        </MudItem>
+    }
+</MudGrid>
 }
 
 

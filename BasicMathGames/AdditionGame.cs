@@ -15,7 +15,7 @@ namespace BAP.BasicMathGames
         public int MaxValue { get; set; } = 100;
         public bool IsSpanish { get; set; } = false;
 
-        public AdditionGame(ILayoutHandler layoutHandler, IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardHandler, gameHandler, layoutHandler, messageSender, keyPressed)
+        public AdditionGame(ILayoutProvider layoutProvider, IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;
@@ -100,7 +100,7 @@ namespace BAP.BasicMathGames
             }
             Score score = new Score()
             {
-                DifficultyName = shortVersion,
+                DifficultyId = shortVersion,
                 DifficultyDescription = longVersion,
                 ScoreData = $"{correctScore}|{wrongScore}|{MinAddend}|{MaxAddend}|{MaxValue}|{SecondsToRun}",
                 NormalizedScore = normalizedScore,

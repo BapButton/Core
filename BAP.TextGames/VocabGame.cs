@@ -14,7 +14,7 @@ namespace BAP.Web.Games
         //public AuthorizationCodeTokenResponse SpotifyToken { get; set; } = new AuthorizationCodeTokenResponse();
     }
 
-        public class VocabGame : KeyboardGameBase, IBapGame, IDisposable
+    public class VocabGame : KeyboardGameBase, IBapGame, IDisposable
     {
         //private SpotifyClient? _spotifyClient { get; set; }
         public SavedVocab SavedVocab { get; set; }
@@ -51,7 +51,7 @@ namespace BAP.Web.Games
             }
             Score score = new()
             {
-                DifficultyName = "",
+                DifficultyId = "",
                 DifficultyDescription = "",
                 ScoreData = CurrentWordNumber.ToString(),
                 NormalizedScore = normalizedScore,
@@ -65,7 +65,7 @@ namespace BAP.Web.Games
             SavedVocab = AsyncHelpers.RunSync(() => DbSaver.GetGameStorage<SavedVocab>()) ?? new();
         }
 
-        public VocabGame(IKeyboardHandler keyboardHandler, IGameHandler gameHandler, ILayoutHandler layoutHandler, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardHandler, gameHandler, layoutHandler, messageSender, keyPressed)
+        public VocabGame(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;

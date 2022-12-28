@@ -128,7 +128,7 @@ namespace BAP.TestUtilities
             return ConnectedNodes.Keys.OrderBy(t => t).ToList();
         }
 
-        public async Task<bool> Initialize()
+        public async Task<bool> InitializeAsync()
         {
             return await Initialize("");
         }

@@ -155,10 +155,6 @@ namespace BAP.ReactionGames
         {
             wrongScore++;
             PlayNextWrongSound();
-            if (_useIfItWasLitForScoring)
-            {
-                _logger.LogInformation($"Wrong answer - the light had been off for {bp.TimeSinceLightTurnedOff} milliseconds");
-            }
             return Task.FromResult(true);
         }
 
@@ -202,8 +198,8 @@ namespace BAP.ReactionGames
         public async virtual Task OnButtonPressed(ButtonPressedMessage e)
         {
             if (IsGameRunning && !GamePaused)
-            {
-                if (lastNodeId == e.NodeId || _useIfItWasLitForScoring && e.ButtonPress.TimeSinceLightTurnedOff < 150)
+            {//This use to use TimeSinceLightTurnedOff
+                if (lastNodeId == e.NodeId || _useIfItWasLitForScoring)
                 {
                     await RightButtonPressed(e.ButtonPress);
                 }

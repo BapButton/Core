@@ -76,7 +76,8 @@ namespace BAP.ReactionGames
 
         public async override Task OnButtonPressed(ButtonPressedMessage e)
         {
-            if (lastFaceNodeId == e.NodeId && e.ButtonPress.TimeSinceLightTurnedOff < 150)
+            //This use to use TimeSinceLightTurnedOff
+            if (lastFaceNodeId == e.NodeId)
             {
                 if (lastFaceWasAFrownyFace)
                 {
