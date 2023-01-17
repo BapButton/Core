@@ -5,7 +5,7 @@ namespace BAP.WebCore
 {
     public class AssemblyScanner
     {
-        private static List<string> BuiltinStatingNames = new List<string>() { "System", "AspNetCore", "Microsoft", "mscorlib", "netstandard", "WindowsBase" };
+        private static List<string> BuiltinNamesToIgnore = new List<string>() { "System", "AspNetCore", "Microsoft", "mscorlib", "netstandard", "WindowsBase" };
 
         public static List<Assembly> GetAllDependentAssemblies()
         {
@@ -23,7 +23,7 @@ namespace BAP.WebCore
 
             foreach (var assemblyName in assemblyNames)
             {
-                if (!BuiltinStatingNames.Any(t => assemblyName.FullName.StartsWith(t, StringComparison.InvariantCulture)))
+                if (!BuiltinNamesToIgnore.Any(t => assemblyName.FullName.StartsWith(t, StringComparison.InvariantCulture)))
                     try
                     {
                         // Try to load the referenced assembly...

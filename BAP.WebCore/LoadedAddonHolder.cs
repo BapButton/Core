@@ -7,7 +7,7 @@ namespace BAP.WebCore
         public List<GameDetail> AllGames { get; set; } = new();
         public List<MenuItemDetail> MainMenuItems { get; set; } = new();
         public List<TopMenuItemDetail> TopBarItems { get; set; } = new();
-        public List<BapProviderDetails> BapProviders { get; set; } = new();
+        public List<BapProviderTypes> BapProviders { get; set; } = new();
         public List<Assembly> AssembliesWithPages { get; set; } = new();
         public List<Assembly> AllAddonAssemblies { get; set; } = new();
         public List<Assembly> AllCompiledAssembies { get; set; } = new();
@@ -26,6 +26,15 @@ namespace BAP.WebCore
         public string Description { get; set; } = "";
         public string UniqueId { get; set; } = "";
         public Type DynamicComponentToLoad { get; set; } = default!;
+    }
+
+    public class BapProviderTypes
+    {
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public Type ProviderInterfaceType { get; set; } = default!;
+        public bool AllowMultipleInstances { get; set; }
+        public List<BapProviderDetails> Providers { get; set; } = new();
     }
 
     public class BapProviderDetails

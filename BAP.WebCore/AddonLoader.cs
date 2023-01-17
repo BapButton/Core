@@ -174,8 +174,32 @@ namespace BAP.WebCore
 
                 }
             }
+        }
 
+        public static IEnumerable<T> GetTypesThatImpementsInterface<T>(T type, Assembly assembly) where T : Type
+        {
+            foreach (Type t in assembly.GetTypes())
+            {
+                if (type.IsAssignableFrom(t) && t.IsClass)
+                {
 
+                    yield return (T)t;
+
+                }
+            }
+        }
+
+        public static IEnumerable<Type> GetInterfacesThatImpementsInterface<T>(Assembly assembly) where T : class
+        {
+            foreach (Type type in assembly.GetTypes())
+            {
+                if (typeof(T).IsAssignableFrom(type) && type.IsInterface)
+                {
+
+                    yield return type;
+
+                }
+            }
         }
     }
 }

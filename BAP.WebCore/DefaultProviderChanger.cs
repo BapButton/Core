@@ -71,12 +71,12 @@ namespace BAP.WebCore
 
         public List<(Type loadableType, string uniqueId, string name, string description)> GetAvailableBapProviders<T>() where T : IBapProvider
         {
-            List<(Type loadableType, string uniqueId, string name, string description)> providers = new();
-            foreach (var provider in _loadedAddonHolder.BapProviders.Where(t => typeof(T).IsAssignableFrom(t.BapProviderType)))
+            var provider = _loadedAddonHolder.BapProviders.FirstOrDefault(t => t.ProviderInterfaceType.FullName == typeof(T).FullName);
+            if (provider != null)
             {
-                providers.Add((provider.BapProviderType, provider.UniqueId, provider.Name, provider.Description));
+                return provider.Providers.Select(t => (t.BapProviderType, t.UniqueId, t.Name, t.Description)).ToList();
             }
-            return providers;
+            return new();
         }
     }
 }

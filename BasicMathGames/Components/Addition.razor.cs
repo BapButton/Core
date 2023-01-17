@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using BAP.UIHelpers.Components;
+using BAP.Types;
 
 namespace BAP.BasicMathGames.Components
 {
+    [GamePage("Addition Game", "Basic Addition Game", UniqueId = "4520ba27-1f61-4b72-a735-6ce533f940e7")]
     public partial class Addition : GamePage
     {
 

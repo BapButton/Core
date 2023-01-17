@@ -28,24 +28,54 @@ namespace BAP.WebCore
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
-                //var buttonProviders = AddonLoader.GetTypesThatImpementsInterface<IBapProvider>(assembly);
-                //foreach (var buttonProvider in buttonProviders)
-                //{
-                //    services.AddTransient(typeof(IButtonProvider), buttonProvider);
-                //    services.AddTransient(buttonProvider);
-                //}
-                //var keyboardProviders = AddonLoader.GetTypesThatImpementsInterface<IKeyboardHandler>(assembly);
-                //foreach (var keyboardProvider in keyboardProviders)
-                //{
-                //    services.AddTransient(typeof(IKeyboardHandler), keyboardProvider);
-                //    services.AddTransient(keyboardProvider);
-                //}
+                var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
+                foreach (var providerInterface in providerInterfaces)
+                {
+                    if (Attribute.IsDefined(providerInterface, typeof(BapProviderInterfaceAttribute)))
+                    {
+                        var parentInfo = (BapProviderInterfaceAttribute?)Attribute.GetCustomAttribute(providerInterface, typeof(BapProviderInterfaceAttribute));
+
+                        addonHolder.BapProviders.Add(new()
+                        {
+                            ProviderInterfaceType = providerInterface,
+                            Description = parentInfo?.Description ?? providerInterface?.FullName ?? "",
+                            Name = parentInfo?.Name ?? providerInterface?.Name ?? "",
+                            AllowMultipleInstances = parentInfo?.AllowMultipleInstances ?? false
+                        });
+
+                    }
+
+                }
+            }
+            foreach (var assembly in addonHolder.AllLoadedAssemblies)
+            {
+                foreach (var bapProviderInterface in addonHolder.BapProviders)
+                {
+                    var providers = AddonLoader.GetTypesThatImpementsInterface(bapProviderInterface.ProviderInterfaceType, assembly);
+                    foreach (var provider in providers)
+                    {
+                        var providerInfo = (BapProviderAttribute?)Attribute.GetCustomAttribute(provider, typeof(BapProviderAttribute));
+
+                        bapProviderInterface.Providers.Add(new()
+                        {
+                            BapProviderType = provider,
+                            Description = providerInfo?.Description ?? provider?.Name ?? string.Empty,
+                            Name = providerInfo?.Name ?? provider?.Name ?? string.Empty,
+                            UniqueId = providerInfo?.UniqueId ?? provider?.FullName ?? string.Empty,
+
+
+                        });
+                    }
+                }
                 var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
                 foreach (var messageSender in messageSenders)
                 {
                     services.AddTransient(typeof(IBapMessageSender), messageSender);
                     services.AddTransient(messageSender);
                 }
+
+                var gamePages = AddonLoader.ComponentsWithBapGamePageAttribute(assembly);
+                addonHolder.AllGames.AddRange(gamePages);
                 var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
                 foreach (var diSetup in diSetups)
                 {
@@ -62,7 +92,17 @@ namespace BAP.WebCore
                 }
 
             }
+            //This is a non dynamic component. But it's what I got for now.
+            services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
+            //Todo - I think gamehandler needs to go away. But this gets some stuff to actually build for now. 
+            services.AddTransient<IGameHandler, DefaultGameHandler>();
+
             services.AddSingleton(addonHolder);
+            foreach (var provider in addonHolder.BapProviders)
+            {
+                var stuff = provider.Providers.OrderBy(t => t.Name).First().BapProviderType;
+                services.AddTransient(provider.ProviderInterfaceType, stuff);
+            }
         }
     }
 }
