@@ -9,9 +9,10 @@ namespace BAP.Db
     public class ActiveProvider
     {
         public int ActiveProviderId { get; set; }
-        public string ProviderInterfaceName { get; set; } = "";
+        public string ProviderInterfaceFullName { get; set; } = "";
         public DateTime DateActivated { get; set; }
         public string ProviderUniqueId { get; set; } = "";
         public string ProviderName { get; set; } = "";
+        public string ProviderDescription { get; set; } = "";
     }
 }

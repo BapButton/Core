@@ -8,6 +8,7 @@ using BAP.UIHelpers.Components;
 
 namespace BAP.TextGames.Components
 {
+    [GamePage("Vocab Game", "Working on spelling your Vocab words", UniqueId = "4512ba27-1f61-4b72-a795-6ce512f940e7")]
     public partial class Vocab : GamePage
     {
         [Inject]

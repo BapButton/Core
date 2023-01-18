@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BAP.PrimaryHandlers
 {
+    [BapProvider("Default Layout Provider", "Provides a basic method for laying out buttons and retrieving that layout", "6420ba24-1f88-5823-a125-6de533f940e7")]
     public class DefaultLayoutProvider : ILayoutProvider
     {
         public ButtonLayout? CurrentButtonLayout { get; internal set; }

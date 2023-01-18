@@ -37,9 +37,9 @@ namespace BAP.WebCore.Components
             mosquittoAddress = Environment.GetEnvironmentVariable("MosquittoAddress") ?? "";
 
 
-            if (BapProviderChanger.GetCurrentBapProvider<IButtonProvider>().GetType() == typeof(MqttBapButtonProvider))
+            if (BapProviderChanger.GetCurrentBapProvider<IButtonProvider>().GetType() == typeof(DefaultMqttBapButtonProvider))
             {
-                var client = ((MqttBapButtonProvider)ButtonProvider).managedMqttClient;
+                var client = ((DefaultMqttBapButtonProvider)ButtonProvider).managedMqttClient;
                 isConnected = client?.IsConnected ?? false;
                 isStarted = client?.IsStarted ?? false;
             }

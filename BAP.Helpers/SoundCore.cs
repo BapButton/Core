@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Text;
 namespace BapButton
 {
+    [BapProvider("NetCoreAudio Local Audio Player", "An attempt to play sound locally", "4670ba27-1f61-4b72-a712-6ce533f968e7")]
     public class SoundCore : IAudioProvider
     {
         //This really works poorly.
         //NetCoreAudio.Player player = new NetCoreAudio.Player();
         private readonly ILogger<SoundCore> _logger;
 
-        public string Name => "NetCoreAudio Local Audio Player";
 
         public SoundCore(ILogger<SoundCore> logger = null)
         {

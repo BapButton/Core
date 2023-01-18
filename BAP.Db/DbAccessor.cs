@@ -135,19 +135,19 @@ namespace BAP.Db
             return await db.MenuItemStatuses.Where(t => t.ShowInMainMenu).Select(t => t.MenuItemUniqueId).ToListAsync();
         }
 
-        public async Task<List<string>> AddActiveProvider<T>(bool deactivateOtherProvider) where T : IBapProvider
+        public List<string> AddActiveProvider(Type providerType, bool deactivateOtherProvider)
         {
             using ButtonContext db = new();
-            ActiveProvider? activeProvider = GenerateActiveProvider<T>();
+            ActiveProvider? activeProvider = GenerateActiveProvider(providerType);
             if (activeProvider != null)
             {
-                List<ActiveProvider> currentActiveProviders = await db.ActiveProviders.Where(t => t.ProviderInterfaceName == activeProvider.ProviderInterfaceName).ToListAsync();
+                List<ActiveProvider> currentActiveProviders = db.ActiveProviders.Where(t => t.ProviderInterfaceFullName == activeProvider.ProviderInterfaceFullName).ToList();
                 if (currentActiveProviders.Any(t => t.ProviderUniqueId == activeProvider.ProviderUniqueId))
                 {
                     if (deactivateOtherProvider)
                     {
                         db.ActiveProviders.RemoveRange(currentActiveProviders.Where(t => t.ProviderUniqueId != activeProvider.ProviderUniqueId));
-                        await db.SaveChangesAsync();
+                        db.SaveChanges();
                     }
                 }
                 else
@@ -157,11 +157,14 @@ namespace BAP.Db
                         db.ActiveProviders.RemoveRange(currentActiveProviders);
                     }
                     db.ActiveProviders.Add(activeProvider);
-                    await db.SaveChangesAsync();
+                    db.SaveChanges();
                 }
             }
-
-            return await GetRecentlyActiveProvider<T>();
+            if (activeProvider != null)
+            {
+                return GetRecentlyActiveProvider(activeProvider.ProviderInterfaceFullName);
+            }
+            return new();
         }
         /// <summary>
         /// 
@@ -170,13 +173,13 @@ namespace BAP.Db
         /// <param name="type"></param>
         /// <param name="deactivateOtherProvider"></param>
         /// <returns>A List of the Active Providers for that type</returns>
-        public async Task<List<string>> RemoveActiveProvider<T>(T type, bool deactivateOtherProvider) where T : IBapProvider
+        public async Task<List<string>> RemoveActiveProvider(Type providerToRemoveType, bool deactivateOtherProvider)
         {
             using ButtonContext db = new();
-            ActiveProvider? activeProvider = GenerateActiveProvider<T>();
+            ActiveProvider? activeProvider = GenerateActiveProvider(providerToRemoveType);
             if (activeProvider != null)
             {
-                ActiveProvider? currentProvider = await db.ActiveProviders.FirstOrDefaultAsync(t => t.ProviderUniqueId != activeProvider.ProviderUniqueId && t.ProviderInterfaceName == activeProvider.ProviderInterfaceName);
+                ActiveProvider? currentProvider = await db.ActiveProviders.FirstOrDefaultAsync(t => t.ProviderUniqueId != activeProvider.ProviderUniqueId && t.ProviderInterfaceFullName == activeProvider.ProviderInterfaceFullName);
                 if (currentProvider != null)
                 {
                     db.ActiveProviders.Remove(currentProvider);
@@ -184,33 +187,34 @@ namespace BAP.Db
                 }
             }
 
-            return await GetRecentlyActiveProvider<T>();
+            return GetRecentlyActiveProvider(activeProvider.ProviderInterfaceFullName);
         }
 
-        private ActiveProvider? GenerateActiveProvider<T>() where T : IBapProvider
+        private ActiveProvider? GenerateActiveProvider(Type providerType)
         {
 
             string providerName = "";
-            Type t = typeof(T);
-            if (t is null)
+            if (providerType is null)
             {
                 throw new Exception("No type was passed in");
             }
-            var implementedInterfaces = t.GetInterfaces();
+            var implementedInterfaces = providerType.GetInterfaces();
             foreach (Type type in implementedInterfaces)
             {
                 if (type.GetCustomAttribute<BapProviderInterfaceAttribute>() != null)
                 {
                     providerName = type.Name;
+                    break;
                 }
             }
-            var bapProviderAttribute = t.GetCustomAttribute<BapProviderAttribute>();
+            var bapProviderAttribute = providerType.GetCustomAttribute<BapProviderAttribute>();
             if (bapProviderAttribute != null)
             {
                 ActiveProvider activeProvider = new ActiveProvider();
-                activeProvider.ProviderInterfaceName = providerName;
+                activeProvider.ProviderInterfaceFullName = providerName;
                 activeProvider.ProviderUniqueId = bapProviderAttribute.UniqueId;
                 activeProvider.ProviderName = bapProviderAttribute.Name;
+                return activeProvider;
             }
 
             return null;
@@ -221,12 +225,12 @@ namespace BAP.Db
         /// </summary>
         /// <typeparam name="T">The Type of the Interface that you want to Fetch</typeparam>
         /// <returns></returns>
-        public async Task<List<string>> GetRecentlyActiveProvider<T>() where T : IBapProvider
+        public List<string> GetRecentlyActiveProvider(string providerInterfaceFullName)
         {
 
             using ButtonContext db = new();
-            ActiveProvider activeProvider = GenerateActiveProvider<T>();
-            return await db.ActiveProviders.Where(t => t.ProviderInterfaceName == activeProvider.ProviderInterfaceName).Select(t => t.ProviderName).ToListAsync();
+
+            return db.ActiveProviders.Where(t => t.ProviderInterfaceFullName == providerInterfaceFullName).Select(t => t.ProviderUniqueId).ToList();
         }
 
         public async Task<FirmwareInfo> AddLatestFirmware(FirmwareInfo latestFirmwareInfo)

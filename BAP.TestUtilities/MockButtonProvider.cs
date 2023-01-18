@@ -10,6 +10,7 @@ using BAP.Types;
 
 namespace BAP.TestUtilities
 {
+    [BapProvider("Mock Button Provider", "Sends to on screen buttons via messages", "5720ba12-1f98-5872-a735-6ce233f940e7")]
     public class MockButtonProvider : IButtonProvider
     {
         private const string buttonAddressBase = "AAA";

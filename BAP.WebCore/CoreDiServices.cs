@@ -98,10 +98,32 @@ namespace BAP.WebCore
             services.AddTransient<IGameHandler, DefaultGameHandler>();
 
             services.AddSingleton(addonHolder);
+            DbAccessor dba = new DbAccessor();
             foreach (var provider in addonHolder.BapProviders)
             {
-                var stuff = provider.Providers.OrderBy(t => t.Name).First().BapProviderType;
-                services.AddTransient(provider.ProviderInterfaceType, stuff);
+                Type? providerType = null;
+                var recentProvider = dba.GetRecentlyActiveProvider(provider.ProviderInterfaceType.FullName).FirstOrDefault();
+                if (recentProvider != null)
+                {
+                    providerType = provider.Providers.FirstOrDefault(t => t.UniqueId == recentProvider)?.BapProviderType;
+                }
+                if (providerType == null)
+                {
+                    providerType = provider.Providers.FirstOrDefault(t => t.Name.Contains("Default", StringComparison.OrdinalIgnoreCase))?.BapProviderType;
+                }
+                if (providerType == null)
+                {
+                    providerType = provider.Providers.FirstOrDefault()?.BapProviderType;
+                }
+                if (providerType != null)
+                {
+                    if (recentProvider == null)
+                    {
+                        dba.AddActiveProvider(providerType, true);
+                    }
+                    services.AddSingleton(provider.ProviderInterfaceType, providerType);
+                }
+
             }
         }
     }

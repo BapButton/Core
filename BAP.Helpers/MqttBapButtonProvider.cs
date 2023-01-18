@@ -19,9 +19,10 @@ using static BAP.Helpers.BapBasicGameHelper;
 
 namespace BAP.Helpers
 {
-    public class MqttBapButtonProvider : IButtonProvider
+    [BapProvider("Default MQTT Button Provider", "Default provider. Sends MQTT messages to communicate to any subscribed buttons", "4520ba12-1f34-5872-a735-6ce533f940e7")]
+    public class DefaultMqttBapButtonProvider : IButtonProvider
     {
-        private readonly ILogger<MqttBapButtonProvider> _logger;
+        private readonly ILogger<DefaultMqttBapButtonProvider> _logger;
         public ConcurrentDictionary<string, bool> ConnectedNodes = new ConcurrentDictionary<string, bool>();
         public ConcurrentDictionary<string, ButtonStatus> AllButtonStatus = new();
         public IManagedMqttClient? managedMqttClient = null;
@@ -37,7 +38,7 @@ namespace BAP.Helpers
         private ILayoutProvider LayoutProvider { get; init; }
         public string Name => "Mqtt Controller";
 
-        public MqttBapButtonProvider(ILogger<MqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
+        public DefaultMqttBapButtonProvider(ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
      IGameHandler gameHandler, ILayoutProvider layoutProvider)
         {
             _logger = logger;

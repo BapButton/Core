@@ -1,5 +1,6 @@
 ﻿namespace BAP.BasicMathGames.Components
 {
+    [GamePage("Multiplication Game", "Basic Multiplication Game", UniqueId = "4520ba27-1f61-4b72-a735-6ce653f940e7")]
     public partial class Multiplication : GamePage
     {
 

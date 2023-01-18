@@ -60,8 +60,16 @@ namespace BAP.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger, IServiceProvider serviceProvider)
         {
+            //Todo - Should call initialize on all of the providers.
+            foreach (var providerInterface in loadedAddonHolder.BapProviders)
+            {
+                var provider = (IBapProvider)serviceProvider.GetRequiredService(providerInterface.ProviderInterfaceType);
+                ///ARRGGGG - find another place for this.
+                await provider.InitializeAsync();
+            }
+
             WebHostStartupMethods.SetupPages(loadedAddonHolder, logger);
 
             if (env.IsDevelopment())

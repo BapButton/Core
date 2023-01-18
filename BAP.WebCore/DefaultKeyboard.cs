@@ -3,6 +3,7 @@ using BAP.Helpers;
 using BAP.Types;
 
 namespace BAP.WebCore;
+[BapProvider("Default Keyboard", "Basic keyboard to use the buttons for text input", "6670ba45-1f12-4b19-a712-6ce123f968e7")]
 public class DefaultKeyboard : KeyboardBase
 {
     public DefaultKeyboard(ILogger<DefaultKeyboard> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender msgSender, IPublisher<KeyboardKeyPressedMessage> keyboardKeyPressedSender) : base(logger, buttonPressed, msgSender, keyboardKeyPressedSender)
