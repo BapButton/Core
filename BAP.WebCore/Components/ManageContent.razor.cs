@@ -1,6 +1,7 @@
 ﻿using BAP.Db;
 using Blazored.FluentValidation;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Security.Cryptography;
@@ -15,18 +16,27 @@ namespace BAP.WebCore.Components
         [Inject]
         DbAccessor dba { get; set; } = default!;
         [Inject]
-        BapSettings BapSettings { get; set; } = default!;
+        IOptions<BapSettings> BapSettings { get; set; } = default!;
+        [Inject]
+        LoadedAddonHolder LoadedAddonHolder { get; set; } = default!;
+        [Inject]
+        ISystemProvider SystemProvider { get; set; } = default!;
         private bool displayProgress { get; set; }
         private EditContext editContext { get; set; } = default!;
         private int progressPercent;
         private FluentValidationValidator fluentValidationValidator = default!;
         private PackageUpload? packageUpload { get; set; }
+        private List<string> UniqueIdsOfProviders { get; set; } = new();
 
         protected override void OnInitialized()
         {
             cancelation = new CancellationTokenSource();
             packageUpload = new PackageUpload();
             editContext = new EditContext(packageUpload);
+            foreach (var providerInterface in LoadedAddonHolder.BapProviders)
+            {
+                UniqueIdsOfProviders.Add(providerInterface.Providers.First(t => t.IsCurrentlySelected).UniqueId);
+            }
         }
 
 
@@ -38,7 +48,7 @@ namespace BAP.WebCore.Components
 
         private async Task OnSubmit()
         {
-            string newFileName = Path.Combine(BapSettings.AddonSaveLocation, Path.GetFileNameWithoutExtension(packageUpload.Package.Name), Path.GetFileName(packageUpload.Package.Name));
+            string newFileName = Path.Combine(BapSettings.Value.AddonSaveLocation, Path.GetFileNameWithoutExtension(packageUpload.Package.Name), Path.GetFileName(packageUpload.Package.Name));
 
             Directory.CreateDirectory(Path.GetDirectoryName(newFileName)!);
             //using var file = File.OpenWrite(newFirmwareFileName);
@@ -50,6 +60,31 @@ namespace BAP.WebCore.Components
             displayProgress = false;
             packageUpload = new PackageUpload();
             StateHasChanged();
+
+        }
+
+        private async Task ProviderOnSubmit()
+        {
+            bool changedAProvider = false;
+            for (int i = 0; i < LoadedAddonHolder.BapProviders.Count; i++)
+            {
+                var providerInterface = LoadedAddonHolder.BapProviders[i];
+                var currentProvider = dba.GetRecentlyActiveProvider(providerInterface.ProviderInterfaceType.FullName).FirstOrDefault();
+                if (currentProvider == null || currentProvider != UniqueIdsOfProviders[i])
+                {
+                    var newProvider = providerInterface.Providers.FirstOrDefault(t => t.UniqueId == UniqueIdsOfProviders[i]);
+                    if (newProvider != null)
+                    {
+                        dba.AddActiveProvider(newProvider.BapProviderType, true);
+                        changedAProvider = true;
+                    }
+
+                }
+            }
+            if (changedAProvider)
+            {
+                await SystemProvider.RebootWebApp();
+            }
 
         }
 

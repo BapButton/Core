@@ -14,7 +14,11 @@ namespace BAP.Web
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).ConfigureAppConfiguration((builderContext, config) =>
+            {
+                config.AddEnvironmentVariables();
+                config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            }).Build().Run();
             //var weatherService = host.Services.GetRequiredService<WeatherService>();
             //await weatherService.InitializeWeatherAsync(
             //    host.Configuration["WeatherServiceUrl"]);
@@ -35,6 +39,6 @@ namespace BAP.Web
                     logging.AddNLogWeb();
                 });
 
-            //.UseNLog();
+        //.UseNLog();
     }
 }

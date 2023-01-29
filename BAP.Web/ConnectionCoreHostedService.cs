@@ -8,34 +8,33 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BAP.Types;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BAP.Web
 {
     public class ConnectionCoreHostedService : IHostedService
     {
-        IButtonProvider ButtonProvider { get; set; }
+        ILogger<ConnectionCoreHostedService> _logger;
+        IDbContextFactory<ButtonContext> _contextFactory;
 
-        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IButtonProvider buttonProvider)
+        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IDbContextFactory<ButtonContext> contextFactory)
         {
-            ButtonProvider = buttonProvider;
+            _logger = logger;
+            _contextFactory = contextFactory;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("Migrating the database");
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             try
             {
-                db.Database.Migrate();
+                await db.Database.MigrateAsync();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error Migrating Database");
                 Console.WriteLine($"error migrating the database {ex.Message} Inner exception {(ex?.InnerException?.Message ?? "")}");
-            }
-
-            if (ButtonProvider != null)
-            {
-                bool succesfullyInitialized = await ButtonProvider.InitializeAsync();
             }
         }
 

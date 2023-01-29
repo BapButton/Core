@@ -60,7 +60,7 @@ namespace BAP.Admin.Components
             //Need to to handle the overwriting component if it is selected.
             if (fileUpload.OverWriteCurrentFirmware)
             {
-                using ButtonContext db = new ButtonContext();
+                ButtonContext db = dba.GetButtonContext();
                 //This wont work in the DB concept.
                 var oldItem = db.FirmwareInfos.Where(t => t.FirmwareVersion == fileUpload.Version);
                 if (oldItem != null)

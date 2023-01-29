@@ -1,104 +1,105 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <nullable>enable</nullable>
-    <UserSecretsId>6f3a15f3-5c6c-46e1-9604-c65838c251ef</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<nullable>enable</nullable>
+		<UserSecretsId>6f3a15f3-5c6c-46e1-9604-c65838c251ef</UserSecretsId>
+		<UseRazorSourceGenerator>true</UseRazorSourceGenerator>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BAP.Types" Version="0.1.6-beta" />
-    <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.4.35">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MessagePipe" Version="1.7.4" />
-    <PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.10" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="MudBlazor" Version="5.1.4" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
-    <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BAP.Types" Version="0.1.8-beta" />
+		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+		<PackageReference Include="MessagePackAnalyzer" Version="2.4.35">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="MessagePipe" Version="1.7.4" />
+		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.10" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+		<PackageReference Include="MudBlazor" Version="5.1.4" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.1.5" />
+		<PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
-    <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
-    <ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
-    <ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
-    <ProjectReference Include="..\BAP.WebCore\BAP.WebCore.csproj" />
-    <ProjectReference Include="..\BasicMathGames\BAP.BasicMathGames.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Watch Include="..\**\*.razor" />
-    <Watch Include="..\**\*.scss" />
-    <Watch Include="..\**\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Watch Remove="App.razor.cs" />
-    <Watch Remove="AssemblyScanner.cs" />
-    <Watch Remove="BapSettings.cs" />
-    <Watch Remove="Controller\FirmwareController.cs" />
-    <Watch Remove="Controller\TTSController.cs" />
-    <Watch Remove="GamePage.cs" />
-    <Watch Remove="Games\ExplodingBapGame.cs" />
-    <Watch Remove="imports.cs" />
-    <Watch Remove="Pages\Addition - Copy.razor.cs" />
-    <Watch Remove="Pages\Error.cshtml.cs" />
-    <Watch Remove="Pages\ExplodingBap.razor" />
-    <Watch Remove="Pages\Index.razor" />
-    <Watch Remove="Pages\Index.razor.cs" />
-    <Watch Remove="Pages\ItemUpload.razor.cs" />
-    <Watch Remove="Pages\Marque.razor.cs" />
-    <Watch Remove="Pages\Marquee - Copy.razor.cs" />
-    <Watch Remove="Pages\ReactionME - Copy.razor.cs" />
-    <Watch Remove="Pages\SetupLayout.razor.cs" />
-    <Watch Remove="Shared\NavMenu.razor.cs" />
-    <Watch Remove="Supervisor\Status.cs" />
-    <Watch Remove="TTS\TtsService.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="wwwroot\audio\f4.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="wwwroot\audio\g4.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="wwwroot\audio\gb4.mp3">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="wwwroot\audio\ab4.mp3" />
-    <Resource Include="wwwroot\audio\bb4.mp3" />
-    <Resource Include="wwwroot\audio\d4.mp3" />
-    <Resource Include="wwwroot\audio\eb4.mp3" />
-    <Resource Include="wwwroot\audio\error_004.mp3" />
-    <Resource Include="wwwroot\audio\madsfrowny.mp3" />
-    <Resource Include="wwwroot\audio\madsfrowny.wav" />
-    <Resource Include="wwwroot\audio\madstoomany.mp3" />
-    <Resource Include="wwwroot\audio\madstoomany.wav" />
-    <Resource Include="wwwroot\audio\open_001.mp3" />
-    <Resource Include="wwwroot\audio\open_001.wav" />
-    <Resource Include="wwwroot\audio\SgLost.mp3" />
-    <Resource Include="wwwroot\audio\SgLost.wav" />
-    <Resource Include="wwwroot\audio\SgLostTheEntireGame.mp3" />
-    <Resource Include="wwwroot\audio\SgStart.mp3" />
-    <Resource Include="wwwroot\audio\SgStartOfEntireGame.mp3" />
-    <Resource Include="wwwroot\audio\SgWonTheEntireGame.mp3" />
-    <Resource Include="wwwroot\audio\SqBeatTheBonusRound.mp3" />
-    <Resource Include="wwwroot\audio\SqHitTheCrown.mp3" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
+		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+		<ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
+		<ProjectReference Include="..\BAP.UIHelpers\BAP.UIHelpers.csproj" />
+		<ProjectReference Include="..\BAP.WebCore\BAP.WebCore.csproj" />
+		<ProjectReference Include="..\BasicMathGames\BAP.BasicMathGames.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Watch Include="..\**\*.razor" />
+		<Watch Include="..\**\*.scss" />
+		<Watch Include="..\**\*.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Watch Remove="App.razor.cs" />
+		<Watch Remove="AssemblyScanner.cs" />
+		<Watch Remove="BapSettings.cs" />
+		<Watch Remove="Controller\FirmwareController.cs" />
+		<Watch Remove="Controller\TTSController.cs" />
+		<Watch Remove="GamePage.cs" />
+		<Watch Remove="Games\ExplodingBapGame.cs" />
+		<Watch Remove="imports.cs" />
+		<Watch Remove="Pages\Addition - Copy.razor.cs" />
+		<Watch Remove="Pages\Error.cshtml.cs" />
+		<Watch Remove="Pages\ExplodingBap.razor" />
+		<Watch Remove="Pages\Index.razor" />
+		<Watch Remove="Pages\Index.razor.cs" />
+		<Watch Remove="Pages\ItemUpload.razor.cs" />
+		<Watch Remove="Pages\Marque.razor.cs" />
+		<Watch Remove="Pages\Marquee - Copy.razor.cs" />
+		<Watch Remove="Pages\ReactionME - Copy.razor.cs" />
+		<Watch Remove="Pages\SetupLayout.razor.cs" />
+		<Watch Remove="Shared\NavMenu.razor.cs" />
+		<Watch Remove="Supervisor\Status.cs" />
+		<Watch Remove="TTS\TtsService.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="wwwroot\audio\f4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="wwwroot\audio\g4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+		<Resource Include="wwwroot\audio\gb4.mp3">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+	<ItemGroup>
+		<Resource Include="wwwroot\audio\ab4.mp3" />
+		<Resource Include="wwwroot\audio\bb4.mp3" />
+		<Resource Include="wwwroot\audio\d4.mp3" />
+		<Resource Include="wwwroot\audio\eb4.mp3" />
+		<Resource Include="wwwroot\audio\error_004.mp3" />
+		<Resource Include="wwwroot\audio\madsfrowny.mp3" />
+		<Resource Include="wwwroot\audio\madsfrowny.wav" />
+		<Resource Include="wwwroot\audio\madstoomany.mp3" />
+		<Resource Include="wwwroot\audio\madstoomany.wav" />
+		<Resource Include="wwwroot\audio\open_001.mp3" />
+		<Resource Include="wwwroot\audio\open_001.wav" />
+		<Resource Include="wwwroot\audio\SgLost.mp3" />
+		<Resource Include="wwwroot\audio\SgLost.wav" />
+		<Resource Include="wwwroot\audio\SgLostTheEntireGame.mp3" />
+		<Resource Include="wwwroot\audio\SgStart.mp3" />
+		<Resource Include="wwwroot\audio\SgStartOfEntireGame.mp3" />
+		<Resource Include="wwwroot\audio\SgWonTheEntireGame.mp3" />
+		<Resource Include="wwwroot\audio\SqBeatTheBonusRound.mp3" />
+		<Resource Include="wwwroot\audio\SqHitTheCrown.mp3" />
+	</ItemGroup>
 </Project>

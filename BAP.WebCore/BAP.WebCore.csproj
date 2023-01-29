@@ -1,32 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseRazorSourceGenerator>true</UseRazorSourceGenerator>
+	</PropertyGroup>
 
 
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BAP.Types" Version="0.1.6-beta" />
-    <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
-    <PackageReference Include="MessagePipe" Version="1.7.4" />
-    <PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="BAP.Types" Version="0.1.8-beta" />
+		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
+		<PackageReference Include="MessagePipe" Version="1.7.4" />
+		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+		<PackageReference Include="MudBlazor" Version="5.1.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
-    <ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
-    <ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
+		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+		<ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
+	</ItemGroup>
 
 </Project>

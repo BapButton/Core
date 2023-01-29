@@ -43,6 +43,7 @@ namespace BAP.WebCore
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public string UniqueId { get; set; } = "";
+        public bool IsCurrentlySelected { get; set; }
 
     }
 

@@ -1,7 +1,9 @@
 ﻿using BAP.Db;
 using BAP.Web;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +14,25 @@ namespace BAP.WebCore
 {
     public static class CoreDiServices
     {
-        public static void AddAllAddonsAndRequiredDiServices(this IServiceCollection services)
+        public static void AddAllAddonsAndRequiredDiServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextFactory<ButtonContext>();
+            services.Configure<BapSettings>(configuration.GetSection("BAP"));
+            var bapSettings = configuration.GetSection("BAP").Get<BapSettings>();
+            if (string.IsNullOrEmpty(bapSettings?.DBConnectionString))
+            {
+                services.AddDbContextFactory<ButtonContext>(options => options.UseInMemoryDatabase(new Guid().ToString()));
+            }
+            else
+            {
+                services.AddDbContextFactory<ButtonContext>(options => options.UseMySql(bapSettings.DBConnectionString, MySqlServerVersion.LatestSupportedServerVersion));
+            }
+
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
             //services.AddSingleton<AnimationController>(); ;
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
-
+            services.AddHostedService<BapProviderInitializer>();
 
 
             LoadedAddonHolder addonHolder = new();
@@ -98,7 +110,9 @@ namespace BAP.WebCore
             services.AddTransient<IGameHandler, DefaultGameHandler>();
 
             services.AddSingleton(addonHolder);
-            DbAccessor dba = new DbAccessor();
+            var factory = new TempButtonContextFactory(bapSettings?.DBConnectionString ?? "");
+
+            DbAccessor dba = new DbAccessor(factory);
             foreach (var provider in addonHolder.BapProviders)
             {
                 Type? providerType = null;
@@ -117,11 +131,8 @@ namespace BAP.WebCore
                 }
                 if (providerType != null)
                 {
-                    if (recentProvider == null)
-                    {
-                        dba.AddActiveProvider(providerType, true);
-                    }
                     services.AddSingleton(provider.ProviderInterfaceType, providerType);
+                    provider.Providers.Where(t => t.BapProviderType == providerType).First().IsCurrentlySelected = true;
                 }
 
             }

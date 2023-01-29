@@ -9,29 +9,41 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Buffers;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace BAP.Db
 {
     public class DbAccessor
     {
+        private readonly IDbContextFactory<ButtonContext> _contextFactory;
+        public DbAccessor(IDbContextFactory<ButtonContext> contextFactory)
+        {
+            _contextFactory = contextFactory;
+        }
+
+        public ButtonContext GetButtonContext()
+        {
+            return _contextFactory.CreateDbContext();
+        }
+
         //Todo - It seems like the DB context should get injected probably from a a factory.
         public async Task<FirmwareInfo> GetLatestFirmwareInfo()
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             return await db.FirmwareInfos.Where(t => t.IsLatestVersion).OrderByDescending(t => t.FirmwareInfoId).FirstOrDefaultAsync() ?? new FirmwareInfo();
 
         }
 
         public async Task<List<FirmwareInfo>> GetAllFirmwareInfo()
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             return await db.FirmwareInfos.ToListAsync();
 
         }
 
         public async Task<GameFavorite> AddGameFavorite(string unqueId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             GameFavorite? gameFavorite = await db.GameFavorites.FirstOrDefaultAsync(t => t.GameUniqueId == unqueId);
             if (gameFavorite == null)
             {
@@ -48,14 +60,14 @@ namespace BAP.Db
 
         public async Task<List<ButtonLayoutHistory>> Last30DaysOfButtonLayouts()
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             DateTime thirtyDaysAgo = DateTime.Now.AddDays(-30);
             return await db.ButtonLayoutHistories.Where(t => t.DateUsed > thirtyDaysAgo).ToListAsync();
         }
 
         public async Task<bool> RemoveGameFavorite(string unqueId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             bool favoriteFound = false;
             GameFavorite? gameFavorite = await db.GameFavorites.FirstOrDefaultAsync(t => t.GameUniqueId == unqueId);
             if (gameFavorite != null)
@@ -69,14 +81,14 @@ namespace BAP.Db
 
         public async Task<List<(string uniqueId, int playCount)>> GetGamePlayStatistics()
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             return (await db.GamePlayLogs.GroupBy(t => t.GameUniqueId).Select(t => new { uniqueId = t.Key, count = t.Count() }).ToListAsync()).Select(t => (t.uniqueId, t.count)).ToList();
 
         }
 
         public async Task<GamePlayLog> AddGamePlayLog(string gameUniqueId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             GamePlayLog newLog = new GamePlayLog() { GameUniqueId = gameUniqueId, DateGameSelectedUTC = DateTime.UtcNow };
             db.GamePlayLogs.Add(newLog);
             await db.SaveChangesAsync();
@@ -85,7 +97,7 @@ namespace BAP.Db
 
         public async Task<bool> AddAnyNewMenuItems(List<(string uniqueId, bool showByDefault)> menuItemDetails)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             HashSet<string> currentMenuItems = (await db.MenuItemStatuses.Select(t => t.MenuItemUniqueId).ToListAsync()).ToHashSet();
             List<string> newItems = menuItemDetails.Select(t => t.uniqueId).Except(currentMenuItems).ToList();
             if (newItems.Count > 0)
@@ -105,7 +117,7 @@ namespace BAP.Db
 
         public async Task<bool> MarkItemAsShowInMenu(string uniqueId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             MenuItemStatus? menuItemStatus = await db.MenuItemStatuses.Where(t => t.MenuItemUniqueId == uniqueId).FirstOrDefaultAsync();
             if (menuItemStatus != null && menuItemStatus.ShowInMainMenu == false)
             {
@@ -118,7 +130,7 @@ namespace BAP.Db
 
         public async Task<bool> MarkItemASDontShowInMenu(string uniqueId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             MenuItemStatus? menuItemStatus = await db.MenuItemStatuses.Where(t => t.MenuItemUniqueId == uniqueId).FirstOrDefaultAsync();
             if (menuItemStatus != null && menuItemStatus.ShowInMainMenu == true)
             {
@@ -131,13 +143,13 @@ namespace BAP.Db
 
         public async Task<List<string>> GetUniqueIdsOfActiveMenuItems()
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             return await db.MenuItemStatuses.Where(t => t.ShowInMainMenu).Select(t => t.MenuItemUniqueId).ToListAsync();
         }
 
         public List<string> AddActiveProvider(Type providerType, bool deactivateOtherProvider)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             ActiveProvider? activeProvider = GenerateActiveProvider(providerType);
             if (activeProvider != null)
             {
@@ -175,7 +187,7 @@ namespace BAP.Db
         /// <returns>A List of the Active Providers for that type</returns>
         public async Task<List<string>> RemoveActiveProvider(Type providerToRemoveType, bool deactivateOtherProvider)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             ActiveProvider? activeProvider = GenerateActiveProvider(providerToRemoveType);
             if (activeProvider != null)
             {
@@ -203,7 +215,7 @@ namespace BAP.Db
             {
                 if (type.GetCustomAttribute<BapProviderInterfaceAttribute>() != null)
                 {
-                    providerName = type.Name;
+                    providerName = type?.FullName ?? type?.Name ?? "";
                     break;
                 }
             }
@@ -220,22 +232,26 @@ namespace BAP.Db
             return null;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T">The Type of the Interface that you want to Fetch</typeparam>
-        /// <returns></returns>
+
         public List<string> GetRecentlyActiveProvider(string providerInterfaceFullName)
         {
+            try
+            {
+                using ButtonContext db = _contextFactory.CreateDbContext();
 
-            using ButtonContext db = new();
+                return db.ActiveProviders.Where(t => t.ProviderInterfaceFullName == providerInterfaceFullName).Select(t => t.ProviderUniqueId).ToList();
+            }
+            catch (Exception ex)
+            {
 
-            return db.ActiveProviders.Where(t => t.ProviderInterfaceFullName == providerInterfaceFullName).Select(t => t.ProviderUniqueId).ToList();
+                return new List<string>();
+            }
+
         }
 
         public async Task<FirmwareInfo> AddLatestFirmware(FirmwareInfo latestFirmwareInfo)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             List<FirmwareInfo> firmwareInfos = await db.FirmwareInfos.Where(t => t.IsLatestVersion).ToListAsync();
             firmwareInfos.ForEach(t => t.IsLatestVersion = false);
             latestFirmwareInfo.IsLatestVersion = true;
@@ -246,7 +262,7 @@ namespace BAP.Db
 
         public async Task<ButtonLayoutHistory> AddButtonLayoutHistory(int buttonLayoutId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             ButtonLayoutHistory buttonLayoutHistory = new();
             buttonLayoutHistory.ButtonLayoutId = buttonLayoutId;
             buttonLayoutHistory.DateUsed = DateTime.UtcNow;
@@ -258,7 +274,7 @@ namespace BAP.Db
 
         public async Task<(ButtonLayout buttonLayout, bool newLayourCreated)> AddButtonLayout(List<ButtonPosition> buttonPositions)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             ButtonLayout buttonLayout = new()
             {
                 ColumnCount = buttonPositions.Select(t => t.ColumnId).Distinct().Count(),
@@ -305,7 +321,7 @@ namespace BAP.Db
 
         public async Task<bool> DeleteLayout(int buttonLayoutId)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             db.RemoveRange(db.ButtonPositions.Where(t => t.ButtonLayoutId == buttonLayoutId));
             ButtonLayout? bl = await db.ButtonLayouts.FirstOrDefaultAsync(t => t.ButtonLayoutId == buttonLayoutId);
             if (bl != null)
@@ -319,7 +335,7 @@ namespace BAP.Db
 
         public async Task<List<ButtonLayout>> CurrentlyViableButtonLayouts(HashSet<string> currentButtonList)
         {
-            using ButtonContext db = new();
+            using ButtonContext db = _contextFactory.CreateDbContext();
             List<ButtonLayout> viableButtonLayouts = new List<ButtonLayout>();
             List<ButtonLayout> allButtonLayouts = await db.ButtonLayouts.Where(t => t.ButtonPositions.Count() == currentButtonList.Count()).Include(t => t.ButtonPositions).ToListAsync();
             foreach (ButtonLayout bl in allButtonLayouts)

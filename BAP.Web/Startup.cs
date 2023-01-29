@@ -15,6 +15,7 @@ using MudBlazor.Services;
 using BAP.PrimaryHandlers;
 using System.Reflection;
 using System.Linq;
+using SixLabors.ImageSharp;
 
 namespace BAP.Web
 {
@@ -40,7 +41,10 @@ namespace BAP.Web
             //services.AddSingleton<AudioManager>();
             services.AddHostedService<ConnectionCoreHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddAllAddonsAndRequiredDiServices();
+            services.AddAllAddonsAndRequiredDiServices(Configuration);
+            services.Configure<BapSettings>(Configuration.GetSection("BAP"));
+
+
             services.AddHttpClient<ITtsService, TtsService>(client => client.BaseAddress = new Uri("http://localhost:5002/api/"));
             services.AddMudServices(config =>
             {
@@ -60,15 +64,8 @@ namespace BAP.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LoadedAddonHolder loadedAddonHolder, ILogger<Startup> logger)
         {
-            //Todo - Should call initialize on all of the providers.
-            foreach (var providerInterface in loadedAddonHolder.BapProviders)
-            {
-                var provider = (IBapProvider)serviceProvider.GetRequiredService(providerInterface.ProviderInterfaceType);
-                ///ARRGGGG - find another place for this.
-                await provider.InitializeAsync();
-            }
 
             WebHostStartupMethods.SetupPages(loadedAddonHolder, logger);
 

@@ -7,6 +7,7 @@ namespace BAP.Db
 {
     public class ButtonContext : DbContext
     {
+        private string _dbConnectionString { get; set; }
         public DbSet<FirmwareInfo> FirmwareInfos => Set<FirmwareInfo>();
         public DbSet<Score> Scores => Set<Score>();
         public DbSet<GameStorage> GameStorageVault => Set<GameStorage>();
@@ -17,22 +18,14 @@ namespace BAP.Db
         public DbSet<ButtonPosition> ButtonPositions => Set<ButtonPosition>();
         public DbSet<ButtonLayoutHistory> ButtonLayoutHistories => Set<ButtonLayoutHistory>();
         public DbSet<ActiveProvider> ActiveProviders => Set<ActiveProvider>();
+
+        public ButtonContext(DbContextOptions<ButtonContext> options)
+       : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            string conectionString = Environment.GetEnvironmentVariable("DbConnectionString") ?? "";
-            if (!options.IsConfigured)
-            {
-                if (string.IsNullOrEmpty(conectionString))
-                {
-                    options.UseInMemoryDatabase(new Guid().ToString());
-                }
-                else
-                {
-                    options.UseMySql(conectionString, MariaDbServerVersion.LatestSupportedServerVersion);
-                }
-            }
-
-
+            Console.WriteLine($"Are we configured? - {options.IsConfigured}");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
