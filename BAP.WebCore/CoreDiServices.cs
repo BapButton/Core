@@ -36,7 +36,7 @@ namespace BAP.WebCore
 
 
             LoadedAddonHolder addonHolder = new();
-            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, "C:\\Users\\nick.gelotte\\source\\repos\\BapButton\\Core\\BAP.TestUtilities\\bin\\Debug");
+            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, bapSettings?.AddonSaveLocation ?? "");
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {

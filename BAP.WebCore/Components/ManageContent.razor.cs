@@ -21,6 +21,7 @@ namespace BAP.WebCore.Components
         LoadedAddonHolder LoadedAddonHolder { get; set; } = default!;
         [Inject]
         ISystemProvider SystemProvider { get; set; } = default!;
+        List<string> CurrentPackages { get; set; } = new();
         private bool displayProgress { get; set; }
         private EditContext editContext { get; set; } = default!;
         private int progressPercent;
@@ -31,6 +32,7 @@ namespace BAP.WebCore.Components
         protected override void OnInitialized()
         {
             cancelation = new CancellationTokenSource();
+            CurrentPackages = Directory.GetDirectories(BapSettings.Value.AddonSaveLocation).ToList();
             packageUpload = new PackageUpload();
             editContext = new EditContext(packageUpload);
             foreach (var providerInterface in LoadedAddonHolder.BapProviders)

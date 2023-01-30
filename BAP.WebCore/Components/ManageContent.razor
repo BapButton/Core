@@ -31,9 +31,15 @@
 <h3>Download from Nuget</h3>
 <p>Feature not yet developed!</p>
 
+<h3>Current Packages</h3>
+<MudList>
+    @foreach (var package in CurrentPackages)
+    {
+        <MudListItem>@package</MudListItem>
+    }
+</MudList>
 
-
-<h3>Upload nuget packages </h3>
+<h3>Upload nuget packages</h3>
 
 <EditForm EditContext="editContext" OnValidSubmit="OnSubmit">
     <div>
