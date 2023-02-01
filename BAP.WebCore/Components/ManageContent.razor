@@ -35,7 +35,12 @@
 <MudList>
     @foreach (var package in CurrentPackages)
     {
-        <MudListItem>@package</MudListItem>
+        var name = $"{package.Name}";
+        if (package.IsMarkedForDeletion)
+        {
+            name = $"{name} (Deleting)";
+        }
+        <MudListItem>@name</MudListItem>
     }
 </MudList>
 

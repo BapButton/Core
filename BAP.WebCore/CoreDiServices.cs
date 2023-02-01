@@ -29,11 +29,17 @@ namespace BAP.WebCore
 
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
+            services.AddTransient<PhysicalFileMaintainer>();
             //services.AddSingleton<AnimationController>(); ;
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddHostedService<BapProviderInitializer>();
+            if (bapSettings != null)
+            {
+                PhysicalFileMaintainer physicalFileMaintainer = new PhysicalFileMaintainer(new BapSettingsFakeOptionSnapshot(bapSettings));
+                physicalFileMaintainer.CleanUpPackages();
 
+            }
 
             LoadedAddonHolder addonHolder = new();
             addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, bapSettings?.AddonSaveLocation ?? "");
