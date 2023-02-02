@@ -41,7 +41,7 @@ namespace BAP.Web.Games
         List<string> NodeIdsPressed { get; set; } = new();
         public int FrameSpacing { get; set; } = 0;
         List<ulong[,]> PossibleImages { get; set; } = new();
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         ILayoutProvider LayoutProvider { get; set; } = default!;
         bool ExplosionInProcess;
         ExplosionTracker? currentExplosionTracker = null;
@@ -56,7 +56,7 @@ namespace BAP.Web.Games
 
         //int minOverlap = 1;
         readonly int failOverlap = 8;
-        public ExplodingBapGame(ILogger<ExplodingBapGame> logger, IBapMessageSender messageSender, IGameHandler gameHandler, ILayoutProvider layoutProvider, ISubscriber<ButtonPressedMessage> buttonPressedPipe)
+        public ExplodingBapGame(ILogger<ExplodingBapGame> logger, IBapMessageSender messageSender, IGameProvider gameHandler, ILayoutProvider layoutProvider, ISubscriber<ButtonPressedMessage> buttonPressedPipe)
         {
             Logger = logger;
             MsgSender = messageSender;

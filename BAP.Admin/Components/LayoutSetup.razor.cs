@@ -11,7 +11,7 @@ using BAP.Admin;
 public partial class LayoutSetup : ComponentBase, IDisposable
 {
     [Inject]
-    IGameHandler GameHandler { get; set; } = default!;
+    IGameProvider GameHandler { get; set; } = default!;
     [Inject]
     ILayoutProvider LayoutProvider { get; set; } = default!;
     [Inject]

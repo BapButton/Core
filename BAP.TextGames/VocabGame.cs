@@ -65,7 +65,7 @@ namespace BAP.Web.Games
             SavedVocab = AsyncHelpers.RunSync(() => DbSaver.GetGameStorage<SavedVocab>()) ?? new();
         }
 
-        public VocabGame(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
+        public VocabGame(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, ILogger<VocabGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;

@@ -20,7 +20,7 @@ namespace BAP.TestUtilities.Components
         [Inject]
         IButtonProvider ButtonProvider { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         [Inject]
         ILayoutProvider LayoutProvider { get; set; } = default!;
         //[Inject]

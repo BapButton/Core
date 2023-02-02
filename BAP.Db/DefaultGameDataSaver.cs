@@ -12,9 +12,9 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 {
 
     private ButtonContext _db { get; set; }
-    private IGameHandler _gameHandler { get; set; }
+    private IGameProvider _gameHandler { get; set; }
 
-    public DefaultGameDataSaver(ButtonContext buttonContext, IGameHandler gameHandler)
+    public DefaultGameDataSaver(ButtonContext buttonContext, IGameProvider gameHandler)
     {
         _gameHandler = gameHandler;
         _db = buttonContext;

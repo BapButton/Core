@@ -16,7 +16,7 @@ namespace BAP.ReactionGames.Components
     public partial class Reaction : ComponentBase, IDisposable
     {
         [Inject]
-        IGameHandler GameHandler { get; init; } = default!;
+        IGameProvider GameHandler { get; init; } = default!;
         [Inject]
         IBapMessageSender MsgSender { get; init; } = default!;
         [Inject]

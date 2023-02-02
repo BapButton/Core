@@ -16,7 +16,7 @@ namespace BAP.ReactionGames.Components
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
 
         private string updateMessage = "";
         private string message = "";

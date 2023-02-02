@@ -16,7 +16,7 @@ namespace BAP.Web.Pages
         [Inject]
         DbAccessor dba { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         [Inject]
         ILayoutProvider LayoutProvider { get; set; } = default!;
         [Inject]
@@ -123,6 +123,7 @@ namespace BAP.Web.Pages
         {
             //todo - Need to unload the game page so it goes back to default;
             GameHandler?.ForceGameEnd();
+            GameHandler.DeselectGame();
             msgSender.ClearAllCachedAudio();
             if (KeyboardProvider.IsEnabled)
             {
@@ -139,6 +140,10 @@ namespace BAP.Web.Pages
         {
             await dba.AddGamePlayLog(gameDetail.UniqueId);
             GameHandler.UpdateDynamicComponentToLoad(gameDetail.DynamicComponentToLoad, gameDetail.Name, gameDetail.Description, gameDetail.UniqueId);
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
         }
         public void Dispose()
         {

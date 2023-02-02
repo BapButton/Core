@@ -20,7 +20,7 @@ namespace BAP.MemoryGames.Components
     public partial class Simon : GamePage
     {
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         [Inject]
         ILayoutProvider LayoutProvider { get; set; } = default!;
         [Inject]

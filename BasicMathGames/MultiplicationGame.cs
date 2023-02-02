@@ -16,7 +16,7 @@ namespace BAP.BasicMathGames
 
 
 
-        public MultiplicationGame(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
+        public MultiplicationGame(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, ILogger<AdditionGame> logger, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IBapMessageSender messageSender, IGameDataSaver dbSaver) : base(keyboardProvider, gameHandler, layoutProvider, messageSender, keyPressed)
         {
             _logger = logger;
             DbSaver = dbSaver;

@@ -11,7 +11,7 @@ namespace BAP.Helpers
         public bool IsGameRunning { get; internal set; }
         public abstract IGameDataSaver DbSaver { get; set; }
         ISubscriber<KeyboardKeyPressedMessage> KeyPressed { get; set; } = default!;
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         IDisposable subscriptions = default!;
         internal BapColor numberColor = new BapColor(0, 255, 0);
         internal string lastNodeId = "";
@@ -34,7 +34,7 @@ namespace BAP.Helpers
         internal char CurrentDigit => Answer[CurrentSpotInAnswerString];
         IKeyboardProvider keyboard { get; set; }
 
-        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameHandler gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
+        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
         {
             KeyboardProvider = keyboardProvider;
             MsgSender = msgSender;

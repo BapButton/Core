@@ -26,11 +26,9 @@ namespace BAP.TestUtilities
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        IBapProviderChanger BapProviderChanger { get; set; } = default!;
-        [Inject]
         IButtonProvider ButtonProvider { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         [Inject]
         ISubscriber<StandardButtonImageMessage> standardButtonMessage { get; set; } = default!;
         private StandardButtonImageMessage CurrentMessage { get; set; } = default!;
@@ -71,7 +69,7 @@ namespace BAP.TestUtilities
         }
         protected void RemoveButton()
         {
-            var currentButtonProvider = BapProviderChanger.GetCurrentBapProvider<IButtonProvider>();
+            var currentButtonProvider = ButtonProvider;
             if (currentButtonProvider.GetType() == typeof(MockButtonProvider))
             {
                 ((MockButtonProvider)currentButtonProvider).RemoveNode(NodeId);

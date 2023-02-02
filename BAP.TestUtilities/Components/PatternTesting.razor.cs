@@ -8,7 +8,7 @@ namespace BAP.TestUtilities.Components
     public partial class PatternTesting : ComponentBase, IDisposable
     {
         [Inject]
-        IGameHandler gameHandler { get; set; } = default!;
+        IGameProvider gameHandler { get; set; } = default!;
         [Inject]
         ISubscriber<GameEventMessage> gameEventMessages { get; set; } = default!;
 

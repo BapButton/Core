@@ -14,15 +14,16 @@ using BAP.PrimaryHandlers;
 
 namespace BAP.PrimayHandlers
 {
-    public class DefaultGameHandler : IGameHandler
+    [BapProvider("Default Gamer Provider", "Holds games in Memory and can close and enable them", "96c3fe0c-8051-4777-986f-daf88ac1afe1")]
+    public class DefaultGameProvider : IGameProvider
     {
         private IServiceProvider _services { get; set; }
         public IBapGame? CurrentGame { get; internal set; }
         public string CurrentGameFullName { get; internal set; } = "";
 
-        public ILogger<DefaultGameHandler> Logger { get; internal set; }
+        public ILogger<DefaultGameProvider> Logger { get; internal set; }
 
-        public DefaultGameHandler(IServiceProvider serviceProvider, ILogger<DefaultGameHandler> logger)
+        public DefaultGameProvider(IServiceProvider serviceProvider, ILogger<DefaultGameProvider> logger)
         {
             _services = serviceProvider;
             Logger = logger;
@@ -100,6 +101,30 @@ namespace BAP.PrimayHandlers
             CurrentGameUniqueId = gameUniqueId;
             DynamicComponentToLoad = pageToLoad;
             return true;
+        }
+
+        public Task DeselectGame()
+        {
+            if (CurrentGame != null)
+            {
+                CurrentGame.Dispose();
+                DynamicComponentToLoad = null;
+                CurrentGameDescription = "";
+                CurrentGameUniqueId = "";
+                CurrentGameName = "";
+                CurrentGame = null;
+            }
+            return Task.CompletedTask;
+        }
+
+        public async Task<bool> InitializeAsync()
+        {
+            return await Task.FromResult(true);
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }

@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="0.1.8-beta" />
+		<PackageReference Include="BAP.Types" Version="0.1.9-beta" />
 		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
 		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">

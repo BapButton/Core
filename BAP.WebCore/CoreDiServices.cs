@@ -112,8 +112,7 @@ namespace BAP.WebCore
             }
             //This is a non dynamic component. But it's what I got for now.
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
-            //Todo - I think gamehandler needs to go away. But this gets some stuff to actually build for now. 
-            services.AddTransient<IGameHandler, DefaultGameHandler>();
+
 
             services.AddSingleton(addonHolder);
             var factory = new TempButtonContextFactory(bapSettings?.DBConnectionString ?? "");

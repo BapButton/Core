@@ -7,7 +7,7 @@ namespace BAP.ReactionGames.Components
     public partial class SpeedUp : GamePage
     {
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         private ReactionSpeedup game { get; set; } = default!;
 
         internal TimeSpan TimePlayed

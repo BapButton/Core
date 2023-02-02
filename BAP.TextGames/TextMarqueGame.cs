@@ -14,12 +14,12 @@ namespace BAP.Web.Games
     }
     public class TextMarqueGame : MarqueGameBase
     {
-        IGameHandler GameHandler { get; set; }
+        IGameProvider GameHandler { get; set; }
         ILayoutProvider LayoutProvider { get; set; }
         public bool Repeat { get; set; } = true;
         public List<MarqueType> MarqueTypes { get; set; } = new();
         private int CurrentMarqueTypeLocation { get; set; } = 0;
-        public TextMarqueGame(ILayoutProvider layoutProvider, IGameHandler gameHandler, ILogger<TextMarqueGame> logger, IBapMessageSender messageSender, AnimationController animationController, ISubscriber<AnimationCompleteMessage> animationCompletePipe) : base(logger, messageSender, animationController, animationCompletePipe)
+        public TextMarqueGame(ILayoutProvider layoutProvider, IGameProvider gameHandler, ILogger<TextMarqueGame> logger, IBapMessageSender messageSender, AnimationController animationController, ISubscriber<AnimationCompleteMessage> animationCompletePipe) : base(logger, messageSender, animationController, animationCompletePipe)
         {
             GameHandler = gameHandler;
             LayoutProvider = layoutProvider;

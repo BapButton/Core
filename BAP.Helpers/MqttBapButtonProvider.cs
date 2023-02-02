@@ -34,12 +34,12 @@ namespace BAP.Helpers
         private ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<ButtonPressedMessage> ButtonPressSender { get; set; } = default!;
-        private IGameHandler GameHandler { get; init; }
+        private IGameProvider GameHandler { get; init; }
         private ILayoutProvider LayoutProvider { get; init; }
         public string Name => "Mqtt Controller";
 
         public DefaultMqttBapButtonProvider(ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
-     IGameHandler gameHandler, ILayoutProvider layoutProvider)
+     IGameProvider gameHandler, ILayoutProvider layoutProvider)
         {
             _logger = logger;
             StandardButtonMessagePipe = standardButtonMessagePipe;

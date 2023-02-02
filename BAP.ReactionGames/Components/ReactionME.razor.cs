@@ -16,7 +16,7 @@ namespace BAP.ReactionGames.Components
         [Inject]
         IBapMessageSender MsgSender { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         //[Inject]
         //ISubscriber<GameEventMessage> GameEventPipe { get; set; } = default!;
         //IDisposable Subscriptions { get; set; } = default!;

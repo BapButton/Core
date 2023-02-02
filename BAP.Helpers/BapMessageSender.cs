@@ -18,7 +18,7 @@ namespace BAP.Helpers
         private IPublisher<GameEventMessage> GameEventMessageSender { get; set; } = default!;
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<LayoutChangeMessage> LayoutChangeSender { get; set; } = default!;
-        private IGameHandler GameHandler { get; set; }
+        private IGameProvider GameHandler { get; set; }
         private IButtonProvider ButtonProvider { get; set; }
         public int ButtonCount
         {

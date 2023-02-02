@@ -6,7 +6,7 @@ namespace BAP.Web.Pages.Games
     public partial class ExplodingBap : ComponentBase
     {
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameHandler { get; set; } = default!;
         protected override void OnInitialized()
         {
             GameHandler.UpdateToNewGameType(typeof(ExplodingBapGame));
