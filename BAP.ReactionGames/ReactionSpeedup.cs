@@ -1,5 +1,4 @@
 ﻿using BAP.Db;
-using BapButton;
 using BAP.Types;
 using BAP.Helpers;
 using BAP.ReactionGames.Components;
@@ -187,6 +186,7 @@ namespace BAP.ReactionGames
                 MsgSender.SendImageToAllButtons(new ButtonImage());
                 MsgSender.SendUpdate("Game Ended", true);
             }
+            
             return true;
         }
 

@@ -6,7 +6,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
-using BapButton;
 using BAP.Types;
 using BAP.Helpers;
 using static BAP.Helpers.BapBasicGameHelper;

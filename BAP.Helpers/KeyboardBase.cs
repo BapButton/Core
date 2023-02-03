@@ -18,7 +18,7 @@ public abstract class KeyboardBase : IKeyboardProvider
     public Dictionary<string, char> KeyboardValues = new();
     public IBapMessageSender MsgSender { get; internal set; }
     private IPublisher<KeyboardKeyPressedMessage> KeyboardKeyPressedSender { get; set; } = default!;
-    private BapColor ColorForCharacters { get; set; } = default!;
+    private BapColor ColorForCharacters { get; set; } = new(0, 255, 0);
     private int CurrentPlaceInArray { get; set; }
     private char CurrentCorrectCharId { get; set; }
     private char leftArrow = '←';
@@ -51,8 +51,6 @@ public abstract class KeyboardBase : IKeyboardProvider
     public List<string> ActiveNodes => NodeIdsToUse.ToList();
 
     public bool PlayDefaultSoundOnPress => PlayKeyPressSound;
-
-    public bool AllowMultiple { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     public KeyboardBase(ILogger logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender msgSender, IPublisher<KeyboardKeyPressedMessage> keyboardKeyPressedSender)
     {

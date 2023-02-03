@@ -112,8 +112,6 @@ namespace BAP.WebCore
             }
             //This is a non dynamic component. But it's what I got for now.
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
-
-
             services.AddSingleton(addonHolder);
             var factory = new TempButtonContextFactory(bapSettings?.DBConnectionString ?? "");
 

@@ -3,6 +3,7 @@ using MessagePipe;
 using Microsoft.AspNetCore.Components;
 
 namespace BAP.Admin.Components;
+[TopMenu()]
 public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
 {
     [Inject]

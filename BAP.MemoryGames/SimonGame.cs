@@ -199,7 +199,7 @@ namespace BAP.MemoryGames
                 gameTimer.Stop();
                 playingPattern = true;
                 await Task.Delay(500);
-                MsgSender.PlayAudio("simonroundcomplete.mp3");
+                MsgSender.PlayAudio("GameSuccess.mp3", true);
                 await Task.Delay(1500);
                 await UpdateAndPlayThePattern();
             }

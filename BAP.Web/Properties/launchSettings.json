@@ -1,16 +1,4 @@
 {
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iis": {
-      "applicationUrl": "http://10.12.1.62:54321/",
-      "sslPort": 0
-    },
-    "iisExpress": {
-      "applicationUrl": "http://localhost:55722",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -19,7 +7,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "nativeDebugging": true,
+      "nativeDebugging": false,
       "hotReloadProfile": "aspnetcore"
     },
     "BapWeb": {
@@ -39,10 +27,22 @@
       "publishAllPorts": true,
       "useSSL": true,
       "httpPort": 8080,
-      "sslPort":  8081
+      "sslPort": 8081
     },
     "IIS": {
       "commandName": "IIS"
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://10.12.1.62:54321/",
+      "sslPort": 0
+    },
+    "iisExpress": {
+      "applicationUrl": "http://localhost:55722",
+      "sslPort": 0
     }
   }
 }

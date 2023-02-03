@@ -9,7 +9,7 @@ namespace BAP.BasicMathGames.Components
     {
 
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameProvider { get; set; } = default!;
 
         [Inject]
         ILayoutProvider LayoutProvider { get; set; } = default!;
@@ -118,7 +118,7 @@ namespace BAP.BasicMathGames.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            game = (AdditionGame)GameHandler.UpdateToNewGameType(typeof(AdditionGame));
+            game = (AdditionGame)GameProvider.UpdateToNewGameType(typeof(AdditionGame));
             if (!game.IsGameRunning)
             {
                 game.Initialize();

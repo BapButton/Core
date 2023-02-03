@@ -1,7 +1,6 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
-using BapButton;
 using static BAP.Helpers.BapBasicGameHelper;
 using BAP.Types;
 using BAP.Helpers;

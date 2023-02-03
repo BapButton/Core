@@ -54,10 +54,19 @@ public abstract class GamePage : ComponentBase, IGamePage, IDisposable
     }
     public void StopUpdatingTime()
     {
-        if (timerUpdator != null && !timerUpdator.IsCancellationRequested)
+        try
         {
-            timerUpdator.Cancel();
+            if (timerUpdator != null && !timerUpdator.IsCancellationRequested)
+            {
+                timerUpdator.Cancel();
+            }
         }
+        catch (Exception)
+        {
+
+
+        }
+
 
     }
     public virtual void Dispose()

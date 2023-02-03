@@ -2,27 +2,29 @@
 @using BAP.Web.Pages;
 
 <MudThemeProvider />
-<MudDialogProvider/>
-<MudSnackbarProvider/>
-
+<MudDialogProvider />
+<MudSnackbarProvider />
+@inject LoadedAddonHolder _LoadedAddonHolder
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">bAp - Buttons for Active Play</MudText>
         <MudSpacer />
         @*<MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />*@
-         <AudioPlayer/>
-        <LayoutTopbarDisplay />
+        @foreach (var item in _LoadedAddonHolder.TopBarItems)
+        {
+            <DynamicComponent Type="item.DynamicComponentToLoad" />
+        }
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu/>
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
         <MudPaper Width="100%" style="margin:10px">
             @Body
         </MudPaper>
     </MudMainContent>
-  
+
 </MudLayout>
 @code {
     bool _drawerOpen = true;

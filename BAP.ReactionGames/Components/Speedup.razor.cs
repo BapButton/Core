@@ -82,6 +82,7 @@ namespace BAP.ReactionGames.Components
         {
             StopUpdatingTime();
             await game.EndSpeedupGame("Closed by player", true);
+
         }
 
         public async void StartGame()

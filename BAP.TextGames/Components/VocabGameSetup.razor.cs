@@ -13,7 +13,7 @@ namespace BAP.TextGames.Components
         [Inject]
         private IDialogService DialogService { get; set; } = default!;
         [Inject]
-        IGameHandler GameHandler { get; set; } = default!;
+        IGameProvider GameProvider { get; set; } = default!;
         [Inject]
         private IBapMessageSender _messageSender { get; set; } = default!;
         internal SavedVocab _savedVocab { get; set; } = new();
@@ -51,7 +51,7 @@ namespace BAP.TextGames.Components
 
         public async Task Save()
         {
-            var vocabGame = (VocabGame)GameHandler.CurrentGame!;
+            var vocabGame = (VocabGame)GameProvider.CurrentGame!;
             await vocabGame.SaveNewVocabWords(SavedWordsConcat, _savedVocab.IsSpanish);
             vocabGame.RefreshSavedVocab();
             MudDialog.Close();
