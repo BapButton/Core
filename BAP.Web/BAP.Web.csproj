@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="0.1.11-beta" />
+		<PackageReference Include="BAP.Types" Version="0.1.12-beta" />
 		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
 		<PackageReference Include="MessagePackAnalyzer" Version="2.4.35">
 			<PrivateAssets>all</PrivateAssets>
@@ -38,6 +38,7 @@
 		<ProjectReference Include="..\BAP.Admin\BAP.Admin.csproj" />
 		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
 		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+		<ProjectReference Include="..\BAP.MemoryGames\BAP.MemoryGames.csproj" />
 		<ProjectReference Include="..\BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj" />
 		<ProjectReference Include="..\BAP.ReactionGames\BAP.ReactionGames.csproj" />
 		<ProjectReference Include="..\BAP.TestUtilities\BAP.TestUtilities.csproj" />

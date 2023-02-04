@@ -77,7 +77,7 @@ namespace BAP.MemoryGames
 
         public void SetupGame(int buttonCountToUse, int rowIdToStartWith)
         {
-            if (LayoutProvider != null && rowIdToStartWith > 0)
+            if (LayoutProvider != null && LayoutProvider.CurrentButtonLayout != null && rowIdToStartWith > 0)
             {
                 buttonsInUse = LayoutProvider?.CurrentButtonLayout.ButtonPositions.Where(t => t.RowId >= rowIdToStartWith).OrderBy(t => t.RowId).ThenBy(t => t.ColumnId).Take(buttonCountToUse).Select(t => t.ButtonId).ToList() ?? new();
             }
@@ -199,7 +199,7 @@ namespace BAP.MemoryGames
                 gameTimer.Stop();
                 playingPattern = true;
                 await Task.Delay(500);
-                MsgSender.PlayAudio("GameSuccess.mp3", true);
+                MsgSender.PlayAudio(FilePathHelper.GetFullPath<SimonGame>("GameSuccess.mp3"), true);
                 await Task.Delay(1500);
                 await UpdateAndPlayThePattern();
             }
@@ -236,10 +236,11 @@ namespace BAP.MemoryGames
                     if (IsGameRunning)
                     {
                         var (color, soundFileName) = ButtonAssignments[button];
-                        MsgSender.PlayAudio(soundFileName);
+                        MsgSender.PlayAudio(FilePathHelper.GetFullPath<SimonGame>(soundFileName));
                         //todo - lost the brightness effect
-                        MsgSender.SendImage(button, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), color));
+                        MsgSender.SendImage(button, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), BrightnessAdjuster.Brighten(color, .4)));
                         await Task.Delay(750);
+                        MsgSender.SendImage(button, new ButtonImage(PatternHelper.GetBytesForPattern(Patterns.AllOneColor), color));
                     }
                 }
                 gameTimer.Start();
@@ -271,7 +272,7 @@ namespace BAP.MemoryGames
             {
                 if (playingPattern)
                 {
-                    EndGame("Button pressed while the pattern is playing");
+                    await EndGame("Button pressed while the pattern is playing");
                 }
                 else
                 {
@@ -279,7 +280,7 @@ namespace BAP.MemoryGames
                     if (ButtonAssignments.TryGetValue(e.NodeId, out var colorAndFile))
                     {
 
-                        MsgSender.PlayAudio(colorAndFile.soundFileName);
+                        MsgSender.PlayAudio(FilePathHelper.GetFullPath<SimonGame>(colorAndFile.soundFileName));
                         if (currentButton == e.NodeId)
                         {
                             _logger.LogDebug($"Correct moving to the next item.");
@@ -287,7 +288,7 @@ namespace BAP.MemoryGames
                         }
                         else
                         {
-                            EndGame("Wrong button");
+                            await EndGame("Wrong button");
                         }
                     }
 

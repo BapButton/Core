@@ -15,6 +15,7 @@ namespace BAP.ReactionGames
         string lastFaceNodeId = "";
         string lastSwordNodeId = "";
         bool lastFaceWasAFrownyFace = false;
+        IGameProvider GameProvider;
         int swordGameCount = 0;
         ulong[] swordSprite = new ulong[64];
         ulong[] frownyFace = new ulong[64];
@@ -28,16 +29,17 @@ namespace BAP.ReactionGames
         private ISubscriber<InternalSimpleGameUpdates> InternalUpdatePipe { get; set; }
         IDisposable subscriptions = default!;
 
-        public ReactionGameEthan(ILogger<ReactionGameBase> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender messageSender, IServiceProvider services, ISubscriber<InternalSimpleGameUpdates> internalUpdatePipe) : base(buttonPressed, messageSender)
+        public ReactionGameEthan(IGameProvider gameProvider, ILogger<ReactionGameBase> logger, ISubscriber<ButtonPressedMessage> buttonPressed, IBapMessageSender messageSender, IServiceProvider services, ISubscriber<InternalSimpleGameUpdates> internalUpdatePipe) : base(buttonPressed, messageSender)
         {
             Services = services;
+            GameProvider = gameProvider;
             InternalUpdatePipe = internalUpdatePipe;
             base.Initialize(minButtons: 2, useIfItWasLitForScoring: false);
             var bag = DisposableBag.CreateBuilder();
             InternalUpdatePipe.Subscribe(async (x) => await UpdateScoreFromInternalMessage(x)).AddTo(bag);
             subscriptions = bag.Build();
             _logger = logger;
-            string path = Path.Combine(".", "wwwroot", "sprites", "Emoji.png");
+            string path = FilePathHelper.GetFullPath<ReactionGameEthan>("Emoji.png");
             SpriteParser spriteParser = new SpriteParser(path);
             swordSprite = spriteParser.GetSprite(4, 5, 24, 20, 16, 2, 9);
             frownyFace = spriteParser.GetSprite(4, 5, 24, 20, 16, 6, 7);
@@ -51,7 +53,7 @@ namespace BAP.ReactionGames
             {
                 base.UnPauseGame();
                 bonusGame?.Dispose();
-                MsgSender.PlayAudio(BeatTheBonusRound);
+                MsgSender.PlayAudio(FilePathHelper.GetFullPath<ReactionGameEthan>(BeatTheBonusRound));
                 await NextCommand();
             }
             MsgSender.SendUpdate("Internal Score Update");
@@ -59,7 +61,7 @@ namespace BAP.ReactionGames
 
         public override async Task<bool> Start(int secondsToRun)
         {
-            bonusGame = Services.GetRequiredService<SwordBonusGame>();
+            bonusGame = GameProvider.ReturnGameWithoutEnabling<SwordBonusGame>();
             await Task.Delay(100);
             bonusGame.Dispose();
             await base.Start(secondsToRun);
@@ -146,7 +148,7 @@ namespace BAP.ReactionGames
                     }
                     bonusGame = Services.GetRequiredService<SwordBonusGame>();
                     PauseGame(true);
-                    MsgSender.PlayAudio(StartOfBonusRound);
+                    MsgSender.PlayAudio(FilePathHelper.GetFullPath<ReactionGameEthan>(StartOfBonusRound));
                     await bonusGame.Start(20);
 
 
@@ -158,7 +160,7 @@ namespace BAP.ReactionGames
                     if (lastFaceWasAFrownyFace)
                     {
                         await EndGame("It was a frowny Face", true);
-                        MsgSender.PlayAudio(FrownyFaceSound);
+                        MsgSender.PlayAudio(FilePathHelper.GetFullPath<ReactionGameEthan>(FrownyFaceSound));
                     }
                     else
                     {
@@ -183,7 +185,7 @@ namespace BAP.ReactionGames
             base.PlayNextWrongSound();
             if (wrongScore > 5)
             {
-                MsgSender.PlayAudio(TooManyWrong);
+                MsgSender.PlayAudio(FilePathHelper.GetFullPath<ReactionGameEthan>(TooManyWrong));
                 await EndGame("Too Many Wrong");
                 return false;
             }

@@ -66,7 +66,10 @@ namespace BAP.PrimayHandlers
             }
 
         }
-
+        public T ReturnGameWithoutEnabling<T>()
+        {
+            return (T)ActivatorUtilities.CreateInstance<T>(_services);
+        }
 
         public IBapGame UpdateToNewGameType(Type gameType, bool createNewGameIfSameTypeLoaded = false)
         {
@@ -108,12 +111,12 @@ namespace BAP.PrimayHandlers
             if (CurrentGame != null)
             {
                 CurrentGame.Dispose();
-                DynamicComponentToLoad = null;
-                CurrentGameDescription = "";
-                CurrentGameUniqueId = "";
-                CurrentGameName = "";
                 CurrentGame = null;
             }
+            DynamicComponentToLoad = null;
+            CurrentGameDescription = "";
+            CurrentGameUniqueId = "";
+            CurrentGameName = "";
             return Task.CompletedTask;
         }
 

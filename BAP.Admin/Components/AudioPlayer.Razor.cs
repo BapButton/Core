@@ -2,6 +2,7 @@
 using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
@@ -17,7 +18,7 @@ namespace BAP.Admin.Components
         [Inject]
         ILogger<AudioPlayer> _logger { get; set; } = default!;
         [Inject]
-        IOptionsSnapshot<BapSettings> _bapSettings { get; set; } = default!;
+        IMemoryCache memoryCache { get; set; } = default!;
         [Inject]
         IJSRuntime js { get; set; } = default!;
         [Inject]
@@ -44,28 +45,22 @@ namespace BAP.Admin.Components
                 {
                     await js.InvokeVoidAsync("ClearAudio");
                 }
-
+                string fileNameToPlay = e.FullPathToAudioFileWithFileName;
                 if (!string.IsNullOrEmpty(e.FullPathToAudioFileWithFileName))
                 {
-                    string fileNameToPlay = e.FullPathToAudioFileWithFileName;
-                    if (e.FullPathToAudioFileWithFileName.StartsWith(_bapSettings.Value.AddonSaveLocation))
+
+                    if (!e.FullPathToAudioFileWithFileName.StartsWith("/api"))
                     {
-                        fileNameToPlay.Substring(_bapSettings.Value.AddonSaveLocation.Length);
-                        List<string> directoryList = new();
-                        string remainingFileInfo = e.FullPathToAudioFileWithFileName;
-                        while (string.IsNullOrEmpty(remainingFileInfo))
-                        {
-                            var directoryName = Path.GetDirectoryName(remainingFileInfo);
-                            if (directoryName?.Length > 0)
-                            {
-                                directoryList.Add(remainingFileInfo.Substring(directoryName.Length));
-                                remainingFileInfo = directoryName;
-                            }
-                        }
-                        //Replace all Pipes with doubles so that they can be swapped out on rehydration.
-                        directoryList.ForEach(t => t = t.Replace("|", "||"));
-                        fileNameToPlay = string.Join("|", directoryList);
+                        string extension = Path.GetExtension(e.FullPathToAudioFileWithFileName);
+                        string guid = Guid.NewGuid().ToString();
+                        string justTheFilename  = $"{guid}{extension}";
+                        memoryCache.Set(justTheFilename, e.FullPathToAudioFileWithFileName, TimeSpan.FromMinutes(2));
+                        fileNameToPlay = $"/api/audio/{guid}{extension}";
                     }
+
+                }
+                if (!string.IsNullOrEmpty(fileNameToPlay))
+                {
                     try
                     {
                         if (!string.IsNullOrEmpty(fileNameToPlay) && !VolumeMuted)
@@ -75,9 +70,10 @@ namespace BAP.Admin.Components
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex.Message, $"Problem stoppping and playing the sound -{ex.Message}");
+                        _logger.LogError(ex.Message, $"Problem playing the sound -{ex.Message}");
                     }
                 }
+
 
             }
             catch (Exception ex)

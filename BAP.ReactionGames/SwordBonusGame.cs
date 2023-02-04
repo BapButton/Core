@@ -41,7 +41,7 @@ namespace BAP.ReactionGames
             CrownNodeId = "";
             _logger = logger;
 
-            string path = Path.Combine(".", "wwwroot", "sprites", "SwordBonusGame.bmp");
+            string path = Path.Combine(".", "wwwroot", "sprites", FilePathHelper.GetFullPath<SwordBonusGame>("SwordBonusGame.bmp"));
             SpriteParser spriteParser = new SpriteParser(path);
             var sprites = spriteParser.GetCustomImagesFromCustomSprite();
             SwordSprite = sprites[0];
@@ -130,7 +130,7 @@ namespace BAP.ReactionGames
         public override async Task<bool> Start(int secondsToRun)
         {
 
-            MsgSender.PlayAudio(StartOfEntireGame);
+            MsgSender.PlayAudio(FilePathHelper.GetFullPath<SwordBonusGame>(StartOfEntireGame));
             bonusTimer = new System.Timers.Timer(MsDelay);
             await base.Start(secondsToRun);
             bonusTimer.Elapsed += NextButtonevent;

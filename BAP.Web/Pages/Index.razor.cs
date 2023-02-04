@@ -123,7 +123,7 @@ namespace BAP.Web.Pages
         {
             //todo - Need to unload the game page so it goes back to default;
             GameHandler?.ForceGameEnd();
-            GameHandler.DeselectGame();
+            GameHandler?.DeselectGame();
             msgSender.ClearAllCachedAudio();
             if (KeyboardProvider.IsEnabled)
             {

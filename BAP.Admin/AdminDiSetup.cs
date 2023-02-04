@@ -15,6 +15,7 @@ namespace BAP.PrimaryHandlers
         public void AddItemsToDi(IServiceCollection services)
         {
             services.AddTransient<IValidator<FileUpload>, FileUploadValidator>();
+            services.AddMemoryCache();
         }
     }
 }
