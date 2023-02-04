@@ -51,11 +51,16 @@ namespace BAP.Admin.Components
 
                     if (!e.FullPathToAudioFileWithFileName.StartsWith("/api"))
                     {
-                        string extension = Path.GetExtension(e.FullPathToAudioFileWithFileName);
-                        string guid = Guid.NewGuid().ToString();
-                        string justTheFilename  = $"{guid}{extension}";
-                        memoryCache.Set(justTheFilename, e.FullPathToAudioFileWithFileName, TimeSpan.FromMinutes(2));
-                        fileNameToPlay = $"/api/audio/{guid}{extension}";
+                        string justTheFilename = memoryCache.Get<string>(e.FullPathToAudioFileWithFileName) ?? "";
+                        if(string.IsNullOrEmpty(justTheFilename))
+                        {
+                            string extension = Path.GetExtension(e.FullPathToAudioFileWithFileName);
+                            string guid = Guid.NewGuid().ToString();
+                            justTheFilename = $"{guid}{extension}";
+                            memoryCache.Set(e.FullPathToAudioFileWithFileName, justTheFilename, TimeSpan.FromMinutes(60));
+                        }
+                        memoryCache.Set(justTheFilename, e.FullPathToAudioFileWithFileName, TimeSpan.FromMinutes(60));
+                        fileNameToPlay = $"/api/audio/{justTheFilename}";
                     }
 
                 }
