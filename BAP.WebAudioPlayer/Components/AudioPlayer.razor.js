@@ -28,6 +28,7 @@
 }
 window.StopAllAudio = function () {
 	var element = document.getElementsByTagName("audio");
+	let index = 0;
 	for (index = element.length - 1; index >= 0; index--) {
 		if (element.id !== 'audioPlayer') {
 			var audio = element[index];
