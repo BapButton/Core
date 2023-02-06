@@ -16,10 +16,11 @@ namespace BAP.WebCore
             foreach (Assembly loadedAssembly in loadedAddonHolder.AllLoadedAssemblies)
             {
                 var (routes, menuItems, topMenuItemDetails) = AddonLoader.GetLoadableComponents(loadedAssembly);
+                List<(string routeName, string assemblyName)> problemRoutes = new();
+                List<(string routeName, string assemblyName)> goodRoutes = new();
                 if (routes.Count > 0)
                 {
-                    List<(string routeName, string assemblyName)> problemRoutes = new();
-                    List<(string routeName, string assemblyName)> goodRoutes = new();
+
                     foreach (var page in routes)
                     {
                         (string routeName, string assemblyName) matchingRoute = currentlyAddedRoutes.FirstOrDefault(t => t.routeName.Equals(page, StringComparison.OrdinalIgnoreCase));
@@ -45,11 +46,12 @@ namespace BAP.WebCore
                         }
 
                     }
-                    if (problemRoutes.Count == 0)
-                    {
-                        loadedAddonHolder.MainMenuItems.AddRange(menuItems);
-                        loadedAddonHolder.TopBarItems.AddRange(topMenuItemDetails);
-                    }
+                }
+
+                if (problemRoutes.Count == 0)
+                {
+                    loadedAddonHolder.MainMenuItems.AddRange(menuItems);
+                    loadedAddonHolder.TopBarItems.AddRange(topMenuItemDetails);
                 }
 
             }

@@ -11,5 +11,4 @@ global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.AspNetCore.Components.Web;
 global using Microsoft.AspNetCore.Components.Web.Virtualization;
 global using Microsoft.JSInterop;
-global using BAP.PrimayHandlers;
 global using MessagePipe;

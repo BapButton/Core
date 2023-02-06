@@ -4,14 +4,15 @@
     border-style: solid;
 }
 
+    table.buttonTable tr {
+        line-height: 18px;
+        display: block;
+    }
+
+
 .buttonTable td {
     height: 18px;
     width: 18px;
-}
-
-.buttonTable tr {
-    max-height: 18px;
-    display: block;
 }
 
 button.removeButton {

@@ -21,11 +21,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.2">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
@@ -53,7 +53,6 @@
 	<ItemGroup>
 		<Watch Remove="App.razor.cs" />
 		<Watch Remove="AssemblyScanner.cs" />
-		<Watch Remove="BapSettings.cs" />
 		<Watch Remove="Controller\AudioController.cs" />
 		<Watch Remove="Controller\FirmwareController.cs" />
 		<Watch Remove="Controller\TTSController.cs" />
@@ -71,7 +70,6 @@
 		<Watch Remove="Pages\ReactionME - Copy.razor.cs" />
 		<Watch Remove="Pages\SetupLayout.razor.cs" />
 		<Watch Remove="Shared\NavMenu.razor.cs" />
-		<Watch Remove="Supervisor\Status.cs" />
 		<Watch Remove="TTS\TtsService.cs" />
 	</ItemGroup>
 	<ItemGroup>
@@ -105,5 +103,8 @@
 		<Resource Include="wwwroot\audio\SgWonTheEntireGame.mp3" />
 		<Resource Include="wwwroot\audio\SqBeatTheBonusRound.mp3" />
 		<Resource Include="wwwroot\audio\SqHitTheCrown.mp3" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Supervisor\" />
 	</ItemGroup>
 </Project>

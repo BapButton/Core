@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BAP.Admin\BAP.Admin.csproj" />
+    <ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
+    <ProjectReference Include="..\BAP.DefaultLayoutProvider\BAP.DefaultLayoutProvider.csproj" />
+    <ProjectReference Include="..\BAP.ReactionGames\BAP.ReactionGames.csproj" />
+    <ProjectReference Include="..\BAP.TestUtilities\BAP.TestUtilities.csproj" />
+    <ProjectReference Include="..\BAP.WebAudioPlayer\BAP.WebAudioPlayer.csproj" />
+    <ProjectReference Include="..\BAP.WebCore\BAP.WebCore.csproj" />
+  </ItemGroup>
+
+</Project>

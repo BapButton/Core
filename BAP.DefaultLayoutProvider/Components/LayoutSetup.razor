@@ -1,0 +1,77 @@
+﻿@page "/layout"
+
+<h3>Setup Layout</h3>
+
+
+
+<p> There @(MsgSender.GetConnectedButtons().Count == 1 ? "is" : "are") @MsgSender.GetConnectedButtons().Count  Button connected.</p> 
+<MudButton OnClick=@rerunLayout>Re-Run Auto Layout</MudButton>
+@if(!GameHandler.IsGameRunning)
+{
+<MudButton OnClick=@Start>Start</MudButton>
+}
+
+@if(PossibleButtonLayouts.Count > 0)
+{
+	<h2>Possible Button Layouts</h2>
+	<MudGrid>
+       
+        @foreach (var bl in PossibleButtonLayouts)
+        {
+			bool outlined = bl.ButtonLayoutId == (LayoutProvider?.CurrentButtonLayout?.ButtonLayoutId ?? 0);
+			int elevation = outlined ? 20 : 0;
+			<MudItem xs = "12" sm="6" lg="3">
+
+                <MudCard Outlined=@outlined Elevation=@elevation>
+                     
+                     <MudCardContent>
+                        <MudText>@bl?.Description</MudText>
+                    </MudCardContent>
+					<MudCardActions>
+					<MudButton Variant="Variant.Text" Color="Color.Primary" @onclick="() => DisplayLayout(bl)">Show</MudButton>
+					<MudButton disabled="@outlined" Variant="Variant.Text" Color="Color.Secondary" @onclick="() => SetButtonLayout(bl)">Select</MudButton>
+					<MudButton Variant="Variant.Text" Color="Color.Tertiary" @onclick="() => DeleteLayout(bl)">Delete</MudButton>
+					</MudCardActions>
+            </MudCard>
+            
+            </MudItem>
+        }
+   </MudGrid>
+}
+	
+@if(!GameHandler.IsGameRunning)
+{
+	<MudButton @onclick="() => AddRow()">Add Row</MudButton>
+	<MudButton @onclick="() => DeleteRow()">Remove Row</MudButton>
+	for (int i = 0; i < RowLayout.Count; i++) 
+{
+	//This is important to save it in scope
+	int currentRowNumber = i;
+  string rowLabel = $"Row {i + 1} ButtonCount";
+  <MudGrid>
+  <MudItem xs="1" lg="1">
+		<MudNumericField @bind-Value="RowLayout[currentRowNumber]" Min="0" Max="20" Label="@rowLabel"></MudNumericField>
+		</MudItem>
+		</MudGrid>
+}
+}
+else
+{
+		for (int i = 0; i < RowLayout.Count; i++) 
+{
+	//This is important to save it in scope
+	int currentRowNumber = i;
+  string rowLabel = $"Row {i + 1} has {RowLayout[currentRowNumber]} Buttons";
+  <MudGrid>
+  <MudItem xs="2" lg="2">
+		@rowLabel
+		</MudItem>
+		</MudGrid>
+}
+	<MudButton OnClick=@GameHandler.ForceGameEnd>End</MudButton>
+}
+
+<h5>Last Message:</h5>
+<p>@LastMessage</p>
+
+@*<LogWindow />*@

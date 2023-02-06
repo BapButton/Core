@@ -14,8 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Db", "BAP.Db\BAP.Db.csproj", "{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Web", "BAP.Web\BAP.Web.csproj", "{57C8BD74-83E8-4861-99A3-5B13C97F1237}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Helpers", "BAP.Helpers\BAP.Helpers.csproj", "{8F8C61FA-1D04-434E-B698-DDAC094A090D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.BasicMathGames", "BasicMathGames\BAP.BasicMathGames.csproj", "{FA94255C-2780-46F1-988A-3F70188FF67C}"
@@ -30,11 +28,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.ReactionGames", "BAP.Re
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.PrimaryHandlers", "BAP.PrimaryHandlers\BAP.PrimaryHandlers.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultGameProvider", "BAP.DefaultGameProvider\BAP.DefaultGameProvider.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Admin", "BAP.Admin\BAP.Admin.csproj", "{AC312AE5-0029-4F65-AFA8-E914E1F6AAC2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.WebCore", "BAP.WebCore\BAP.WebCore.csproj", "{DB4EAE6C-6ACA-4AD6-9DB3-92B5D3581C53}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.WebDev", "BAP.WebDev\BAP.WebDev.csproj", "{2605DCA5-2801-4D89-AB0A-1391D510550D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultLayoutProvider", "BAP.DefaultLayoutProvider\BAP.DefaultLayoutProvider.csproj", "{16DD619A-BC06-48D1-BAF3-A98AC8D34447}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.WebAudioPlayer", "BAP.WebAudioPlayer\BAP.WebAudioPlayer.csproj", "{02D041BB-8100-4053-944B-483B32535893}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,10 +50,6 @@ Global
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57C8BD74-83E8-4861-99A3-5B13C97F1237}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8F8C61FA-1D04-434E-B698-DDAC094A090D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8F8C61FA-1D04-434E-B698-DDAC094A090D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F8C61FA-1D04-434E-B698-DDAC094A090D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -90,6 +90,18 @@ Global
 		{DB4EAE6C-6ACA-4AD6-9DB3-92B5D3581C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB4EAE6C-6ACA-4AD6-9DB3-92B5D3581C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB4EAE6C-6ACA-4AD6-9DB3-92B5D3581C53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2605DCA5-2801-4D89-AB0A-1391D510550D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2605DCA5-2801-4D89-AB0A-1391D510550D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2605DCA5-2801-4D89-AB0A-1391D510550D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2605DCA5-2801-4D89-AB0A-1391D510550D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16DD619A-BC06-48D1-BAF3-A98AC8D34447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16DD619A-BC06-48D1-BAF3-A98AC8D34447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16DD619A-BC06-48D1-BAF3-A98AC8D34447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16DD619A-BC06-48D1-BAF3-A98AC8D34447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02D041BB-8100-4053-944B-483B32535893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02D041BB-8100-4053-944B-483B32535893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02D041BB-8100-4053-944B-483B32535893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02D041BB-8100-4053-944B-483B32535893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

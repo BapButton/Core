@@ -1,0 +1,14 @@
+﻿@using System.Runtime.InteropServices
+
+<MudPaper Width="250px" Class="py-3" Square="true">
+    <MudNavMenu>
+
+        <MudNavLink Match="NavLinkMatch.All" Href="/">Games</MudNavLink>
+        @foreach (var item in LoadedAddonHolder.MainMenuItems)
+        {
+            <MudTooltip Text="@item.MouseOver">
+                <MudNavLink tooltip Href="@item.Path">@item.DisplayedLabel</MudNavLink>
+            </MudTooltip>
+        }
+    </MudNavMenu>
+</MudPaper>

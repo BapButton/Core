@@ -1,8 +1,11 @@
 ﻿using BAP.Db;
 using BAP.Web;
+using BAP.WebCore.TTS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MudBlazor;
+using MudBlazor.Services;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
@@ -34,6 +37,22 @@ namespace BAP.WebCore
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddHostedService<BapProviderInitializer>();
+            services.AddHttpClient<ITtsService, TtsService>(client => client.BaseAddress = new Uri("http://localhost:5002/api/"));
+            services.AddMudServices(config =>
+            {
+                config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+                config.SnackbarConfiguration.PreventDuplicates = true;
+                config.SnackbarConfiguration.NewestOnTop = false;
+                config.SnackbarConfiguration.ShowCloseIcon = true;
+                config.SnackbarConfiguration.VisibleStateDuration = 10000;
+                config.SnackbarConfiguration.HideTransitionDuration = 500;
+                config.SnackbarConfiguration.ShowTransitionDuration = 500;
+                config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            });
+            services.AddLogging();
+
+
             if (bapSettings != null)
             {
                 PhysicalFileMaintainer physicalFileMaintainer = new PhysicalFileMaintainer(new BapSettingsFakeOptionSnapshot(bapSettings));
@@ -46,7 +65,7 @@ namespace BAP.WebCore
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
-                var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
+                    var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
                 foreach (var providerInterface in providerInterfaces)
                 {
                     if (Attribute.IsDefined(providerInterface, typeof(BapProviderInterfaceAttribute)))

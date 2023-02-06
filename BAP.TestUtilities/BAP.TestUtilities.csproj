@@ -7,6 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Components\MockButton.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Components\MockButton.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<SupportedPlatform Include="browser" />
 	</ItemGroup>
 
