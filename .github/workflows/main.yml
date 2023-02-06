@@ -27,19 +27,19 @@ jobs:
         with:
           dotnet-version: "7.0.x" # SDK Version
       - name: 🎁 Pack Web Core
-        run: dotnet pack BAP.WebCore.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.WebCore/BAP.WebCore.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap DB
-        run: dotnet pack BAP.DB.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.DB/BAP.DB.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap Helpers
-        run: dotnet pack BAP.Helpers.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.Helpers/BAP.Helpers.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap UI Helpers
-        run: dotnet pack BAP.UIHelpers.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.UIHelpers/BAP.UIHelpers.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap Default LayoutProvider
-        run: dotnet pack BAP.DefaultLayoutProvider.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.DefaultLayoutProvider/BAP.DefaultLayoutProvider.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap Web Audio
-        run: dotnet pack BAP.WebAudioPlayer.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.WebAudioPlayer/BAP.WebAudioPlayer.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 Pack Bap Default Game Provider
-        run: dotnet pack BAP.DefaultGameProvider.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.DefaultGameProvider/BAP.DefaultGameProvider.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
      
       - name: 📨 Push to nuget
         run: dotnet nuget push **/*.nupkg --api-key ${{secrets.NugetPublishingKey}} --source https://api.nuget.org/v3/index.json
