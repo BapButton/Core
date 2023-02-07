@@ -10,6 +10,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageTags>BAP;BAPProvider</PackageTags>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	</PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,10 @@
     <PackageReference Include="BAP.Types" Version="0.1.12-beta" />
     <PackageReference Include="MessagePipe" Version="1.7.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.2" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MudBlazor" Version="5.1.4" />
   </ItemGroup>
 

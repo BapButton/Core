@@ -10,6 +10,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageTags>BAP;BAPFramework</PackageTags>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,6 +32,10 @@
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="2.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="MudBlazor" Version="5.1.4" />
 	</ItemGroup>
 

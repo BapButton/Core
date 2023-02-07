@@ -9,6 +9,7 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageTags>BAP;BAPFramework</PackageTags>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -28,6 +29,10 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
 	</ItemGroup>
 
