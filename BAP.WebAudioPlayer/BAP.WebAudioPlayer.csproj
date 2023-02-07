@@ -11,6 +11,7 @@
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<PackageTags>BAP;BAPProvider</PackageTags>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 	</PropertyGroup>
 
 	<ItemGroup>
