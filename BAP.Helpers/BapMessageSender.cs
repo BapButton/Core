@@ -14,11 +14,10 @@ namespace BAP.Helpers
         //private IPublisher<InternalCustomImageMessage> InternalCustomImageMessageSender { get; set; }
         private IPublisher<ButtonPressedMessage> ButtonPressedSender { get; set; }
         private IPublisher<TurnOffButtonMessage> TurnOffButtonMessageSender { get; set; }
-        private IPublisher<PlayAudioMessage> PlayAudioMessageSender { get; set; } = default!;
-        private IPublisher<GameEventMessage> GameEventMessageSender { get; set; } = default!;
-        private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
-        private IPublisher<LayoutChangeMessage> LayoutChangeSender { get; set; } = default!;
-        private IGameProvider GameHandler { get; set; }
+        private IPublisher<PlayAudioMessage> PlayAudioMessageSender { get; set; }
+        private IPublisher<GameEventMessage> GameEventMessageSender { get; set; }
+        private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; }
+        private IPublisher<LayoutChangeMessage> LayoutChangeSender { get; set; }
         private IButtonProvider ButtonProvider { get; set; }
         public int ButtonCount
         {
@@ -39,6 +38,7 @@ namespace BAP.Helpers
             GameEventMessageSender = gameEventMessageSender;
             PlayAudioMessageSender = playAudioMessageSender;
             ButtonProvider = buttonProvider;
+            LayoutChangeSender = layoutChangeSender;
         }
 
         public void PlayAudio(string fileName, bool stopAllOtherAudio = false)

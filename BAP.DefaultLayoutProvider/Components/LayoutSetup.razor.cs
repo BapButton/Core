@@ -146,14 +146,7 @@ public partial class LayoutSetup : ComponentBase, IDisposable
     async Task Start()
     {
 
-        if (GameHandler.CurrentGame != null)
-        {
-            await GameHandler.CurrentGame.Start();
-        }
-        else
-        {
-            MsgSender.SendUpdate("Could not load Layout Setup", true);
-        }
+        await layoutGame.Start();
     }
 
     public void Dispose()
