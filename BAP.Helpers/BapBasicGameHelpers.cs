@@ -58,7 +58,7 @@ namespace BAP.Helpers
             int maxAttempts = maxretries == 0 ? 5 : maxretries;
             while (nodeFound == false && maxAttempts != 0)
             {
-                nextNode = GetRandomNodeId(nodes);
+                nextNode = GetRandomItemFromList(nodes);
                 if (nextNode != currentNode)
                 {
                     nodeFound = true;
@@ -88,27 +88,27 @@ namespace BAP.Helpers
             return nextNode;
         }
 
-        public static string GetRandomNodeId(List<string> nodes)
+        public static string GetRandomItemFromList(List<string> items)
         {
             try
             {
-                int nodesCount = nodes?.Count ?? 0;
+                int nodesCount = items?.Count ?? 0;
                 if (nodesCount == 0)
                 {
                     return "";
                 }
                 if (nodesCount == 1)
                 {
-                    return nodes?[0] ?? "";
+                    return items?[0] ?? "";
                 }
                 int nextNodeNumber = Random.Shared.Next(0, nodesCount);
-                return nodes?[nextNodeNumber] ?? "";
+                return items?[nextNodeNumber] ?? "";
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Encountered an error getting the next nodeId");
                 Console.WriteLine(ex.Message);
-                return nodes.FirstOrDefault() ?? "";
+                return items.FirstOrDefault() ?? "";
             }
 
         }

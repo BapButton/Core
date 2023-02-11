@@ -41,7 +41,7 @@ namespace BAP.ReactionGames
             CrownNodeId = "";
             _logger = logger;
 
-            string path = Path.Combine(".", "wwwroot", "sprites", FilePathHelper.GetFullPath<SwordBonusGame>("SwordBonusGame.bmp"));
+            string path = FilePathHelper.GetFullPath<SwordBonusGame>("SwordBonusGame.bmp");
             SpriteParser spriteParser = new SpriteParser(path);
             var sprites = spriteParser.GetCustomImagesFromCustomSprite();
             SwordSprite = sprites[0];

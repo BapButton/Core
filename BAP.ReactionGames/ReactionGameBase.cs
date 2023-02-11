@@ -139,7 +139,8 @@ namespace BAP.ReactionGames
         }
         public virtual string GetNextSound(List<string> sounds)
         {
-            return BapBasicGameHelper.GetRandomNodeId(sounds);
+            var minimalPath = BapBasicGameHelper.GetRandomItemFromList(sounds);
+            return FilePathHelper.GetFullPath<ReactionGameBase>(minimalPath);
         }
 
         public virtual void PlayNextWrongSound()

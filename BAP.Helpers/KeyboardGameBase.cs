@@ -106,7 +106,7 @@ namespace BAP.Helpers
 
         public virtual string GetNextSound(List<string> files)
         {
-            return BapBasicGameHelper.GetRandomNodeId(files);
+            return BapBasicGameHelper.GetRandomItemFromList(files);
         }
 
         public virtual void PlayNextWrongSound()

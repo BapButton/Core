@@ -96,7 +96,7 @@ namespace BAP.ReactionGames
                 else
                 {
                     CurrentMillisSpeed -= SubtractionInterval;
-                    string nextNodeId = BapBasicGameHelper.GetRandomNodeId(buttons.Except(NodeIdsCurrentlyShowingSomething).ToList());
+                    string nextNodeId = BapBasicGameHelper.GetRandomItemFromList(buttons.Except(NodeIdsCurrentlyShowingSomething).ToList());
                     NodeIdsCurrentlyShowingSomething.Add(nextNodeId);
                     if (buttons.Count == NodeIdsCurrentlyShowingSomething.Count)
                     {
