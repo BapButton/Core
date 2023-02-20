@@ -29,8 +29,16 @@
 <h1>Install additional games or features</h1>
 
 <h3>Download from Nuget</h3>
-<p>Feature not yet developed!</p>
+<MudList>
+    @foreach (var package in NugetPackages)
+    {
+        <MudListItem>
+            @package
+            <MudButton OnClick="() =>InstallPackage(package)">Install</MudButton>
+        </MudListItem>
+    }
 
+</MudList>
 <h3>Current Packages</h3>
 <MudList>
     @foreach (var package in CurrentPackages)

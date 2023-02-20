@@ -6,9 +6,8 @@
         <MudNavLink Match="NavLinkMatch.All" Href="/">Games</MudNavLink>
         @foreach (var item in LoadedAddonHolder.MainMenuItems)
         {
-            <MudTooltip Text="@item.MouseOver">
-                <MudNavLink tooltip Href="@item.Path">@item.DisplayedLabel</MudNavLink>
-            </MudTooltip>
+            <MudNavLink tooltip Href="@item.Path"><MudTooltip Text="@item.MouseOver">@item.DisplayedLabel</MudTooltip></MudNavLink>
+
         }
     </MudNavMenu>
 </MudPaper>

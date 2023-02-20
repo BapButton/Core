@@ -1,5 +1,6 @@
 ﻿using BAP.WebCore.Components;
 using Microsoft.Extensions.Options;
+using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,9 +20,12 @@ namespace BAP.WebCore
         public bool IsMarkedForRename { get; set; }
     }
 
+
     public class PhysicalFileMaintainer
     {
+        private HashSet<string> allowedNonStaticAssetExtensions = new() { "dll", "pdb" };
         BapSettings _bapSettings { get; set; }
+        private string frameworkVersion = "net7.0";
         private const string pendingDeleteFileName = "delete.txt";
         private const string pendingRenameFileName = "rename.txt";
         public PhysicalFileMaintainer(IOptionsSnapshot<BapSettings> bapSettings)
@@ -88,24 +92,38 @@ namespace BAP.WebCore
             File.WriteAllText(Path.Combine(directoryName, pendingDeleteFileName), $"{DateTime.Now.ToLongDateString()} {DateTime.Now.ToLongTimeString()}");
         }
 
+
         /// <summary>
         /// Adds a file Package. If the same name package is found it will mark that for deletion.
         /// </summary>
         /// <param name="zipOrNuget">Memory stream that is seekable syncronously</param>
         /// <returns>List of all packages after addind the new package</returns>
-        public List<PackageInfo> AddFilePackage(MemoryStream zipOrNuget, string packageNameFallback)
+        public List<PackageInfo> AddFilePackage(MemoryStream zipFile, string packageId)
         {
-            bool renameNeeded = false;
-            using ZipArchive archive = new(zipOrNuget);
-            string packageName = packageNameFallback;
+
+            using ZipArchive archive = new(zipFile);
+            string packageName = packageId;
+            string newDirectoryName = CleanupFoldersIfNeeded(packageName);
+
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
-                if (entry.Name.EndsWith(".deps.json"))
+                if (Path.EndsInDirectorySeparator(entry.FullName))
                 {
-                    packageName = entry.Name.Substring(0, entry.Name.Length - 10);
-                    break;
+                    Directory.CreateDirectory(Path.Combine(newDirectoryName, entry.FullName));
                 }
+                else
+                {
+                    entry.ExtractToFile(Path.Combine(newDirectoryName, entry.FullName));
+                }
+
             }
+
+            return GetPackages();
+        }
+
+        private string CleanupFoldersIfNeeded(string packageName)
+        {
+            bool renameNeeded = false;
             string newDirectoryName = Path.Combine(_bapSettings.AddonSaveLocation, packageName);
             var packageList = GetPackages();
             bool packageAlreadyExists = packageList.Any(t => t.Name == packageName);
@@ -129,25 +147,62 @@ namespace BAP.WebCore
                 Directory.Delete(newDirectoryName, true);
             }
             Directory.CreateDirectory(newDirectoryName);
-
-            foreach (ZipArchiveEntry entry in archive.Entries)
-            {
-                if (Path.EndsInDirectorySeparator(entry.FullName))
-                {
-                    Directory.CreateDirectory(Path.Combine(newDirectoryName, entry.FullName));
-                }
-                else
-                {
-                    entry.ExtractToFile(Path.Combine(newDirectoryName, entry.FullName));
-                }
-
-            }
             if (renameNeeded)
             {
                 MarkDirectoryForRename(newDirectoryName, packageName);
             }
+            return newDirectoryName;
+        }
+
+
+        /// <summary>
+        /// Adds a file Package. If the same name package is found it will mark that for deletion.
+        /// </summary>
+        /// <param name="zipOrNuget">Memory stream that is seekable syncronously</param>
+        /// <returns>List of all packages after addind the new package</returns>
+        public async Task<List<PackageInfo>> AddNugetPackage(MemoryStream nugetStream, NuGetVersion nuGetVersion, string packageId)
+        {
+            string newDirectoryName = CleanupFoldersIfNeeded(packageId);
+            using ZipArchive archive = new(nugetStream);
+            ExtractNuget(archive, newDirectoryName, true);
+            await NugetHelper.DownloadAllDependencies(packageId, nuGetVersion, this, newDirectoryName);
+
             return GetPackages();
         }
 
+        public async Task<bool> AddNugetDependency(string packageId, string parentPackageFolder)
+        {
+            var (packageStream, _) = await NugetHelper.DownloadPackage(packageId);
+            if (packageStream != null)
+            {
+                using ZipArchive archive = new(packageStream);
+                ExtractNuget(archive, parentPackageFolder, false);
+                return true;
+            }
+
+            //Todo - this shoudl really be logged or something. It will probably make things crash later on.
+            return false;
+        }
+
+        private void ExtractNuget(ZipArchive archive, string directoryName, bool includeNuspec)
+        {
+            foreach (ZipArchiveEntry entry in archive.Entries)
+            {
+                string extension = Path.GetExtension(entry.FullName).TrimStart('.').ToLowerInvariant();
+                if (entry.FullName.StartsWith("staticwebassets"))
+                {
+                    string? directory = Path.GetDirectoryName(Path.Combine(directoryName, entry.FullName));
+                    if (directory != null)
+                    {
+                        Directory.CreateDirectory(directory);
+                    }
+                    entry.ExtractToFile(Path.Combine(directoryName, entry.FullName));
+                }
+                else if (entry.FullName.StartsWith($"lib/{frameworkVersion}") && allowedNonStaticAssetExtensions.Contains(extension) || includeNuspec && extension.Equals("nuspec", StringComparison.OrdinalIgnoreCase))
+                {
+                    entry.ExtractToFile(Path.Combine(directoryName, entry.Name));
+                }
+            }
+        }
     }
 }

@@ -35,6 +35,7 @@ namespace BAP.WebCore.Components
         private FluentValidationValidator fluentValidationValidator = default!;
         private PackageUpload packageUpload { get; set; } = default!;
         private List<string> UniqueIdsOfProviders { get; set; } = new();
+        private List<string> NugetPackages { get; set; } = new();
 
 
 
@@ -48,8 +49,18 @@ namespace BAP.WebCore.Components
             {
                 UniqueIdsOfProviders.Add(providerInterface.Providers.First(t => t.IsCurrentlySelected).UniqueId);
             }
+
         }
 
+        protected override async Task OnInitializedAsync()
+        {
+            NugetPackages = await NugetHelper.FindPackagesAsync();
+        }
+
+        private async Task InstallPackage(string packageId)
+        {
+            await NugetHelper.InstallPackageAsync(PhysicalFileMaintainer, packageId);
+        }
 
         private void OnChange(InputFileChangeEventArgs eventArgs)
         {

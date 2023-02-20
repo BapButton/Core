@@ -7,7 +7,7 @@ namespace BAP.Db
 {
     public class ButtonContext : DbContext
     {
-        private string _dbConnectionString { get; set; }
+        //private string _dbConnectionString { get; set; }
         public DbSet<FirmwareInfo> FirmwareInfos => Set<FirmwareInfo>();
         public DbSet<Score> Scores => Set<Score>();
         public DbSet<GameStorage> GameStorageVault => Set<GameStorage>();
