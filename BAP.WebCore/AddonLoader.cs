@@ -21,16 +21,12 @@ namespace BAP.WebCore
                 //search the directories for .deps.json because that is the only DLL we want to load. 
                 foreach (var directory in directories)
                 {
-                    string[] depsFiles = Directory.GetFiles(directory, "*.deps.json");
-                    foreach (var depFile in depsFiles)
+                    DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+                    string assumedDllFileName = $"{directory}\\{directoryInfo.Name}.dll";
+                    if (File.Exists(assumedDllFileName))
                     {
-                        string assumedDllFileName = $"{directory}\\{Path.GetFileNameWithoutExtension(Path.GetFileNameWithoutExtension(depFile))}.dll";
-                        if (File.Exists(assumedDllFileName))
-                        {
-                            baseDllPlugPaths.Add(assumedDllFileName);
-                        }
+                        baseDllPlugPaths.Add(assumedDllFileName);
                     }
-
                 }
 
                 foreach (var pluginPath in baseDllPlugPaths)
@@ -120,7 +116,7 @@ namespace BAP.WebCore
             List<string> routes = new();
             List<MenuItemDetail> menuItems = new();
             List<TopMenuItemDetail> topMenuItemDetails = new();
-            foreach (Type type in assembly.GetTypes())
+            foreach (Type type in assembly.GetLoadableTypes())
             {
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
@@ -148,7 +144,7 @@ namespace BAP.WebCore
         public static List<GameDetail> ComponentsWithBapGamePageAttribute(Assembly assembly)
         {
             List<GameDetail> results = new();
-            foreach (Type type in assembly.GetTypes())
+            foreach (Type type in assembly.GetLoadableTypes())
             {
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
@@ -165,7 +161,7 @@ namespace BAP.WebCore
 
         public static IEnumerable<Type> GetTypesThatImpementsInterface<T>(Assembly assembly) where T : class
         {
-            foreach (Type type in assembly.GetTypes())
+            foreach (Type type in assembly.GetLoadableTypes())
             {
                 if (typeof(T).IsAssignableFrom(type) && type.IsClass)
                 {
@@ -178,7 +174,7 @@ namespace BAP.WebCore
 
         public static IEnumerable<T> GetTypesThatImpementsInterface<T>(T type, Assembly assembly) where T : Type
         {
-            foreach (Type t in assembly.GetTypes())
+            foreach (Type t in assembly.GetLoadableTypes())
             {
                 if (type.IsAssignableFrom(t) && t.IsClass)
                 {
@@ -191,14 +187,26 @@ namespace BAP.WebCore
 
         public static IEnumerable<Type> GetInterfacesThatImpementsInterface<T>(Assembly assembly) where T : class
         {
-            foreach (Type type in assembly.GetTypes())
+            foreach (Type type in assembly.GetLoadableTypes())
             {
                 if (typeof(T).IsAssignableFrom(type) && type.IsInterface)
                 {
-
                     yield return type;
 
                 }
+            }
+        }
+
+        public static IEnumerable<Type> GetLoadableTypes(this Assembly assembly)
+        {
+            if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.Where(t => t != null)!;
             }
         }
     }

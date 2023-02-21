@@ -5,7 +5,7 @@ namespace BAP.WebCore
 {
     public class AssemblyScanner
     {
-        private static List<string> BuiltinNamesToIgnore = new List<string>() { "System", "AspNetCore", "Microsoft", "mscorlib", "netstandard", "WindowsBase","MessagePack","MessagePipe","MQTTnet", "MudBlazor", "MySqlConnector", "NLog", "Pomelo", "SixLabors.ImageSharp" };
+        private static List<string> BuiltinNamesToIgnore = new List<string>() { "System", "AspNetCore", "Microsoft", "mscorlib", "netstandard", "WindowsBase","MessagePack","MessagePipe","MQTTnet", "MudBlazor", "MySqlConnector", "NLog", "Pomelo", "SixLabors.ImageSharp","Nuget" };
 
         public static List<Assembly> GetAllDependentAssemblies()
         {

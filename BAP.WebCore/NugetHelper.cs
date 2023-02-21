@@ -1,5 +1,7 @@
 ﻿using BAP.WebCore.Components;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
 using NuGet.Common;
 using NuGet.Configuration;
@@ -21,7 +23,9 @@ namespace BAP.WebCore
         private static SourceCacheContext Cache = new SourceCacheContext();
         private static SourceRepository Repo = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
         private static string targetFramework = "net7.0";
-        private static HashSet<string> packagesToAvoid = new() { "BAP.Types", "MessagePipe" };
+        private static List<string> DependenciesPrefixesToIgnore = new() { "System", "Microsoft","MessagePipe","MudBlazor" };
+        private static HashSet<string> DependenciesToIgnore = new();
+        private static HashSet<string> BapPackagesThatMustBeShared = new() { "BAP.Types", "BAP.Db" };
         public static async Task<List<string>> FindPackagesAsync()
         {
 
@@ -94,6 +98,23 @@ namespace BAP.WebCore
         public static async Task DownloadAllDependencies(string packageId, NuGetVersion nuGetVersion, PhysicalFileMaintainer physicalFileMaintainer, string parentDirectoryName)
         {
             var packages = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
+            if (DependenciesToIgnore.Count == 0)
+            {
+                var dependenciesToIgnore = new HashSet<SourcePackageDependencyInfo>(PackageIdentityComparer.Default);
+                foreach (var sharedPackage in BapPackagesThatMustBeShared)
+                {
+                    var versions = await GetPackageVersionsAsync(sharedPackage);
+                    NuGetVersion? latestVersion = versions.LastOrDefault();
+                    await ListAllPackageDependencies(
+                        new PackageIdentity(sharedPackage, latestVersion),
+                        NuGetFramework.ParseFolder(targetFramework),
+                        dependenciesToIgnore,
+                        CancellationToken.None);
+                }
+                DependenciesToIgnore = dependenciesToIgnore.Select(t => t.Id).ToHashSet();
+            }
+
+
             await ListAllPackageDependencies(
                 new PackageIdentity(packageId, nuGetVersion),
                 NuGetFramework.ParseFolder(targetFramework),
@@ -116,36 +137,61 @@ namespace BAP.WebCore
 
             foreach (var resolvedPackage in resolvedPackages)
             {
-                await physicalFileMaintainer.AddNugetDependency(resolvedPackage.Id, parentDirectoryName);
+                if (ShouldPackageEverBeDownloaded(resolvedPackage.Id))
+                {
+                    await physicalFileMaintainer.AddNugetDependency(resolvedPackage.Id, resolvedPackage.Version, parentDirectoryName);
+                }
+
             }
         }
 
+        private static bool ShouldPackageEverBeDownloaded(string packagId)
+        {
+            if (DependenciesPrefixesToIgnore.Any(t => packagId.StartsWith(t)))
+            {
+                return false;
+            }
+            if (DependenciesToIgnore.Contains(packagId))
+            {
+                return false;
+            }
+            if (BapPackagesThatMustBeShared.Contains(packagId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static async Task ListAllPackageDependencies(
-    PackageIdentity package,
-    NuGetFramework framework,
-    HashSet<SourcePackageDependencyInfo> dependencies,
-    CancellationToken cancellationToken)
+            PackageIdentity package,
+            NuGetFramework framework,
+            HashSet<SourcePackageDependencyInfo> dependencies,
+            CancellationToken cancellationToken)
         {
             if (dependencies.Contains(package))
+            {
                 return;
+            }
+
 
             foreach (var repository in new List<SourceRepository>() { Repo })
             {
                 var dependencyInfoResource = await repository.GetResourceAsync<DependencyInfoResource>();
                 var dependencyInfo = await dependencyInfoResource.ResolvePackage(package, framework, Cache, Logger, cancellationToken);
-
                 if (dependencyInfo == null)
+                {
                     continue;
-
+                }
                 if (dependencies.Add(dependencyInfo))
                 {
                     foreach (var dependency in dependencyInfo.Dependencies)
                     {
                         await ListAllPackageDependencies(
-                            new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
-                            framework,
-                            dependencies,
-                            cancellationToken);
+                           new PackageIdentity(dependency.Id, dependency.VersionRange.MinVersion),
+                           framework,
+                           dependencies,
+                           cancellationToken);
                     }
                 }
             }

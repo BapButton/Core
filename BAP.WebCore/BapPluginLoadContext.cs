@@ -14,6 +14,10 @@ namespace BAP.WebCore
 
         protected override Assembly? Load(AssemblyName assemblyName)
         {
+            if (assemblyName.Name == "BAP.Types" || assemblyName.Name == "BAP.Db")
+            {
+                return null;
+            }
             string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
             if (assemblyPath != null)
             {

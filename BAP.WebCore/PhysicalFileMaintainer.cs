@@ -170,7 +170,7 @@ namespace BAP.WebCore
             return GetPackages();
         }
 
-        public async Task<bool> AddNugetDependency(string packageId, string parentPackageFolder)
+        public async Task<bool> AddNugetDependency(string packageId, NuGetVersion nuGetVersion, string parentPackageFolder)
         {
             var (packageStream, _) = await NugetHelper.DownloadPackage(packageId);
             if (packageStream != null)
@@ -180,7 +180,7 @@ namespace BAP.WebCore
                 return true;
             }
 
-            //Todo - this shoudl really be logged or something. It will probably make things crash later on.
+            //Todo - this should really be logged or something. It will probably make things crash later on.
             return false;
         }
 
