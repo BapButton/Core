@@ -33,8 +33,21 @@
     @foreach (var package in NugetPackages)
     {
         <MudListItem>
-            @package
-            <MudButton OnClick="() =>InstallPackage(package)">Install</MudButton>
+            .
+            <MudTooltip Text="@($"called {package.Description} - {package.Version}")">
+                <MudText>@package.Name</MudText>
+            </MudTooltip>
+            <MudButton Disabled="@package.Downloading" OnClick="()=>InstallPackage(package.PackageId)" Variant="Variant.Filled" Color="Color.Primary">
+                @if (package.Downloading)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Class="ms-2">Installing</MudText>
+                }
+                else
+                {
+                    <MudText>Install</MudText>
+                }
+            </MudButton>
         </MudListItem>
     }
 

@@ -23,10 +23,10 @@ namespace BAP.WebCore
         private static SourceCacheContext Cache = new SourceCacheContext();
         private static SourceRepository Repo = Repository.Factory.GetCoreV3("https://api.nuget.org/v3/index.json");
         private static string targetFramework = "net7.0";
-        private static List<string> DependenciesPrefixesToIgnore = new() { "System", "Microsoft","MessagePipe","MudBlazor" };
+        private static List<string> DependenciesPrefixesToIgnore = new() { "System", "Microsoft", "MessagePipe", "MudBlazor" };
         private static HashSet<string> DependenciesToIgnore = new();
         private static HashSet<string> BapPackagesThatMustBeShared = new() { "BAP.Types", "BAP.Db" };
-        public static async Task<List<string>> FindPackagesAsync()
+        public static async Task<List<NugetPackageInfo>> FindPackagesAsync()
         {
 
             var resource = await Repo.GetResourceAsync<PackageSearchResource>();
@@ -35,7 +35,7 @@ namespace BAP.WebCore
                 IncludeDelisted = false,
                 SupportedFrameworks = new[] { FrameworkConstants.CommonFrameworks.Net70.Framework },
             };
-
+            //todo - this probably needs to handle paging the correct way.
             var results = await resource.SearchAsync(
                 "tags:BapGame",
                 searchFilter,
@@ -43,10 +43,12 @@ namespace BAP.WebCore
                 take: 10,
                 Logger,
                 CancellationToken.None);
-            List<string> packages = new();
+            List<NugetPackageInfo> packages = new();
             foreach (IPackageSearchMetadata result in results)
             {
-                packages.Add(result.Identity.Id);
+                var versions = await GetPackageVersionsAsync(result.Identity.Id);
+                string version = versions.LastOrDefault()?.ToString() ?? "";
+                packages.Add(new() { Description = result.Description, Name = result.Title, PackageId = result.Identity.Id, Version = version });
             }
             return packages;
         }
@@ -137,11 +139,10 @@ namespace BAP.WebCore
 
             foreach (var resolvedPackage in resolvedPackages)
             {
-                if (ShouldPackageEverBeDownloaded(resolvedPackage.Id))
+                if (ShouldPackageEverBeDownloaded(resolvedPackage.Id) && resolvedPackage.Id != packageId)
                 {
                     await physicalFileMaintainer.AddNugetDependency(resolvedPackage.Id, resolvedPackage.Version, parentDirectoryName);
                 }
-
             }
         }
 

@@ -16,10 +16,19 @@ namespace BAP.WebCore
         public string Name { get; set; } = "";
         public string Version { get; set; } = "";
         public string FullPath { get; set; } = "";
+        public bool IsNewPackageAvailable { get; set; }
         public bool IsMarkedForDeletion { get; set; }
         public bool IsMarkedForRename { get; set; }
     }
 
+    public class NugetPackageInfo
+    {
+        public string PackageId { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Version { get; set; } = "";
+        public string Description { get; set; } = "";
+        public bool Downloading { get; set; }
+    }
 
     public class PhysicalFileMaintainer
     {
@@ -186,22 +195,79 @@ namespace BAP.WebCore
 
         private void ExtractNuget(ZipArchive archive, string directoryName, bool includeNuspec)
         {
-            foreach (ZipArchiveEntry entry in archive.Entries)
+            List<ZipArchiveEntry> entriesToExtract = new List<ZipArchiveEntry>();
+            List<ZipArchiveEntry> staticAssetsToExtract = new List<ZipArchiveEntry>();
+            if (includeNuspec)
             {
-                string extension = Path.GetExtension(entry.FullName).TrimStart('.').ToLowerInvariant();
-                if (entry.FullName.StartsWith("staticwebassets"))
+                ZipArchiveEntry? entry = archive.Entries.FirstOrDefault(t => t.Name.EndsWith("nuspec"));
+                if (entry != null)
                 {
-                    string? directory = Path.GetDirectoryName(Path.Combine(directoryName, entry.FullName));
-                    if (directory != null)
+                    entriesToExtract.Add(entry);
+                }
+            }
+            staticAssetsToExtract.AddRange(archive.Entries.Where(t => t.FullName.StartsWith("staticwebassets")));
+
+            string folderOfDllName = "";
+            HashSet<string> libFolders = new();
+            foreach (var entry in archive.Entries.Where(t => t.FullName.StartsWith("lib")))
+            {
+                if (entry.FullName.TrimStart('/').Split('/').Length > 2)
+                {
+                    string folderName = entry.FullName.TrimStart('/').Split('/')[1];
+                    if (!libFolders.Contains(folderName))
                     {
-                        Directory.CreateDirectory(directory);
+                        if (folderName.Contains('.'))
+                        {
+                            libFolders.Add(folderName);
+                        }
+
                     }
-                    entry.ExtractToFile(Path.Combine(directoryName, entry.FullName));
                 }
-                else if (entry.FullName.StartsWith($"lib/{frameworkVersion}") && allowedNonStaticAssetExtensions.Contains(extension) || includeNuspec && extension.Equals("nuspec", StringComparison.OrdinalIgnoreCase))
+            }
+            if (libFolders.Contains(frameworkVersion))
+            {
+                folderOfDllName = frameworkVersion;
+            }
+            if (string.IsNullOrEmpty(folderOfDllName))
+            {
+                var netFolder = libFolders.Where(t => t.StartsWith("net") && !t.StartsWith("nets")).OrderByDescending(t => t).FirstOrDefault();
+                if (netFolder != null)
                 {
-                    entry.ExtractToFile(Path.Combine(directoryName, entry.Name));
+                    folderOfDllName = netFolder;
                 }
+            }
+            if (string.IsNullOrEmpty(folderOfDllName))
+            {
+                var netStdFolder = libFolders.Where(t => t.StartsWith("nets")).OrderByDescending(t => t).FirstOrDefault();
+                if (netStdFolder != null)
+                {
+                    folderOfDllName = netStdFolder;
+                }
+            }
+            if (!string.IsNullOrEmpty(folderOfDllName))
+            {
+                foreach (var entry in archive.Entries.Where(t => t.FullName.TrimStart('/').StartsWith($"lib/{folderOfDllName}")))
+                {
+                    string extension = Path.GetExtension(entry.FullName).TrimStart('.').ToLowerInvariant();
+                    if (allowedNonStaticAssetExtensions.Contains(extension))
+                    {
+                        entriesToExtract.Add(entry);
+                    }
+
+                }
+            }
+            foreach (var entry in entriesToExtract)
+            {
+                entry.ExtractToFile(Path.Combine(directoryName, entry.Name));
+            }
+            foreach (var entry in staticAssetsToExtract)
+            {
+                string? directory = Path.GetDirectoryName(Path.Combine(directoryName, entry.FullName));
+                if (directory != null)
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                entry.ExtractToFile(Path.Combine(directoryName, entry.FullName));
             }
         }
     }
