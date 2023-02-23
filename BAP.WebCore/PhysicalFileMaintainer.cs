@@ -7,18 +7,22 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace BAP.WebCore
 {
     public class PackageInfo
     {
-        public string Name { get; set; } = "";
+        public string Id { get; set; } = "";
         public string Version { get; set; } = "";
         public string FullPath { get; set; } = "";
+        public string Description { get; set; } = "";
         public bool IsNewPackageAvailable { get; set; }
         public bool IsMarkedForDeletion { get; set; }
         public bool IsMarkedForRename { get; set; }
+        public bool IsUpdating { get; set; }
     }
 
     public class NugetPackageInfo
@@ -46,9 +50,9 @@ namespace BAP.WebCore
         /// This should only be run on boot before packages have been loaded. 
         /// </summary>
         /// <returns>List of all pacakges after running cleanup </returns>
-        public List<PackageInfo> CleanUpPackages()
+        public async Task<List<PackageInfo>> CleanUpPackages()
         {
-            List<PackageInfo> packageInfos = GetPackages();
+            List<PackageInfo> packageInfos = await GetPackages();
             foreach (var package in packageInfos.Where(t => t.IsMarkedForDeletion))
             {
                 Directory.Delete(package.FullPath, true);
@@ -61,10 +65,66 @@ namespace BAP.WebCore
                 File.Delete(Path.Combine(newDirectoryFullPath, pendingRenameFileName));
             }
 
-            return GetPackages();
+            return await GetPackages();
         }
 
-        private PackageInfo GetPackageInfo(string directoryFullPath)
+        private PackageInfo GetVersionNumberFromNuspec(string fileName)
+        {
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.IgnoreWhitespace = true;
+            string version = "";
+            string packageId = "";
+            string description = "";
+            using (var fileStream = File.OpenText(fileName))
+            using (XmlReader reader = XmlReader.Create(fileStream, settings))
+            {
+                bool isNextNodeVersion = false;
+                bool isNextNodePackageId = false;
+                bool isNextNodeDescription = false;
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (reader.Name.Equals("Version", StringComparison.OrdinalIgnoreCase))
+                            {
+                                isNextNodeVersion = true;
+                            }
+                            if (reader.Name.Equals("id", StringComparison.OrdinalIgnoreCase))
+                            {
+                                isNextNodePackageId = true;
+                            }
+                            if (reader.Name.Equals("Description", StringComparison.OrdinalIgnoreCase))
+                            {
+                                isNextNodeDescription = true;
+                            }
+                            break;
+                        case XmlNodeType.Text:
+                            if (isNextNodeVersion)
+                            {
+                                version = reader.Value;
+                                isNextNodeVersion = false;
+                            }
+                            if (isNextNodePackageId)
+                            {
+                                packageId = reader.Value;
+                                isNextNodePackageId = false;
+                            }
+                            if (isNextNodeDescription)
+                            {
+                                description = reader.Value;
+                                isNextNodeDescription = false;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            return new() { Version = version, Id = packageId, Description = description };
+        }
+
+        private async Task<PackageInfo> GetPackageInfo(string directoryFullPath)
         {
             PackageInfo info = new PackageInfo()
             {
@@ -72,18 +132,38 @@ namespace BAP.WebCore
             };
 
             DirectoryInfo directoryInfo = new DirectoryInfo(directoryFullPath);
-            info.Name = directoryInfo.Name;
+            info.Id = directoryInfo.Name;
             info.IsMarkedForDeletion = directoryInfo.GetFiles(pendingDeleteFileName, SearchOption.TopDirectoryOnly).Length > 0;
             info.IsMarkedForRename = directoryInfo.GetFiles(pendingRenameFileName, SearchOption.TopDirectoryOnly).Length > 0;
+            var nuspecFile = directoryInfo.GetFiles("*.nuspec").FirstOrDefault();
+            if (nuspecFile != null)
+            {
+                var nuspecInfo = GetVersionNumberFromNuspec(nuspecFile.FullName);
+                info.Id = nuspecInfo.Id;
+                info.Version = nuspecInfo.Version;
+                info.Description = nuspecInfo.Description;
+            }
+            if (!string.IsNullOrEmpty(info.Version))
+            {
+                var versions = await NugetHelper.GetPackageVersionsAsync(info.Id);
+                var latestVersion = versions.LastOrDefault();
+                if (latestVersion != null)
+                {
+                    if (latestVersion.OriginalVersion != info.Version)
+                    {
+                        info.IsNewPackageAvailable = true;
+                    }
+                }
+            }
             return info;
         }
-        public List<PackageInfo> GetPackages()
+        public async Task<List<PackageInfo>> GetPackages()
         {
             var packageInfos = new List<PackageInfo>();
             var directories = Directory.GetDirectories(_bapSettings.AddonSaveLocation);
             foreach (var directory in directories)
             {
-                packageInfos.Add(GetPackageInfo(directory));
+                packageInfos.Add(await GetPackageInfo(directory));
 
             }
             return packageInfos;
@@ -107,12 +187,12 @@ namespace BAP.WebCore
         /// </summary>
         /// <param name="zipOrNuget">Memory stream that is seekable syncronously</param>
         /// <returns>List of all packages after addind the new package</returns>
-        public List<PackageInfo> AddFilePackage(MemoryStream zipFile, string packageId)
+        public async Task<List<PackageInfo>> AddFilePackage(MemoryStream zipFile, string packageId)
         {
 
             using ZipArchive archive = new(zipFile);
             string packageName = packageId;
-            string newDirectoryName = CleanupFoldersIfNeeded(packageName);
+            string newDirectoryName = await CleanupFoldersIfNeeded(packageName);
 
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
@@ -127,17 +207,17 @@ namespace BAP.WebCore
 
             }
 
-            return GetPackages();
+            return await GetPackages();
         }
 
-        private string CleanupFoldersIfNeeded(string packageName)
+        private async Task<string> CleanupFoldersIfNeeded(string packageName)
         {
             bool renameNeeded = false;
             string newDirectoryName = Path.Combine(_bapSettings.AddonSaveLocation, packageName);
-            var packageList = GetPackages();
-            bool packageAlreadyExists = packageList.Any(t => t.Name == packageName);
-            bool packageAlreadyWaitingToDelete = packageList.Any(t => t.IsMarkedForDeletion && t.Name == packageName);
-            bool packageAlreadyWaitingToRename = packageList.Any(t => t.IsMarkedForRename && t.Name == packageName);
+            var packageList = await GetPackages();
+            bool packageAlreadyExists = packageList.Any(t => t.Id == packageName);
+            bool packageAlreadyWaitingToDelete = packageList.Any(t => t.IsMarkedForDeletion && t.Id == packageName);
+            bool packageAlreadyWaitingToRename = packageList.Any(t => t.IsMarkedForRename && t.Id == packageName);
 
 
             DirectoryInfo directory = new DirectoryInfo(newDirectoryName);
@@ -171,12 +251,12 @@ namespace BAP.WebCore
         /// <returns>List of all packages after addind the new package</returns>
         public async Task<List<PackageInfo>> AddNugetPackage(MemoryStream nugetStream, NuGetVersion nuGetVersion, string packageId)
         {
-            string newDirectoryName = CleanupFoldersIfNeeded(packageId);
+            string newDirectoryName = await CleanupFoldersIfNeeded(packageId);
             using ZipArchive archive = new(nugetStream);
             ExtractNuget(archive, newDirectoryName, true);
             await NugetHelper.DownloadAllDependencies(packageId, nuGetVersion, this, newDirectoryName);
 
-            return GetPackages();
+            return await GetPackages();
         }
 
         public async Task<bool> AddNugetDependency(string packageId, NuGetVersion nuGetVersion, string parentPackageFolder)

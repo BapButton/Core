@@ -94,7 +94,7 @@ namespace BAP.WebCore
                 await physicalFileMaintainer.AddNugetPackage(packageStream, nugetVersion, packageId);
             }
 
-            return physicalFileMaintainer.GetPackages();
+            return await physicalFileMaintainer.GetPackages();
         }
 
         public static async Task DownloadAllDependencies(string packageId, NuGetVersion nuGetVersion, PhysicalFileMaintainer physicalFileMaintainer, string parentDirectoryName)

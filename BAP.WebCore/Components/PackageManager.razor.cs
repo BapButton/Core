@@ -13,8 +13,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace BAP.WebCore.Components
 {
-    [MenuItem("Manage Content", "Add or remove Games or Menu Items", true, "cbf9fb4e-edbb-4474-b1a7-811f7f5e8c18")]
-    public partial class ManageContent : ComponentBase, IDisposable
+   
+    public partial class PackageManager : ComponentBase, IDisposable
     {
         private CancellationTokenSource cancelation { get; set; } = default!;
         [Inject]
@@ -28,8 +28,6 @@ namespace BAP.WebCore.Components
         [Inject]
         ISystemProvider SystemProvider { get; set; } = default!;
         List<PackageInfo> CurrentPackages { get; set; } = new();
-        private bool displayProgress { get; set; }
-        private string FileUploadMessage { get; set; } = "";
         private EditContext editContext { get; set; } = default!;
         private int progressPercent;
         private FluentValidationValidator fluentValidationValidator = default!;
@@ -42,7 +40,6 @@ namespace BAP.WebCore.Components
         protected override void OnInitialized()
         {
             cancelation = new CancellationTokenSource();
-            CurrentPackages = PhysicalFileMaintainer.GetPackages();
             packageUpload = new PackageUpload();
             editContext = new EditContext(packageUpload);
             foreach (var providerInterface in LoadedAddonHolder.BapProviders)
@@ -54,7 +51,9 @@ namespace BAP.WebCore.Components
 
         protected override async Task OnInitializedAsync()
         {
+            CurrentPackages = await PhysicalFileMaintainer.GetPackages();
             NugetPackages = await NugetHelper.FindPackagesAsync();
+            NugetPackages = NugetPackages.Except(NugetPackages.Where(t => CurrentPackages.Select(s => s.Id).Contains(t.PackageId))).ToList();
         }
 
         private async Task InstallPackage(string packageId)
@@ -62,7 +61,13 @@ namespace BAP.WebCore.Components
             NugetPackages.First(t => t.PackageId == packageId).Downloading = true;
             await NugetHelper.InstallPackageAsync(PhysicalFileMaintainer, packageId);
             NugetPackages.RemoveAll(t => t.PackageId == packageId);
-            CurrentPackages = PhysicalFileMaintainer.GetPackages();
+            CurrentPackages = await PhysicalFileMaintainer.GetPackages();
+        }
+        private async Task UpdatePackage(string packageId)
+        {
+            CurrentPackages.First(t => t.Id == packageId).IsUpdating = true;
+            await NugetHelper.InstallPackageAsync(PhysicalFileMaintainer, packageId);
+            CurrentPackages = await PhysicalFileMaintainer.GetPackages();
         }
 
         private void OnChange(InputFileChangeEventArgs eventArgs)
@@ -75,7 +80,7 @@ namespace BAP.WebCore.Components
         {
             using MemoryStream ms = new MemoryStream();
             await packageUpload.Package.OpenReadStream().CopyToAsync(ms);
-            CurrentPackages = PhysicalFileMaintainer.AddFilePackage(ms, packageUpload.Package.Name);
+            CurrentPackages = await PhysicalFileMaintainer.AddFilePackage(ms, packageUpload.Package.Name);
             StateHasChanged();
 
         }
@@ -108,39 +113,6 @@ namespace BAP.WebCore.Components
         public void Dispose()
         {
             cancelation.Cancel();
-        }
-    }
-
-    public class PackageUpload
-    {
-
-        [Required]
-        [FileValidation(new[] { ".zip", ".nupkg" })]
-        public IBrowserFile Package { get; set; }
-    }
-
-
-    public class FileValidationAttribute : ValidationAttribute
-    {
-        public FileValidationAttribute(string[] allowedExtensions)
-        {
-            AllowedExtensions = allowedExtensions;
-        }
-
-        private string[] AllowedExtensions { get; }
-
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            var file = (IBrowserFile)value;
-
-            var extension = System.IO.Path.GetExtension(file.Name);
-
-            if (!AllowedExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase))
-            {
-                return new ValidationResult($"File must have one of the following extensions: {string.Join(", ", AllowedExtensions)}.", new[] { validationContext.MemberName });
-            }
-
-            return ValidationResult.Success;
         }
     }
 }

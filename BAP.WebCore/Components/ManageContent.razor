@@ -1,83 +1,10 @@
 ﻿@page "/manage"
 
-@using Blazored.FluentValidation;
-@using Microsoft.AspNetCore.Components.Forms
-
-<h1>Current Providers</h1>
-
-<MudGrid>
-    <MudItem xs="12" sm="12" md="12">
-        @for (int i = 0; i < UniqueIdsOfProviders.Count; i++)
-        {
-            int providerInstance = i;
-            <h4>@LoadedAddonHolder.BapProviders[providerInstance].Name</h4>
-            <MudItem xs="3" sm="3" md="3" Class="pb-8">
-                <MudSelect T="string" Label="" @bind-Value="UniqueIdsOfProviders[providerInstance]">
-                    @foreach (var provider in LoadedAddonHolder.BapProviders[providerInstance].Providers)
-                    {
-                        <MudSelectItem T="string" value="@provider.UniqueId">@provider.Name - @provider.Description</MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-        }
-    </MudItem>
-    <MudItem>
-        <MudButton OnClick="ProviderOnSubmit" Variant="Variant.Filled">Save Providers and Reboot</MudButton>
-    </MudItem>
-</MudGrid>
-
-<h1>Install additional games or features</h1>
-
-<h3>Download from Nuget</h3>
-<MudList>
-    @foreach (var package in NugetPackages)
-    {
-        <MudListItem>
-            .
-            <MudTooltip Text="@($"called {package.Description} - {package.Version}")">
-                <MudText>@package.Name</MudText>
-            </MudTooltip>
-            <MudButton Disabled="@package.Downloading" OnClick="()=>InstallPackage(package.PackageId)" Variant="Variant.Filled" Color="Color.Primary">
-                @if (package.Downloading)
-                {
-                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
-                    <MudText Class="ms-2">Installing</MudText>
-                }
-                else
-                {
-                    <MudText>Install</MudText>
-                }
-            </MudButton>
-        </MudListItem>
-    }
-
-</MudList>
-<h3>Current Packages</h3>
-<MudList>
-    @foreach (var package in CurrentPackages)
-    {
-        var name = $"{package.Name}";
-        if (package.IsMarkedForDeletion)
-        {
-            name = $"{name} (Deleting)";
-        }
-        <MudListItem>@name</MudListItem>
-    }
-</MudList>
-
-<h3>Upload nuget packages</h3>
-
-<EditForm EditContext="editContext" OnValidSubmit="OnSubmit">
-    <div>
-        <DataAnnotationsValidator />
-        <FluentValidationValidator @ref="fluentValidationValidator" DisableAssemblyScanning="@true" />
-        <div class="form-group">
-            Nuget or Zip: <InputFile OnChange="OnChange" class="form-control" />
-            <ValidationMessage For="() => packageUpload.Package" />
-        </div>
-
-        <button>Submit</button>
-    </div>
-</EditForm>
-
-
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Package Manager">
+        <PackageManager />
+    </MudTabPanel>
+    <MudTabPanel Text="Provider Manager">
+        <ProviderManager />
+    </MudTabPanel>
+</MudTabs>

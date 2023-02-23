@@ -1,0 +1,26 @@
+﻿@using Blazored.FluentValidation;
+@using Microsoft.AspNetCore.Components.Forms
+
+<h1>Current Providers</h1>
+
+<MudGrid>
+    <MudItem xs="12" sm="12" md="12">
+        @for (int i = 0; i < UniqueIdsOfProviders.Count; i++)
+        {
+            int providerInstance = i;
+            <h4>@LoadedAddonHolder.BapProviders[providerInstance].Name</h4>
+            <MudItem xs="3" sm="3" md="3" Class="pb-8">
+                <MudSelect T="string" Label="" @bind-Value="UniqueIdsOfProviders[providerInstance]">
+                    @foreach (var provider in LoadedAddonHolder.BapProviders[providerInstance].Providers)
+                    {
+                        <MudSelectItem T="string" value="@provider.UniqueId">@provider.Name - @provider.Description</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        }
+    </MudItem>
+    <MudItem>
+        <MudButton OnClick="ProviderOnSubmit" Variant="Variant.Filled">Save Providers and Reboot</MudButton>
+    </MudItem>
+</MudGrid>
+
