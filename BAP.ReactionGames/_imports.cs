@@ -9,8 +9,6 @@ global using System.Linq;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.Logging;
 global using System.Net.Http;
-global using Microsoft.AspNetCore.Authorization;
-global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.AspNetCore.Components.Forms;
 global using Microsoft.AspNetCore.Components.Routing;
 global using Microsoft.AspNetCore.Components.Web;

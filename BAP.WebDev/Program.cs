@@ -1,10 +1,8 @@
-using BAP.UIHelpers;
 using BAP.WebCore;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using NLog.Targets;
+using BAP.WebDev;
 using SixLabors.ImageSharp;
 using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,10 +25,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-MethodCallTarget target = new MethodCallTarget("LiveLogger", (logEvent, parms) => LiveLogger.RecordNewLogMessage(logEvent.LoggerName, logEvent.Level, logEvent.FormattedMessage));
-NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Trace);
-app.Services.GetRequiredService<LoadedAddonHolder>();
-WebHostStartupMethods.SetupPages(app.Services.GetRequiredService<LoadedAddonHolder>(), app.Logger);
+
+app.SetupPostDIBapServices();
 
 app.UseHttpsRedirection();
 
@@ -42,3 +38,4 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+

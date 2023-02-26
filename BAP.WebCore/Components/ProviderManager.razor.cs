@@ -78,7 +78,11 @@ namespace BAP.WebCore.Components
 
         public void Dispose()
         {
-            cancelation.Cancel();
+            if (cancelation != null)
+            {
+                cancelation.Cancel();
+            }
+
         }
     }
 

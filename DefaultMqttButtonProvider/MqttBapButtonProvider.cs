@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using BAP.Types;
 using static BAP.Helpers.BapBasicGameHelper;
 
-namespace BAP.Helpers
+namespace DefaultMqttButtonProvider
 {
     [BapProvider("Default MQTT Button Provider", "Default provider. Sends MQTT messages to communicate to any subscribed buttons", "4520ba12-1f34-5872-a735-6ce533f940e7")]
     public class DefaultMqttBapButtonProvider : IButtonProvider
@@ -34,12 +34,9 @@ namespace BAP.Helpers
         private ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<ButtonPressedMessage> ButtonPressSender { get; set; } = default!;
-        private IGameProvider GameHandler { get; init; }
         private ILayoutProvider LayoutProvider { get; init; }
-        public string Name => "Mqtt Controller";
 
-        public DefaultMqttBapButtonProvider(ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, //ISubscriber<InternalCustomImageMessage> internalCustomImage,
-     IGameProvider gameHandler, ILayoutProvider layoutProvider)
+        public DefaultMqttBapButtonProvider(ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, ILayoutProvider layoutProvider)//ISubscriber<InternalCustomImageMessage> internalCustomImage, )
         {
             _logger = logger;
             StandardButtonMessagePipe = standardButtonMessagePipe;
@@ -49,11 +46,10 @@ namespace BAP.Helpers
             //InternalCustomImagePipe = internalCustomImage;
             NodeChangeSender = nodeChangeSender;
             ButtonPressSender = buttonPressSender;
-            GameHandler = gameHandler;
             LayoutProvider = layoutProvider;
 
         }
-
+        //This method is not very well thought out. It should probably be an environmental Variable. 
         private string GetCorrectDefautltIpAddress()
         {
             try

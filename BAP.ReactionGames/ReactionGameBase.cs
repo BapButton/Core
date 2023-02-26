@@ -1,6 +1,5 @@
 ﻿using MessagePipe;
 using Microsoft.Extensions.Logging;
-using NLog.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

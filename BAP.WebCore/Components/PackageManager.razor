@@ -1,15 +1,22 @@
-﻿
-@using Blazored.FluentValidation;
+﻿@using Blazored.FluentValidation;
 @using Microsoft.AspNetCore.Components.Forms
 
 <h1>Install additional games or features</h1>
 
 <h3>Download from Nuget</h3>
 <MudList>
+    @if (NugetPackagesLoaded == false)
+    {@*
+    <MudProgressCircular />*@
+        <MudAlert Severity="@Severity.Normal">Loading...</MudAlert>
+    }
+    @if (!string.IsNullOrEmpty(NugetStatus))
+    {
+        <MudAlert Severity="Severity.Warning">@NugetStatus</MudAlert>
+    }
     @foreach (var package in NugetPackages)
     {
         <MudListItem>
-            .
             <MudTooltip Text="@($"called {package.Description} - {package.Version}")">
                 <MudText>@package.Name</MudText>
             </MudTooltip>
@@ -29,16 +36,29 @@
 
 </MudList>
 <h3>Current Packages</h3>
+@if (MainPackagesLoaded == false)
+{
+    <MudProgressLinear Class="ms-n1" Size="Size.Large" Indeterminate="true" />
+    <MudAlert Severity="@Severity.Normal">Loading...</MudAlert>
+}
+
 <MudList>
-    @foreach (var package in CurrentPackages)
+    @if (CurrentPackages.Where(t => t.IsMarkedForDeletion == false).Count() == 0)
     {
-        var name = $"{package.Id}";
-        if (package.IsMarkedForDeletion)
-        {
-            name = $"{name} (Deleting)";
-        }
+        <MudAlert Severity="Severity.Info">"Oh man - you don't have any games downloaded. You should probably get some."</MudAlert>
+    }
+    @foreach (var package in CurrentPackages.Where(t => t.IsMarkedForDeletion == false))
+    {
         <MudListItem>
-            <MudTooltip Text="@($"{package.Description} - {package.Version}")"><MudText>@name</MudText></MudTooltip>
+            <MudTooltip Text="@($"{package.Description} - {package.Version}")">
+                <MudText>
+                    @if (package.IsDeleting)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    }
+                    @package.Id
+                </MudText>
+            </MudTooltip>
             @if (package.IsNewPackageAvailable && package.IsMarkedForDeletion == false)
             {
                 <MudButton Disabled="@package.IsUpdating" OnClick="()=>UpdatePackage(package.Id)" Variant="Variant.Filled" Color="Color.Primary">
@@ -53,9 +73,14 @@
                     }
                 </MudButton>
             }
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                <MudMenuItem OnClick="() => DeletePackage(package.Id)">UnInstall</MudMenuItem>
+            </MudMenu>
         </MudListItem>
     }
 </MudList>
+
+
 
 <h3>Upload nuget packages</h3>
 
@@ -72,4 +97,9 @@
     </div>
 </EditForm>
 
-
+@if (CurrentPackages.Any(t => t.NotYetLoaded) || CurrentPackages.Any(t => t.IsMarkedForDeletion) || CurrentPackages.Any(t => t.IsMarkedForRename))
+{
+    <MudItem>
+        <MudButton OnClick="Reboot" Variant="Variant.Filled">Save Providers and Reboot</MudButton>
+    </MudItem>
+}

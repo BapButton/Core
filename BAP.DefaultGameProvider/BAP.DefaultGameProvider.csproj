@@ -15,7 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="1.15.0-beta" />
+		<PackageReference Include="BAP.Types" Version="1.17.0-beta" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
 		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
 		  <PrivateAssets>all</PrivateAssets>

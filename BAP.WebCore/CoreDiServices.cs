@@ -1,4 +1,5 @@
 ﻿using BAP.Db;
+using BAP.Helpers;
 using BAP.Web;
 using BAP.WebCore.TTS;
 using Microsoft.EntityFrameworkCore;
@@ -6,17 +7,31 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
 using MudBlazor.Services;
+using NLog.Targets;
 using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 
 namespace BAP.WebCore
 {
     public static class CoreDiServices
     {
+        public static void SetupPostDIBapServices(this IHost app)
+        {
+            var defaultLogProvider = app.Services.GetRequiredService<DefaultLogProvider>();
+            MethodCallTarget target = new MethodCallTarget("LiveLogger", (logEvent, parms) => defaultLogProvider.RecordNewLogMessage(logEvent.LoggerName, logEvent.Level, logEvent.FormattedMessage));
+            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Trace);
+            app.Services.GetRequiredService<LoadedAddonHolder>();
+            var logger = app.Services.GetRequiredService<ILogger<BapPluginLoadContext>>();
+            WebHostStartupMethods.SetupPages(app.Services.GetRequiredService<LoadedAddonHolder>(), logger);
+        }
+
+
         public static void AddAllAddonsAndRequiredDiServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<BapSettings>(configuration.GetSection("BAP"));
@@ -33,6 +48,7 @@ namespace BAP.WebCore
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
             services.AddTransient<PhysicalFileMaintainer>();
+            services.AddSingleton<DefaultLogProvider>();
             //services.AddSingleton<AnimationController>(); ;
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
@@ -55,8 +71,10 @@ namespace BAP.WebCore
 
             if (bapSettings != null)
             {
-                PhysicalFileMaintainer physicalFileMaintainer = new PhysicalFileMaintainer(new BapSettingsFakeOptionSnapshot(bapSettings));
-                physicalFileMaintainer.CleanUpPackages();
+                //todo - This is most likely a garbage way to make a logger;
+                PhysicalFileMaintainer physicalFileMaintainer = new PhysicalFileMaintainer(new BapSettingsFakeOptionSnapshot(bapSettings), new Logger<PhysicalFileMaintainer>(new LoggerFactory()));
+
+                AsyncHelpers.RunSync(() => physicalFileMaintainer.CleanUpPackages());
 
             }
 
@@ -65,7 +83,7 @@ namespace BAP.WebCore
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
-                    var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
+                var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
                 foreach (var providerInterface in providerInterfaces)
                 {
                     if (Attribute.IsDefined(providerInterface, typeof(BapProviderInterfaceAttribute)))

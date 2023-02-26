@@ -13,14 +13,13 @@
                 <MudSelect T="string" Label="" @bind-Value="UniqueIdsOfProviders[providerInstance]">
                     @foreach (var provider in LoadedAddonHolder.BapProviders[providerInstance].Providers)
                     {
-                        <MudSelectItem T="string" value="@provider.UniqueId">@provider.Name - @provider.Description</MudSelectItem>
+
+                        <MudSelectItem T="string" value="@provider.UniqueId"><MudTooltip Text="@provider.Description"> @provider.Name</MudTooltip></MudSelectItem>
                     }
                 </MudSelect>
             </MudItem>
         }
     </MudItem>
-    <MudItem>
-        <MudButton OnClick="ProviderOnSubmit" Variant="Variant.Filled">Save Providers and Reboot</MudButton>
-    </MudItem>
+
 </MudGrid>
 
