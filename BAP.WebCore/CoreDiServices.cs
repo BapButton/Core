@@ -16,16 +16,44 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
+using MudBlazor.Charts;
+using Microsoft.Extensions.Logging;
+using System.Reflection.Emit;
 
 namespace BAP.WebCore
 {
     public static class CoreDiServices
     {
+        private static LogLevel NlogLevelConvertor(NLog.LogLevel level)
+        {
+            LogLevel logLevel = LogLevel.Trace;
+            if (level == NLog.LogLevel.Info)
+            {
+                logLevel = LogLevel.Information;
+            }
+            else if (level == NLog.LogLevel.Debug)
+            {
+                logLevel = LogLevel.Debug;
+            }
+            else if (level == NLog.LogLevel.Fatal)
+            {
+                logLevel = LogLevel.Error;
+            }
+            else if (level == NLog.LogLevel.Trace)
+            {
+                logLevel = LogLevel.Trace;
+            }
+            return logLevel;
+        }
+
         public static void SetupPostDIBapServices(this IHost app)
         {
-            var defaultLogProvider = app.Services.GetRequiredService<DefaultLogProvider>();
-            MethodCallTarget target = new MethodCallTarget("LiveLogger", (logEvent, parms) => defaultLogProvider.RecordNewLogMessage(logEvent.LoggerName, logEvent.Level, logEvent.FormattedMessage));
+            var logProvider = app.Services.GetRequiredService<ILogProvider>();
+
+            MethodCallTarget target = new MethodCallTarget("LiveLogger", (logEvent, parms) => logProvider.RecordNewLogMessage(logEvent.LoggerName, NlogLevelConvertor(logEvent.Level), logEvent.FormattedMessage));
             NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, NLog.LogLevel.Trace);
+
+
             app.Services.GetRequiredService<LoadedAddonHolder>();
             var logger = app.Services.GetRequiredService<ILogger<BapPluginLoadContext>>();
             WebHostStartupMethods.SetupPages(app.Services.GetRequiredService<LoadedAddonHolder>(), logger);
@@ -48,8 +76,6 @@ namespace BAP.WebCore
             services.AddTransient(p => p.GetRequiredService<IDbContextFactory<ButtonContext>>().CreateDbContext());
             services.AddTransient<DbAccessor>();
             services.AddTransient<PhysicalFileMaintainer>();
-            services.AddSingleton<DefaultLogProvider>();
-            //services.AddSingleton<AnimationController>(); ;
             services.AddMessagePipe();
             services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddHostedService<BapProviderInitializer>();

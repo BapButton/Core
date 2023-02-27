@@ -31,10 +31,10 @@
     {
         Logs.Add(logMessage);
         //IS this necessary?
-        //InvokeAsync(() =>
-        //{
-        //    StateHasChanged();
-        //});
+        await InvokeAsync(() =>
+        {
+            StateHasChanged();
+        });
 
     }
     void ClearLog(MouseEventArgs e)

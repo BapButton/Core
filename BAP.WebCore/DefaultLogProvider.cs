@@ -11,38 +11,43 @@ namespace BAP.WebCore
     public class DefaultLogProvider : ILogProvider
     {
 
+        HashSet<string> BapRelatedPrefixes { get; set; } = new() { "BAP" };
         IPublisher<LogMessage> LogSender;
-        public DefaultLogProvider(IPublisher<LogMessage> logMessageSender)
+        public DefaultLogProvider(IPublisher<LogMessage> logMessageSender, LoadedAddonHolder loadedAddonHolder)
         {
             LogSender = logMessageSender;
+            foreach (var item in loadedAddonHolder.AllAddonAssemblies)
+            {
+                string? name = item?.GetName()?.Name;
+                if (name != null)
+                {
+                    BapRelatedPrefixes.Add(name);
+                }
+            }
+            foreach (var item in loadedAddonHolder.AssembliesWithPages)
+            {
+                string? name = item?.GetName()?.Name;
+                if (name != null)
+                {
+                    BapRelatedPrefixes.Add(name);
+                }
+            }
         }
 
         private int CurrentId { get; set; } = 0;
         private FixedSizedQueue<LogMessage> Queue { get; set; } = new(100);
 
-        public void RecordNewLogMessage(string source, NLog.LogLevel level, string message)
+        public void RecordNewLogMessage(string source, LogLevel logLevel, string message)
         {
-            CurrentId++;
-            LogLevel logLevel = LogLevel.Trace;
-            if (level == NLog.LogLevel.Info)
+            if (BapRelatedPrefixes.Any(t => t.StartsWith(source.Split('.')[0])))
             {
-                logLevel = LogLevel.Information;
+                CurrentId++;
+
+                LogMessage newMessage = new LogMessage(CurrentId, source, logLevel, message);
+                Queue.Enqueue(newMessage);
+                LogSender.Publish(newMessage);
             }
-            else if (level == NLog.LogLevel.Debug)
-            {
-                logLevel = LogLevel.Debug;
-            }
-            else if (level == NLog.LogLevel.Fatal)
-            {
-                logLevel = LogLevel.Error;
-            }
-            else if (level == NLog.LogLevel.Trace)
-            {
-                logLevel = LogLevel.Trace;
-            }
-            LogMessage newMessage = new LogMessage(CurrentId, source, logLevel, message);
-            Queue.Enqueue(newMessage);
-            LogSender.Publish(newMessage);
+
         }
         public List<LogMessage> GetCurrentLogs()
         {

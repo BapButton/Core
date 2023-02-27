@@ -1,8 +1,11 @@
 using BAP.WebCore;
 using BAP.WebDev;
+using NLog;
+using NLog.Web;
 using SixLabors.ImageSharp;
 using System.Reflection;
 
+var logger = LogManager.Setup().GetCurrentClassLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +17,11 @@ builder.Services.AddControllers();
 builder.Services.AddHostedService<ConnectionCoreHostedService>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddAllAddonsAndRequiredDiServices(builder.Configuration);
-
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BAP.Types" Version="1.17.0-beta" />
+    <PackageReference Include="BAP.Types" Version="1.18.0-beta" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.3" />
     <PackageReference Include="MQTTnet" Version="3.1.2" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="3.1.2" />

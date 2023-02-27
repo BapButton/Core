@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="1.17.0-beta" />
+		<PackageReference Include="BAP.Types" Version="1.18.0-beta" />
 		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
 		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
@@ -39,6 +39,7 @@
 		</PackageReference>
 		<PackageReference Include="MudBlazor" Version="5.1.4" />
 		<PackageReference Include="NLog" Version="5.1.2" />
+		<PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
 		<PackageReference Include="NuGet.Client" Version="4.2.0" />
 		<PackageReference Include="NuGet.Commands" Version="6.4.0" />
 		<PackageReference Include="NuGet.LibraryModel" Version="6.4.0" />
