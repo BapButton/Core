@@ -14,11 +14,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMvc();
 builder.Services.AddControllers();
-builder.Services.AddHostedService<ConnectionCoreHostedService>();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddAllAddonsAndRequiredDiServices(builder.Configuration);
-builder.Logging.ClearProviders();
-builder.Host.UseNLog();
+builder.AddAllAddonsAndRequiredDiServices();
 
 var app = builder.Build();
 

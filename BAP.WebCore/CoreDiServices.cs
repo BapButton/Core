@@ -19,6 +19,8 @@ using Microsoft.Extensions.Hosting;
 using MudBlazor.Charts;
 using Microsoft.Extensions.Logging;
 using System.Reflection.Emit;
+using Microsoft.AspNetCore.Http;
+using NLog.Web;
 
 namespace BAP.WebCore
 {
@@ -60,10 +62,15 @@ namespace BAP.WebCore
         }
 
 
-        public static void AddAllAddonsAndRequiredDiServices(this IServiceCollection services, IConfiguration configuration)
+        public static void AddAllAddonsAndRequiredDiServices(this WebApplicationBuilder builder)
         {
-            services.Configure<BapSettings>(configuration.GetSection("BAP"));
-            var bapSettings = configuration.GetSection("BAP").Get<BapSettings>();
+            var services = builder.Services;
+            services.AddHostedService<ConnectionCoreHostedService>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.Configure<BapSettings>(builder.Configuration.GetSection("BAP"));
+            var bapSettings = builder.Configuration.GetSection("BAP").Get<BapSettings>();
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
             if (string.IsNullOrEmpty(bapSettings?.DBConnectionString))
             {
                 services.AddDbContextFactory<ButtonContext>(options => options.UseInMemoryDatabase(new Guid().ToString()));
