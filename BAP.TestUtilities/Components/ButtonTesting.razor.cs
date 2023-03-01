@@ -78,9 +78,9 @@ namespace BAP.TestUtilities.Components
             });
         }
 
-        protected void AddButton()
+        protected async Task AddButton()
         {
-            Core.AddNode();
+            await Core.AddNode();
         }
         public void Dispose()
         {

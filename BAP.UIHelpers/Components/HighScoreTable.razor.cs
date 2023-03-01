@@ -13,7 +13,6 @@ public partial class HighScoreTable : ComponentBase, IDisposable
     public Score? NewScore { get; set; } = null;
     [Parameter]
     public string Difficulty { get; set; } = default!;
-
     [Parameter]
     public IGameDataSaver GameDataSaver { get; set; } = default!;
 

@@ -9,15 +9,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using BAP.Types;
 using Microsoft.EntityFrameworkCore.Internal;
+using System.Reflection;
+using Microsoft.AspNetCore.Http;
 
 namespace BAP.WebCore
 {
-    public class ConnectionCoreHostedService : IHostedService
+    public class DBMigratorHostedService : IHostedService
     {
-        ILogger<ConnectionCoreHostedService> _logger;
+        ILogger<DBMigratorHostedService> _logger;
         IDbContextFactory<ButtonContext> _contextFactory;
 
-        public ConnectionCoreHostedService(ILogger<ConnectionCoreHostedService> logger, IDbContextFactory<ButtonContext> contextFactory)
+        public DBMigratorHostedService(ILogger<DBMigratorHostedService> logger, IDbContextFactory<ButtonContext> contextFactory)
         {
             _logger = logger;
             _contextFactory = contextFactory;
@@ -26,16 +28,8 @@ namespace BAP.WebCore
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine("Migrating the database");
-            using ButtonContext db = _contextFactory.CreateDbContext();
-            try
-            {
-                await db.Database.MigrateAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error Migrating Database");
-                Console.WriteLine($"error migrating the database {ex.Message} Inner exception {(ex?.InnerException?.Message ?? "")}");
-            }
+
+            await DbMigrator.MigrateDatabaseIfNeeded(_contextFactory.CreateDbContext(), _logger);
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

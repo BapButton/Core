@@ -21,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using System.Reflection.Emit;
 using Microsoft.AspNetCore.Http;
 using NLog.Web;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BAP.WebCore
 {
@@ -65,12 +66,11 @@ namespace BAP.WebCore
         public static void AddAllAddonsAndRequiredDiServices(this WebApplicationBuilder builder)
         {
             var services = builder.Services;
-            services.AddHostedService<ConnectionCoreHostedService>();
+            services.AddHostedService<DBMigratorHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<BapSettings>(builder.Configuration.GetSection("BAP"));
             var bapSettings = builder.Configuration.GetSection("BAP").Get<BapSettings>();
-            builder.Logging.ClearProviders();
-            builder.Host.UseNLog();
+
             if (string.IsNullOrEmpty(bapSettings?.DBConnectionString))
             {
                 services.AddDbContextFactory<ButtonContext>(options => options.UseInMemoryDatabase(new Guid().ToString()));
@@ -84,7 +84,6 @@ namespace BAP.WebCore
             services.AddTransient<DbAccessor>();
             services.AddTransient<PhysicalFileMaintainer>();
             services.AddMessagePipe();
-            services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddHostedService<BapProviderInitializer>();
             services.AddHttpClient<ITtsService, TtsService>(client => client.BaseAddress = new Uri("http://localhost:5002/api/"));
             services.AddMudServices(config =>
@@ -100,7 +99,9 @@ namespace BAP.WebCore
                 config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
             });
             services.AddLogging();
-
+            builder.Logging.ClearProviders();
+            builder.Host.UseNLog();
+            builder.Services.TryAdd(ServiceDescriptor.Transient(typeof(IGameDataSaver<>), typeof(DefaultGameDataSaver<>)));
 
             if (bapSettings != null)
             {
@@ -181,7 +182,6 @@ namespace BAP.WebCore
 
             }
             //This is a non dynamic component. But it's what I got for now.
-            services.AddTransient<IGameDataSaver, DefaultGameDataSaver>();
             services.AddSingleton(addonHolder);
             var factory = new TempButtonContextFactory(bapSettings?.DBConnectionString ?? "");
 

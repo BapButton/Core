@@ -1,5 +1,4 @@
 ﻿global using BAP.Types;
-global using BAP.Db;
 global using MessagePipe;
 global using System;
 global using System.Collections.Generic;

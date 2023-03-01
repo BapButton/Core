@@ -9,7 +9,7 @@ namespace BAP.TextGames.Components
     {
 
         [Parameter]
-        public IGameDataSaver GameDataSaver { get; set; } = default!;
+        public IGameDataSaver<VocabGameSetup> GameDataSaver { get; set; } = default!;
         [Inject]
         private IDialogService DialogService { get; set; } = default!;
         [Inject]

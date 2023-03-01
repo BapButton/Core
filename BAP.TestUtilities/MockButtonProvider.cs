@@ -14,6 +14,7 @@ namespace BAP.TestUtilities
     public class MockButtonProvider : IButtonProvider
     {
         private const string buttonAddressBase = "AAA";
+        private const string NodeListGamdDataSaverKey = "NodeList";
         private readonly ILogger<MockButtonProvider> _logger;
         //public delegate void MyClickHandler(object sender, string myValue);
         public ConcurrentDictionary<string, bool> ConnectedNodes = new();
@@ -21,10 +22,11 @@ namespace BAP.TestUtilities
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         public ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
         IDisposable subscriptions = default!;
+        IGameDataSaver<MockButtonProvider> GameDataSaver { get; set; }
 
         public string Name => "Mock Buttons";
 
-        public MockButtonProvider(ILogger<MockButtonProvider> logger, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<NodeChangeMessage> nodeChangeSender)
+        public MockButtonProvider(ILogger<MockButtonProvider> logger, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<NodeChangeMessage> nodeChangeSender, IGameDataSaver<MockButtonProvider> gameDataSaver)
         {
             _logger = logger;
             TurnOffButtonMessagePipe = turnOffButtonMessagePipe;
@@ -32,6 +34,7 @@ namespace BAP.TestUtilities
             TurnOffButtonMessagePipe.Subscribe(async (x) => await TurnOffButton(x)).AddTo(bag);
             subscriptions = bag.Build();
             NodeChangeSender = nodeChangeSender;
+            GameDataSaver = gameDataSaver;
         }
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -42,29 +45,32 @@ namespace BAP.TestUtilities
             {
                 foreach (var node in ConnectedNodes.ToList())
                 {
-                    RemoveNode(node.Key);
+                    await RemoveNode(node.Key);
                 }
             }
             else
             {
-                RemoveNode(turnOffButtonMessage.NodeId);
+               await  RemoveNode(turnOffButtonMessage.NodeId);
             }
 
         }
-        public (string, ButtonStatus) AddNode()
+        public async Task<(string, ButtonStatus)> AddNode(string clientId = "")
         {
-            string clientId = "";
-            string highestNodeId = ConnectedNodes.Count > 0 ? ConnectedNodes.OrderByDescending(t => t.Key).FirstOrDefault().Key : "";
-            if (string.IsNullOrEmpty(highestNodeId))
+            if (string.IsNullOrEmpty(clientId))
             {
-                clientId = buttonAddressBase + "001";
+                string highestNodeId = ConnectedNodes.Count > 0 ? ConnectedNodes.OrderByDescending(t => t.Key).FirstOrDefault().Key : "";
+                if (string.IsNullOrEmpty(highestNodeId))
+                {
+                    clientId = buttonAddressBase + "001";
+                }
+                else
+                {
+                    int number = int.Parse(highestNodeId[3..].TrimStart('0'));
+                    number++;
+                    clientId = buttonAddressBase + number.ToString("D3");
+                }
             }
-            else
-            {
-                int number = int.Parse(highestNodeId[3..].TrimStart('0'));
-                number++;
-                clientId = buttonAddressBase + number.ToString("D3");
-            }
+
             ButtonStatus buttonStatus = new ButtonStatus()
             {
                 WifiStrength = 100,
@@ -76,30 +82,43 @@ namespace BAP.TestUtilities
             ConnectedNodes.AddOrUpdate(clientId, false, (key, oldValue) => false);
             AllButtonStatus.AddOrUpdate(clientId, buttonStatus, (key, oldValue) => buttonStatus);
             NodeChangeSender.Publish(new NodeChangeMessage(clientId, false));
+            await GameDataSaver.UpdateGameStorage(ConnectedNodes.Select(t => t.Key).ToList(), NodeListGamdDataSaverKey);
             return (clientId, buttonStatus);
         }
 
-        public void RemoveNode(string clientId)
+        public async Task RemoveNode(string clientId)
         {
 
             ConnectedNodes.TryRemove(clientId, out bool _);
             AllButtonStatus.TryRemove(clientId, out ButtonStatus _);
             NodeChangeSender.Publish(new NodeChangeMessage(clientId, true));
-
+            await GameDataSaver.UpdateGameStorage(ConnectedNodes.Select(t => t.Key).ToList(), NodeListGamdDataSaverKey);
         }
 
-        public Task<bool> Initialize(string ignoredString)
+        public async Task<bool> Initialize(string ignoredString)
         {
             if (ConnectedNodes == null || ConnectedNodes.Count == 0)
             {
                 ConnectedNodes = new ConcurrentDictionary<string, bool>();
-                for (int i = 0; i < 5; i++)
+                var oldNodes = await GameDataSaver.GetGameStorage<List<string>?>(NodeListGamdDataSaverKey);
+                if (oldNodes != null)
                 {
-                    AddNode();
+                    foreach (var node in oldNodes)
+                    {
+                        await AddNode(node);
+                    }
                 }
+                else
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        await AddNode();
+                    }
+                }
+
             }
 
-            return Task.FromResult(true);
+            return true;
         }
 
         public List<string> GetConnectedButtons()

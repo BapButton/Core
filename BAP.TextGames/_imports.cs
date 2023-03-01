@@ -1,6 +1,5 @@
 ﻿global using BAP.Types;
 global using BAP.Helpers;
-global using BAP.Db;
 global using BAP.UIHelpers;
 global using MessagePipe;
 global using System;

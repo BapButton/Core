@@ -67,12 +67,12 @@ namespace BAP.TestUtilities
             MsgSender.MockClickButton(NodeId, bp);
             return true;
         }
-        protected void RemoveButton()
+        protected async Task RemoveButton()
         {
             var currentButtonProvider = ButtonProvider;
             if (currentButtonProvider.GetType() == typeof(MockButtonProvider))
             {
-                ((MockButtonProvider)currentButtonProvider).RemoveNode(NodeId);
+                await ((MockButtonProvider)currentButtonProvider).RemoveNode(NodeId);
             }
         }
 

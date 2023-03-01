@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using BAP.Types;
 using BAP.Helpers;
-using BAP.Web;
 
 namespace BAP.ReactionGames.Components
 {

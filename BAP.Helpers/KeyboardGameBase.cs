@@ -1,5 +1,4 @@
-﻿using BAP.Db;
-using MessagePipe;
+﻿using MessagePipe;
 using Microsoft.Extensions.Logging;
 using BAP.Types;
 
@@ -34,7 +33,7 @@ namespace BAP.Helpers
         internal char CurrentDigit => Answer[CurrentSpotInAnswerString];
         IKeyboardProvider keyboard { get; set; }
 
-        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
+        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IGameDataSaver gameDataSaver)
         {
             KeyboardProvider = keyboardProvider;
             MsgSender = msgSender;
@@ -50,6 +49,7 @@ namespace BAP.Helpers
             var bag = DisposableBag.CreateBuilder();
             KeyPressed.Subscribe(async (x) => await OnCharacterPressed(x)).AddTo(bag);
             subscriptions = bag.Build();
+            DbSaver = gameDataSaver;
         }
 
         public MathGameStatus GetStatus()

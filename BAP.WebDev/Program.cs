@@ -1,5 +1,7 @@
+using BAP.TestUtilities;
 using BAP.WebCore;
 using BAP.WebDev;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NLog;
 using NLog.Web;
 using SixLabors.ImageSharp;
@@ -15,6 +17,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddMvc();
 builder.Services.AddControllers();
 builder.AddAllAddonsAndRequiredDiServices();
+
+
 
 var app = builder.Build();
 

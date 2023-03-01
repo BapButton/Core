@@ -1,5 +1,4 @@
-﻿using BAP.Db;
-using BAP.Types;
+﻿using BAP.Types;
 using BAP.Helpers;
 using BAP.ReactionGames.Components;
 
@@ -15,7 +14,7 @@ namespace BAP.ReactionGames
         PausableTimer NextButtonTimer { get; set; }
         public DateTime GameStartedAt { get; set; }
         public DateTime GameEndedAt { get; set; }
-        public IGameDataSaver DbSaver { get; set; }
+        public IGameDataSaver<ReactionSpeedup> DbSaver { get; set; }
         public TimeSpan GameLength
         {
             get
@@ -64,7 +63,7 @@ namespace BAP.ReactionGames
             }
         }
 
-        public ReactionSpeedup(IGameDataSaver dbSaver, ISubscriber<ButtonPressedMessage> buttonPressed, ILogger<ReactionGame> logger, IBapMessageSender messageSender) : base(buttonPressed, messageSender)
+        public ReactionSpeedup(IGameDataSaver<ReactionSpeedup> dbSaver, ISubscriber<ButtonPressedMessage> buttonPressed, ILogger<ReactionGame> logger, IBapMessageSender messageSender) : base(buttonPressed, messageSender)
         {
             _logger = logger;
             colorToUse = StandardColorPalettes.Default[1];

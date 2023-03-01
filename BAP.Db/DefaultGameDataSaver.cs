@@ -5,19 +5,30 @@ using BAP.Types;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace BAP.Web;
 
-public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver<TGameDesc> where TGameDesc : IBapGameDescription
+public class DefaultGameDataSaver<TSavedForClassName> : IGameDataSaver<TSavedForClassName>
 {
 
     private ButtonContext _db { get; set; }
-    private IGameProvider _gameHandler { get; set; }
+    string UniqueId { get; init; }
+    public string UniqueIdUserForSaving => UniqueId;
 
-    public DefaultGameDataSaver(ButtonContext buttonContext, IGameProvider gameHandler)
+    public DefaultGameDataSaver(ButtonContext buttonContext)
     {
-        _gameHandler = gameHandler;
         _db = buttonContext;
+        var callingType = typeof(TSavedForClassName);
+        var gamePageAttr = callingType.GetCustomAttribute<GamePageAttribute>();
+        if (gamePageAttr != null)
+        {
+            UniqueId = gamePageAttr.UniqueId;
+        }
+        else
+        {
+            UniqueId = callingType?.FullName ?? callingType?.Name ?? "Unknown Type";
+        }
     }
 
     /// <summary>
@@ -41,21 +52,21 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
     /// This gets a string of data that was saved for the app. This could be serialized text, Json, or yaml or xml or anythign else. It is up to the game to decide what goes here.
     /// </summary>
     /// <returns></returns>
-    public async Task<string> GetGameStorage()
+    public async Task<string> GetGameStorage(string key = "default")
     {
-        return (await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.CurrentGameUniqueId).FirstOrDefaultAsync())?.Data ?? "";
+        return (await _db.GameStorageVault.Where(t => t.GameUniqueId == UniqueId && t.Key == key).FirstOrDefaultAsync())?.Data ?? "";
     }
 
 
-    public async Task<bool> UpdateGameStorage<T>(T itemToSave)
+    public async Task<bool> UpdateGameStorage<T>(T itemToSave, string key = "default")
     {
         string textToSave = JsonSerializer.Serialize<T>(itemToSave);
-        await UpdateGameStorage(textToSave);
+        await UpdateGameStorage(textToSave, key);
         return true;
     }
-    public async Task<T?> GetGameStorage<T>()
+    public async Task<T?> GetGameStorage<T>(string key = "default")
     {
-        string savedText = await GetGameStorage();
+        string savedText = await GetGameStorage(key);
         if (string.IsNullOrEmpty(savedText))
         {
             return default(T);
@@ -64,12 +75,13 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
         return savedObject;
     }
 
-    public async Task<bool> UpdateGameStorage(string data)
+    public async Task<bool> UpdateGameStorage(string data, string key = "default")
     {
-        var currentGameStorage = await _db.GameStorageVault.Where(t => t.GameUniqueId == _gameHandler.CurrentGameUniqueId).FirstOrDefaultAsync();
+        var currentGameStorage = await _db.GameStorageVault.Where(t => t.GameUniqueId == UniqueId && t.Key == key).FirstOrDefaultAsync();
         if (currentGameStorage == null)
         {
-            _db.GameStorageVault.Add(new GameStorage() { GameUniqueId = _gameHandler.CurrentGameUniqueId, Data = data });
+            var newItem = new GameStorage() { GameUniqueId = UniqueId, Data = data, Key = key };
+            _db.GameStorageVault.Add(newItem);
         }
         else
         {
@@ -81,7 +93,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<List<Score>> GetScores(string difficulty, int topScoresToTake = 10, bool higherScoreIsBetter = true)
     {
-        var query = _db.Scores.Where(t => t.GameId == _gameHandler.CurrentGameUniqueId && t.DifficultyId == difficulty);
+        var query = _db.Scores.Where(t => t.GameId == UniqueId && t.DifficultyId == difficulty);
         if (higherScoreIsBetter)
         {
             query = query.OrderByDescending(t => t.NormalizedScore);
@@ -115,7 +127,7 @@ public class DefaultGameDataSaver : IGameDataSaver//<TGameDesc> : IGameDataSaver
 
     public async Task<Score> AddScore(Score score)
     {
-        score.GameId = _gameHandler.CurrentGameUniqueId;
+        score.GameId = UniqueId;
 
         _db.Scores.Add(score);
         await _db.SaveChangesAsync();

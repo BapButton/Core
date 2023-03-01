@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="1.18.0-beta" />
+		<PackageReference Include="BAP.Types" Version="1.21.0-beta" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />

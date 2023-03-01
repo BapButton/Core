@@ -33,6 +33,7 @@ public partial class LayoutTopbarDisplay : ComponentBase, IDisposable
         Subscriptions = bag.Build();
         Last30DaysOfButtonLayoutHistorys = await dba.Last30DaysOfButtonLayouts();
         await LoadPossibleButtonLayouts();
+        await SelectOrDeselectAButtonLayoutIfItMakesSense();
     }
 
     private void NavigateToLayout()
