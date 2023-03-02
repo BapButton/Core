@@ -38,7 +38,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultLayoutProvider",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.WebAudioPlayer", "BAP.WebAudioPlayer\BAP.WebAudioPlayer.csproj", "{02D041BB-8100-4053-944B-483B32535893}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefaultMqttButtonProvider", "DefaultMqttButtonProvider\DefaultMqttButtonProvider.csproj", "{1407C8B9-AF4A-4CFF-A895-B41B7F9707E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultMqttButtonProvider", "DefaultMqttButtonProvider\BAP.DefaultMqttButtonProvider.csproj", "{1407C8B9-AF4A-4CFF-A895-B41B7F9707E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

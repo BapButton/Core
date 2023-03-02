@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 using BAP.Types;
 using static BAP.Helpers.BapBasicGameHelper;
 
-namespace DefaultMqttButtonProvider
+namespace BAP.DefaultMqttButtonProvider
 {
     [BapProvider("Default MQTT Button Provider", "Default provider. Sends MQTT messages to communicate to any subscribed buttons", "4520ba12-1f34-5872-a735-6ce533f940e7")]
     public class DefaultMqttBapButtonProvider : IButtonProvider
