@@ -25,7 +25,6 @@ namespace BAP.Db
         }
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            Console.WriteLine($"Are we configured? - {options.IsConfigured}");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

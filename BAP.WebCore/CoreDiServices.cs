@@ -65,11 +65,30 @@ namespace BAP.WebCore
 
         public static void AddAllAddonsAndRequiredDiServices(this WebApplicationBuilder builder)
         {
+
             var services = builder.Services;
             services.AddHostedService<DBMigratorHostedService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<BapSettings>(builder.Configuration.GetSection("BAP"));
             var bapSettings = builder.Configuration.GetSection("BAP").Get<BapSettings>();
+            if (!string.IsNullOrEmpty(bapSettings?.AddonSaveLocation))
+            {
+                Console.WriteLine($"Ensuring Addon Directory {bapSettings?.AddonSaveLocation} exists");
+                var info = Directory.CreateDirectory(bapSettings?.AddonSaveLocation ?? "");
+                if (info.Exists)
+                {
+                    Console.WriteLine($"Directory {info.FullName} exists");
+                }
+                else
+                {
+                    Console.WriteLine("Directory failed to be created.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No addon save location. Things will fail shortly");
+            }
+
 
             if (string.IsNullOrEmpty(bapSettings?.DBConnectionString))
             {
