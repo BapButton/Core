@@ -4,22 +4,31 @@
 <h1>Current Providers</h1>
 
 <MudGrid>
+
+    @for (int i = 0; i < UniqueIdsOfProviders.Count; i++)
+    {
+        int providerInstance = i;
+        <MudItem xs="12" sm="9" md="6" lg="4" xl="3">
+
+            <MudCard Class="d-flex align-center justify-center mud-width-full py-8">
+                <MudCardHeader>@LoadedAddonHolder.BapProviders[providerInstance].Name</MudCardHeader>
+                <MudCardContent>
+                    <MudSelect T="string" Label="" @bind-Value="UniqueIdsOfProviders[providerInstance]">
+                        @foreach (var provider in LoadedAddonHolder.BapProviders[providerInstance].Providers)
+                        {
+                            <MudSelectItem T="string" value="@provider.UniqueId">@provider.Name</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudText>@LoadedAddonHolder.BapProviders[providerInstance].Providers.FirstOrDefault(t => t.UniqueId == UniqueIdsOfProviders[providerInstance])?.Description</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+
+
+
     <MudItem xs="12" sm="12" md="12">
-        @for (int i = 0; i < UniqueIdsOfProviders.Count; i++)
-        {
-            int providerInstance = i;
-            <h4>@LoadedAddonHolder.BapProviders[providerInstance].Name</h4>
-            <MudItem xs="3" sm="3" md="3" Class="pb-8">
-                <MudSelect T="string" Label="" @bind-Value="UniqueIdsOfProviders[providerInstance]">
-                    @foreach (var provider in LoadedAddonHolder.BapProviders[providerInstance].Providers)
-                    {
-
-                        <MudSelectItem T="string" value="@provider.UniqueId"><MudTooltip Text="@provider.Description"> @provider.Name</MudTooltip></MudSelectItem>
-                    }
-                </MudSelect>
-            </MudItem>
-        }
+        <MudButton OnClick="ProviderOnSubmit" Variant="Variant.Filled">Save Providers and Reboot</MudButton>
     </MudItem>
-
 </MudGrid>
 

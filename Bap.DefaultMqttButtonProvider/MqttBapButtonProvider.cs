@@ -3,7 +3,6 @@ using MessagePipe;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MQTTnet;
-using MQTTnet.Client.Options;
 using MQTTnet.Extensions.ManagedClient;
 using System;
 using System.Collections.Concurrent;
@@ -16,6 +15,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using BAP.Types;
 using static BAP.Helpers.BapBasicGameHelper;
+using SixLabors.ImageSharp;
+using Microsoft.Extensions.Configuration;
+using MQTTnet.Client;
 
 namespace BAP.DefaultMqttButtonProvider
 {
@@ -25,6 +27,7 @@ namespace BAP.DefaultMqttButtonProvider
         private readonly ILogger<DefaultMqttBapButtonProvider> _logger;
         public ConcurrentDictionary<string, bool> ConnectedNodes = new ConcurrentDictionary<string, bool>();
         public ConcurrentDictionary<string, ButtonStatus> AllButtonStatus = new();
+        private string mqttIpAddress;
         public IManagedMqttClient? managedMqttClient = null;
         IDisposable subscriptions = default!;
         private ISubscriber<StandardButtonImageMessage> StandardButtonMessagePipe { get; set; }
@@ -36,58 +39,21 @@ namespace BAP.DefaultMqttButtonProvider
         private IPublisher<ButtonPressedMessage> ButtonPressSender { get; set; } = default!;
         private ILayoutProvider LayoutProvider { get; init; }
 
-        public DefaultMqttBapButtonProvider(ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, ILayoutProvider layoutProvider)//ISubscriber<InternalCustomImageMessage> internalCustomImage, )
+        public DefaultMqttBapButtonProvider(IConfiguration configuration, ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, ILayoutProvider layoutProvider)
         {
             _logger = logger;
             StandardButtonMessagePipe = standardButtonMessagePipe;
             RestartButtonMessagePipe = restartButtonMessagePipe;
             StatusButtonMessagePipe = statusButtonMessagePipe;
             TurnOffButtonMessagePipe = turnOffButtonMessagePipe;
-            //InternalCustomImagePipe = internalCustomImage;
+            mqttIpAddress = configuration.GetValue<string>("MosquittoAddress") ?? "";
             NodeChangeSender = nodeChangeSender;
             ButtonPressSender = buttonPressSender;
             LayoutProvider = layoutProvider;
 
         }
-        //This method is not very well thought out. It should probably be an environmental Variable. 
-        private string GetCorrectDefautltIpAddress()
-        {
-            try
-            {
-                NetworkInterface? bestInterface = null;
-                foreach (NetworkInterface adapter in NetworkInterface.GetAllNetworkInterfaces().Where(t => t.OperationalStatus == OperationalStatus.Up && !t.IsReceiveOnly && t.NetworkInterfaceType != NetworkInterfaceType.Loopback).OrderByDescending(t => t.Speed))
-                {
-                    bestInterface = bestInterface ?? adapter;
-                    if (bestInterface.Name.StartsWith("v"))
-                    {
-                        bestInterface = adapter;
-                    }
 
-                }
-                string ipAddress = "";
-                var gatewayAddress = bestInterface?.GetIPProperties()?.GatewayAddresses?.FirstOrDefault()?.Address ?? new System.Net.IPAddress(new byte[] { 0, 0, 0, 0 });
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (gatewayAddress.ToString().StartsWith("192.168.86"))
-                    {
-                        //Todo: Need to figure out a way to pull this from config or something.
-                        ipAddress = "192.168.86.50";
-                    }
-                }
-                if (string.IsNullOrEmpty(ipAddress))
-                {
-                    ipAddress = gatewayAddress.ToString();
-                }
-                return ipAddress;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting the Ip Address of the network Gateway");
-                return "192.168.0.1";
-            }
-
-        }
-        private async Task<bool> Initialize(string mqttServerIp = "", Action<MqttApplicationMessageReceivedEventArgs>? customCallback = null, string hostName = "")
+        private async Task<bool> Initialize(Action<MqttApplicationMessageReceivedEventArgs>? customCallback = null, string hostName = "")
         {
             var bag = DisposableBag.CreateBuilder();
             StandardButtonMessagePipe.Subscribe(async (x) => await SendCommand(x.NodeId, x.ButtonImage)).AddTo(bag);
@@ -99,20 +65,12 @@ namespace BAP.DefaultMqttButtonProvider
 
             if (managedMqttClient == null)
             {
-                if (string.IsNullOrEmpty(mqttServerIp))
-                {
-                    mqttServerIp = GetCorrectDefautltIpAddress();
-                }
-                if (mqttServerIp.StartsWith("0"))
-                {
-                    return false;
-                }
                 string clientId = string.IsNullOrEmpty(hostName) ? $"ButtonMaster-{GetRandomInt(0, 1000000000)}" : hostName;
                 var factory = new MqttFactory();
                 var mqttClient = factory.CreateMqttClient();
                 var options = new MqttClientOptionsBuilder()
                                 .WithClientId(clientId)
-                                .WithTcpServer(mqttServerIp)
+                                .WithTcpServer(mqttIpAddress)
                                 .WithCleanSession(true)
                                 .Build();
 
@@ -120,41 +78,64 @@ namespace BAP.DefaultMqttButtonProvider
                 if (customCallback != null)
                 {
                     _logger.LogTrace("Using a custom Callback when initializing the MQTT client");
-                    managedMqttClient.UseApplicationMessageReceivedHandler(e => { customCallback(e); });
+                    managedMqttClient.ApplicationMessageReceivedAsync += e =>
+                    {
+                        Console.WriteLine("Received application message.");
+                        customCallback(e);
+                        return Task.CompletedTask;
+                    };
                 }
                 else
                 {
-                    managedMqttClient.UseApplicationMessageReceivedHandler(e => { CallBack(e); });
-                }
-                managedMqttClient.ConnectingFailedHandler = new HandleNotConnected();
-                //Need to do all the subscriptions.
-                await managedMqttClient.StartAsync(
-                    new ManagedMqttClientOptions
+                    managedMqttClient.ApplicationMessageReceivedAsync += e =>
                     {
-                        ClientOptions = options
-                    });
-                _logger.LogInformation($"Attempted a connection to mqtt server {mqttServerIp}");
-                await Task.Delay(2000);
+                        Console.WriteLine("Received application message.");
+                        {
+                            CallBack(e);
+                            return Task.CompletedTask;
+                        };
+                    };
+                    managedMqttClient.ConnectingFailedAsync += e =>
+                    {
+                        HandleConnectingFailedAsync(e);
+                        return Task.CompletedTask;
+                    };
+                    //Need to do all the subscriptions.
+                    await managedMqttClient.StartAsync(
+                        new ManagedMqttClientOptions
+                        {
+                            ClientOptions = options
+                        });
+                    _logger.LogInformation($"Attempted a connection to mqtt server {mqttIpAddress}");
+                    await Task.Delay(2000);
 
-                if (!managedMqttClient.IsStarted)
-                {
-                    _logger.LogInformation($"The MQTT client is not started. Things are not looking good but we will wait and see if we can get connected.");
-                    await Task.Delay(3000);
-                    if (!managedMqttClient.IsConnected)
+                    if (!managedMqttClient.IsStarted)
                     {
-                        _logger.LogCritical($"You are not connected to the MQTT server. Everything will fail. This is bad. But maybe if you are just going to use the mock provider then it's fine :)");
+                        _logger.LogInformation($"The MQTT client is not started. Things are not looking good but we will wait and see if we can get connected.");
+                        await Task.Delay(3000);
+                        if (!managedMqttClient.IsConnected)
+                        {
+                            _logger.LogCritical($"You are not connected to the MQTT server. Everything will fail. This is bad. But maybe if you are just going to use the mock provider then it's fine :)");
+                        }
                     }
+                    else
+                    {
+                        _logger.LogInformation($"Looks like the connection succeeded on the first try");
+                    }
+                    await managedMqttClient.SubscribeAsync("buttons/#", MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
+                    await Task.Delay(2000);
                 }
-                else
-                {
-                    _logger.LogInformation($"Looks like the connection succeeded on the first try");
-                }
-                await managedMqttClient.SubscribeAsync("buttons/#", MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce);
-                await Task.Delay(2000);
+
             }
             return true;
         }
 
+        private Task HandleConnectingFailedAsync(ConnectingFailedEventArgs eventArgs)
+        {
+            _logger.LogError($"Connecting to MQTT failed with message {eventArgs.Exception.Message}");
+            Console.WriteLine(eventArgs.Exception.Message);
+            return Task.FromResult(true);
+        }
 
         public IManagedMqttClient? GetCurrentClient()
         {
@@ -162,17 +143,12 @@ namespace BAP.DefaultMqttButtonProvider
         }
         public async Task<bool> InitializeAsync()
         {
-            string? mosquittoAddress = Environment.GetEnvironmentVariable("MosquittoAddress");
-            return await Initialize(mosquittoAddress ?? "", null, "");
+            return await Initialize(null, "");
         }
 
-        public async Task<bool> Initialize(string mqttServerIp = "")
+        public async Task<bool> InitializeWtihCustomCallback(Action<MqttApplicationMessageReceivedEventArgs> customCallback, string clientId)
         {
-            return await Initialize(mqttServerIp, null, "");
-        }
-        public async Task<bool> InitializeWtihCustomCallback(Action<MqttApplicationMessageReceivedEventArgs> customCallback, string clientId, string mqttServerIp = "")
-        {
-            return await Initialize(mqttServerIp, customCallback, clientId);
+            return await Initialize(customCallback, clientId);
         }
 
         public List<string> GetConnectedButtons()
@@ -284,20 +260,9 @@ namespace BAP.DefaultMqttButtonProvider
                 var message = new MqttApplicationMessageBuilder()
                    .WithTopic(topic)
                    .WithPayload(MessagePackSerializer.Serialize(objectToSend))
-                   .WithAtLeastOnceQoS()
+                   .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
                    .Build();
-                var result = await managedMqttClient.PublishAsync(message, CancellationToken.None);
-                bool success = result.ReasonCode == MQTTnet.Client.Publishing.MqttClientPublishReasonCode.Success;
-                if (success)
-                {
-                    _logger.LogDebug($"Succesfully sent command '{objectToSend}' to node {topic}");
-
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                await managedMqttClient.EnqueueAsync(message);
             }
             return false;
         }
@@ -376,12 +341,6 @@ namespace BAP.DefaultMqttButtonProvider
 
     }
 
-    public class HandleNotConnected : IConnectingFailedHandler
-    {
-        public Task HandleConnectingFailedAsync(ManagedProcessFailedEventArgs eventArgs)
-        {
-            Console.WriteLine(eventArgs.Exception.Message);
-            return Task.FromResult(true);
-        }
-    }
+
+
 }

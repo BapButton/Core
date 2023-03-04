@@ -10,7 +10,6 @@ namespace BAP.Helpers
         public bool IsGameRunning { get; internal set; }
         public abstract IGameDataSaver DbSaver { get; set; }
         ISubscriber<KeyboardKeyPressedMessage> KeyPressed { get; set; } = default!;
-        IGameProvider GameHandler { get; set; } = default!;
         IDisposable subscriptions = default!;
         internal BapColor numberColor = new BapColor(0, 255, 0);
         internal string lastNodeId = "";
@@ -33,12 +32,11 @@ namespace BAP.Helpers
         internal char CurrentDigit => Answer[CurrentSpotInAnswerString];
         IKeyboardProvider keyboard { get; set; }
 
-        public KeyboardGameBase(IKeyboardProvider keyboardProvider, IGameProvider gameHandler, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed, IGameDataSaver gameDataSaver)
+        public KeyboardGameBase(IKeyboardProvider keyboardProvider, ILayoutProvider layoutProvider, IBapMessageSender msgSender, ISubscriber<KeyboardKeyPressedMessage> keyPressed)
         {
             KeyboardProvider = keyboardProvider;
             MsgSender = msgSender;
             KeyPressed = keyPressed;
-            GameHandler = gameHandler;
             LayoutProvider = layoutProvider;
 
             if (layoutProvider == null)
@@ -49,7 +47,6 @@ namespace BAP.Helpers
             var bag = DisposableBag.CreateBuilder();
             KeyPressed.Subscribe(async (x) => await OnCharacterPressed(x)).AddTo(bag);
             subscriptions = bag.Build();
-            DbSaver = gameDataSaver;
         }
 
         public MathGameStatus GetStatus()

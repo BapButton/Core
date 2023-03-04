@@ -4,13 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.0.31521.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B87CA40A-92D1-42EC-878F-5FF288D42739}"
-	ProjectSection(SolutionItems) = preProject
-		.dockerignore = .dockerignore
-		ArmDocker-Compose.yml = ArmDocker-Compose.yml
-		docker-compose.yml = docker-compose.yml
-		Dockerfile = Dockerfile
-		DockerInstructions.txt = DockerInstructions.txt
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Db", "BAP.Db\BAP.Db.csproj", "{00C26BF7-4F5E-4FB8-8788-E4B77F27DC43}"
 EndProject
@@ -18,13 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.Helpers", "BAP.Helpers\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.UIHelpers", "BAP.UIHelpers\BAP.UIHelpers.csproj", "{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TextGames", "BAP.TextGames\BAP.TextGames.csproj", "{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.TestUtilities", "BAP.TestUtilities\BAP.TestUtilities.csproj", "{ABC746B5-588A-4C6E-A50C-D2255CB6277A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.ReactionGames", "BAP.ReactionGames\BAP.ReactionGames.csproj", "{1A309328-1F62-446D-8C5A-C5CAE87C9E72}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.MemoryGames", "BAP.MemoryGames\BAP.MemoryGames.csproj", "{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultGameProvider", "BAP.DefaultGameProvider\BAP.DefaultGameProvider.csproj", "{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}"
 EndProject
@@ -38,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultLayoutProvider",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.WebAudioPlayer", "BAP.WebAudioPlayer\BAP.WebAudioPlayer.csproj", "{02D041BB-8100-4053-944B-483B32535893}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultMqttButtonProvider", "DefaultMqttButtonProvider\BAP.DefaultMqttButtonProvider.csproj", "{1407C8B9-AF4A-4CFF-A895-B41B7F9707E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BAP.DefaultMqttButtonProvider", "BAP.DefaultMqttButtonProvider\BAP.DefaultMqttButtonProvider.csproj", "{1407C8B9-AF4A-4CFF-A895-B41B7F9707E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,22 +45,10 @@ Global
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{714BE0A9-82D6-4A32-9CB9-36F9797B3FD3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{38C624DF-60B0-468D-8FD3-07AF58EE5BBF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABC746B5-588A-4C6E-A50C-D2255CB6277A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ABC746B5-588A-4C6E-A50C-D2255CB6277A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABC746B5-588A-4C6E-A50C-D2255CB6277A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABC746B5-588A-4C6E-A50C-D2255CB6277A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1A309328-1F62-446D-8C5A-C5CAE87C9E72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1A309328-1F62-446D-8C5A-C5CAE87C9E72}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1A309328-1F62-446D-8C5A-C5CAE87C9E72}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1A309328-1F62-446D-8C5A-C5CAE87C9E72}.Release|Any CPU.Build.0 = Release|Any CPU
-		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31CA343C-A08E-4092-B6B5-BD57E0AE2A89}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF4BD4F7-AFDE-4CB4-9388-3188CE55916A}.Release|Any CPU.ActiveCfg = Release|Any CPU
