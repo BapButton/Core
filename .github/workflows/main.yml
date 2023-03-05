@@ -45,7 +45,7 @@ jobs:
       - name: 🎁 Pack Bap.Admin
         run: dotnet pack BAP.Admin/BAP.Admin.csproj --configuration Release -p:ContinuousIntegrationBuild=true -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
       - name: 🎁 PackBAP.DefaultMqttButtonProvider
-        run: dotnet pack DefaultMqttButtonProvider/BAP.DefaultMqttButtonProvider.csproj --configuration Release -p:ContinuousIntegrationBuild=true -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
+        run: dotnet pack BAP.DefaultMqttButtonProvider/BAP.DefaultMqttButtonProvider.csproj --configuration Release -p:ContinuousIntegrationBuild=true -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:PackageVersion=${{ steps.version.outputs.version }} -p:Version=${{ steps.version.outputs.version }}
      
       - name: 📨 Push to nuget
         run: dotnet nuget push **/*.nupkg --api-key ${{secrets.NugetPublishingKey}} --source https://api.nuget.org/v3/index.json
