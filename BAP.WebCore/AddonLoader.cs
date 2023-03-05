@@ -22,7 +22,7 @@ namespace BAP.WebCore
                 {
                     Console.WriteLine($"Directory is {directory}");
                     DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-                    string assumedDllFileName = Path.Combine(directory,$"{directoryInfo.Name}.dll");
+                    string assumedDllFileName = Path.Combine(directory, $"{directoryInfo.Name}.dll");
                     Console.WriteLine($"Looking for {assumedDllFileName}");
                     if (File.Exists(assumedDllFileName))
                     {
@@ -33,7 +33,7 @@ namespace BAP.WebCore
 
                 foreach (var pluginPath in baseDllPlugPaths)
                 {
-                    Console.WriteLine($"loadding plugin {pluginPath}");
+                    Console.WriteLine($"loading plugin {pluginPath}");
                     Assembly pluginAssembly = LoadPlugin(pluginPath);
                     results.Add(pluginAssembly);
                 }
@@ -98,21 +98,11 @@ namespace BAP.WebCore
         //}
 
 
-        private static Assembly LoadPlugin(string relativePath)
+        private static Assembly LoadPlugin(string fullPath)
         {
-            //todo - this seems terrible -there must be a betterway to build the path. 
-            // Navigate up to the solution root
-            string root = Path.GetFullPath(Path.Combine(
-                Path.GetDirectoryName(
-                    Path.GetDirectoryName(
-                        Path.GetDirectoryName(
-                            Path.GetDirectoryName(
-                                Path.GetDirectoryName(AppContext.BaseDirectory)))))));
-
-            string pluginLocation = Path.GetFullPath(Path.Combine(root, relativePath.Replace('\\', Path.DirectorySeparatorChar)));
-            Console.WriteLine($"Loading commands from: {pluginLocation}");
-            BapPluginLoadContext loadContext = new BapPluginLoadContext(pluginLocation);
-            return loadContext.LoadFromAssemblyName(AssemblyName.GetAssemblyName(pluginLocation));
+            Console.WriteLine($"Loading commands from: {fullPath}");
+            BapPluginLoadContext loadContext = new BapPluginLoadContext(fullPath);
+            return loadContext.LoadFromAssemblyName(AssemblyName.GetAssemblyName(fullPath));
         }
         public static (List<string> routes, List<MenuItemDetail> menuItems, List<TopMenuItemDetail> topMenuItemDetails) GetLoadableComponents(Assembly assembly)
         {
