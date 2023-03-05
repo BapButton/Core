@@ -2,7 +2,6 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/dotnet-postgres
 {
     "name": "BAP",
-    "dockerComposeFile": "docker-compose.yml",
     "service": "bapwebapp",
     "workspaceFolder": "/workspace",
 
