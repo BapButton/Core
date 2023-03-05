@@ -143,15 +143,19 @@ namespace BAP.WebCore
 
         public static List<GameDetail> ComponentsWithBapGamePageAttribute(Assembly assembly)
         {
+            Console.WriteLine($"Checking {assembly.GetName()} if it has Games");
             List<GameDetail> results = new();
             foreach (Type type in assembly.GetLoadableTypes())
             {
+                Console.WriteLine($"Checking if {type.Name} has components");
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
+                    Console.WriteLine($"It does have components. Now to check for the GamePage Attribute");
                     //This needs to also check for the Custom attribute to indicate what it is for.
                     var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
                     if (gameAttribute != null)
                     {
+                        Console.WriteLine($"Yep it has a Game Page Attribute");
                         results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = gameAttribute.UniqueId, DynamicComponentToLoad = type! });
                     }
                 }
@@ -206,6 +210,8 @@ namespace BAP.WebCore
             }
             catch (ReflectionTypeLoadException e)
             {
+                Console.WriteLine($"For the Assembly {assembly.GetName()} we had to fall backto getting just some of the types.");
+                Console.WriteLine($"The error is {e.Message} with inner exception {e.InnerException?.Message ?? ""}");
                 return e.Types.Where(t => t != null)!;
             }
         }

@@ -17,7 +17,7 @@ using BAP.Db;
 
 namespace BAP.Web.Controller
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class FirmwareController : ControllerBase
     {
@@ -37,6 +37,7 @@ namespace BAP.Web.Controller
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [Route("api/[controller]")]
         public async Task<ActionResult> Get(bool downloadAnyway = false)
         {
 

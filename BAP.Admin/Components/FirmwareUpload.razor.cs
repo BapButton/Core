@@ -23,7 +23,6 @@ namespace BAP.Admin.Components
         private EditContext editContext { get; set; } = default!;
         private FileUpload fileUpload { get; set; } = default!;
         private int progressPercent;
-        private string firmwareDataFilePath = "/data/firmwareData.json";
         private FluentValidationValidator fluentValidationValidator = default!;
 
         protected override void OnInitialized()
@@ -31,11 +30,6 @@ namespace BAP.Admin.Components
             cancelation = new CancellationTokenSource();
             fileUpload = new FileUpload();
             editContext = new EditContext(fileUpload);
-            if (File.Exists(firmwareDataFilePath))
-            {
-                string currentjson = File.ReadAllText(firmwareDataFilePath);
-
-            }
 
         }
 
@@ -53,7 +47,7 @@ namespace BAP.Admin.Components
         private async Task OnSubmit()
         {
 
-            string newFirmwareFileName = "/data/firmware/firmware" + fileUpload.Version.Replace('.', '_') + ".bin";
+            string newFirmwareFileName = Path.Combine("data", "firmware", "firmware" + fileUpload.Version.Replace('.', '_') + ".bin");
             //Check ifthe file currently exists. If not generate an empty model.
 
 
