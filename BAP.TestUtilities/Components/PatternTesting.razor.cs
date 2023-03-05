@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BAP.TestUtilities.Components
 {
+    [MenuItem("Pattern Testing", "Send patterns in order to button", false, "ea0d8577-609f-40e4-b05e-f02004b080a4")]
     public partial class PatternTesting : ComponentBase, IDisposable
     {
         [Inject]
