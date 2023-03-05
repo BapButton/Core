@@ -77,7 +77,7 @@ namespace BAP.WebCore
                 var info = Directory.CreateDirectory(bapSettings?.AddonSaveLocation ?? "");
                 if (info.Exists)
                 {
-                    Console.WriteLine($"Directory {info.FullName} exists");
+                    Console.WriteLine($"Yep. Directory {info.FullName} exists");
                 }
                 else
                 {
