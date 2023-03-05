@@ -22,7 +22,7 @@ namespace BAP.WebCore
                 {
                     Console.WriteLine($"Directory is {directory}");
                     DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-                    string assumedDllFileName = $"{directory}\\{directoryInfo.Name}.dll";
+                    string assumedDllFileName = Path.Combine(directory,"${directoryInfo.Name}.dll");
                     Console.WriteLine($"Looking for {assumedDllFileName}");
                     if (File.Exists(assumedDllFileName))
                     {
@@ -150,15 +150,15 @@ namespace BAP.WebCore
             List<GameDetail> results = new();
             foreach (Type type in assembly.GetLoadableTypes())
             {
-                Console.WriteLine($"Checking if {type.Name} has components");
+                //Console.WriteLine($"Checking if {type.Name} has components");
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
-                    Console.WriteLine($"It does have components. Now to check for the GamePage Attribute");
+                    //Console.WriteLine($"It does have components. Now to check for the GamePage Attribute");
                     //This needs to also check for the Custom attribute to indicate what it is for.
                     var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
                     if (gameAttribute != null)
                     {
-                        Console.WriteLine($"Yep it has a Game Page Attribute");
+                        //Console.WriteLine($"Yep it has a Game Page Attribute");
                         results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = gameAttribute.UniqueId, DynamicComponentToLoad = type! });
                     }
                 }
