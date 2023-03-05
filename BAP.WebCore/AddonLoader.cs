@@ -22,7 +22,7 @@ namespace BAP.WebCore
                 {
                     Console.WriteLine($"Directory is {directory}");
                     DirectoryInfo directoryInfo = new DirectoryInfo(directory);
-                    string assumedDllFileName = Path.Combine(directory,"${directoryInfo.Name}.dll");
+                    string assumedDllFileName = Path.Combine(directory,$"{directoryInfo.Name}.dll");
                     Console.WriteLine($"Looking for {assumedDllFileName}");
                     if (File.Exists(assumedDllFileName))
                     {
