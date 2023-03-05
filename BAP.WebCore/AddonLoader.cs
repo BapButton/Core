@@ -18,19 +18,22 @@ namespace BAP.WebCore
             {
                 var directories = Directory.GetDirectories(basePath);
                 List<string> baseDllPlugPaths = new List<string>();
-                //search the directories for .deps.json because that is the only DLL we want to load. 
                 foreach (var directory in directories)
                 {
+                    Console.WriteLine($"Directory is {directory}");
                     DirectoryInfo directoryInfo = new DirectoryInfo(directory);
                     string assumedDllFileName = $"{directory}\\{directoryInfo.Name}.dll";
+                    Console.WriteLine($"Looking for {assumedDllFileName}");
                     if (File.Exists(assumedDllFileName))
                     {
+                        Console.WriteLine($"{assumedDllFileName} exists");
                         baseDllPlugPaths.Add(assumedDllFileName);
                     }
                 }
 
                 foreach (var pluginPath in baseDllPlugPaths)
                 {
+                    Console.WriteLine($"loadding plugin {pluginPath}");
                     Assembly pluginAssembly = LoadPlugin(pluginPath);
                     results.Add(pluginAssembly);
                 }

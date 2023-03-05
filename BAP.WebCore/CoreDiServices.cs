@@ -133,7 +133,9 @@ namespace BAP.WebCore
 
             LoadedAddonHolder addonHolder = new();
             addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, bapSettings?.AddonSaveLocation ?? "");
+            Console.WriteLine($"There are {addonHolder.AllAddonAssemblies.Count} Addon Assemblies");
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
+            Console.WriteLine($"There are {addonHolder.AllCompiledAssembies.Count} Compiled Assemblies");
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
                 var providerInterfaces = AddonLoader.GetInterfacesThatImpementsInterface<IBapProvider>(assembly);
