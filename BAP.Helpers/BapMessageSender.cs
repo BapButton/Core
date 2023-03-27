@@ -17,6 +17,7 @@ namespace BAP.Helpers
         private IPublisher<PlayAudioMessage> PlayAudioMessageSender { get; set; }
         private IPublisher<GameEventMessage> GameEventMessageSender { get; set; }
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; }
+        private IPublisher<EnableTestingModeMessage> EnableTestingModeSender { get; set; }
         private IPublisher<LayoutChangeMessage> LayoutChangeSender { get; set; }
         private IButtonProvider ButtonProvider { get; set; }
         public int ButtonCount
@@ -27,18 +28,20 @@ namespace BAP.Helpers
             }
         }
 
-        public BapMessageSender(IPublisher<ButtonPressedMessage> buttonPressed, IPublisher<StandardButtonImageMessage> standardButtonMessageSender, IPublisher<RestartButtonMessage> restartButtonMessageSender, IPublisher<StatusButtonMessage> statusButtonMessageSender, IPublisher<TurnOffButtonMessage> turnOffButtonMessageSender, IPublisher<GameEventMessage> gameEventMessageSender, IPublisher<PlayAudioMessage> playAudioMessageSender, IButtonProvider buttonProvider, IPublisher<LayoutChangeMessage> layoutChangeSender)
+        public BapMessageSender(IPublisher<ButtonPressedMessage> buttonPressed, IPublisher<StandardButtonImageMessage> standardButtonMessageSender, IPublisher<RestartButtonMessage> restartButtonMessageSender, IPublisher<StatusButtonMessage> statusButtonMessageSender, IPublisher<TurnOffButtonMessage> turnOffButtonMessageSender, IPublisher<GameEventMessage> gameEventMessageSender, IPublisher<PlayAudioMessage> playAudioMessageSender, IPublisher<NodeChangeMessage> nodeChangeSender, IPublisher<EnableTestingModeMessage> testingModeSender, IButtonProvider buttonProvider, IPublisher<LayoutChangeMessage> layoutChangeSender)
         {
 
             StandardButtonMessageSender = standardButtonMessageSender;
             RestartButtonMessageSender = restartButtonMessageSender;
             StatusButtonMessageSender = statusButtonMessageSender;
             ButtonPressedSender = buttonPressed;
+            NodeChangeSender = nodeChangeSender;
             TurnOffButtonMessageSender = turnOffButtonMessageSender;
             GameEventMessageSender = gameEventMessageSender;
             PlayAudioMessageSender = playAudioMessageSender;
             ButtonProvider = buttonProvider;
             LayoutChangeSender = layoutChangeSender;
+            EnableTestingModeSender = testingModeSender;
         }
 
         public void PlayAudio(string fileName, bool stopAllOtherAudio = false)
@@ -146,33 +149,14 @@ namespace BAP.Helpers
             StandardButtonMessageSender.Publish(new StandardButtonImageMessage(buttonImage));
         }
 
-        //public void SendCustomImage(CustomImage customImage)
-        //{
-        //    CustomImageMessageSender.Publish(new CustomImageMessage(customImage));
-        //}
-
-        //public void SendCustomImage(string nodeId, CustomImage customImage)
-        //{
-        //    CustomImageMessageSender.Publish(new CustomImageMessage(customImage, nodeId));
-        //}
-
-        //public void SendInternalCustomImage(string nodeId, InternalCustomImage customImage)
-        //{
-        //    InternalCustomImageMessageSender.Publish(new InternalCustomImageMessage(customImage, nodeId));
-        //}
-        //public void SendInternalCustomImage(InternalCustomImageMessage internalCustomImageMessage)
-        //{
-        //    InternalCustomImageMessageSender.Publish(internalCustomImageMessage);
-        //}
-
-        //public void SendCustomImageToAllButtons(CustomImage customImage)
-        //{
-        //    CustomImageMessageSender.Publish(new ButtonImage(customImage));
-        //}
-
         public void ClearButtons()
         {
             SendImageToAllButtons(new ButtonImage());
+        }
+
+        public void EnableLocalTestingModeForButton(string nodeId)
+        {
+            EnableTestingModeSender.Publish(new EnableTestingModeMessage(nodeId));
         }
     }
 }

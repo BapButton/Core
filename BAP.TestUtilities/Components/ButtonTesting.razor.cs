@@ -45,6 +45,7 @@ namespace BAP.TestUtilities.Components
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            //This is not good. 
             Core = (MockButtonProvider)ButtonProvider!;
             var bag = DisposableBag.CreateBuilder();
             gameStateChangedPipe.Subscribe(async (x) => await Updates(x)).AddTo(bag);

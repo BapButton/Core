@@ -23,7 +23,7 @@ namespace BAP.WebCore
 
             foreach (var assemblyName in assemblyNames)
             {
-                if (!BuiltinNamesToIgnore.Any(t => assemblyName.FullName.StartsWith(t, StringComparison.InvariantCulture)))
+                if (!BuiltinNamesToIgnore.Any(t => assemblyName.FullName.StartsWith(t, StringComparison.OrdinalIgnoreCase)))
                     try
                     {
                         // Try to load the referenced assembly...

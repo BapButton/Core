@@ -210,7 +210,7 @@ public abstract class KeyboardBase : IKeyboardProvider
         foreach (var keyAndNodeId in KeyboardValues)
         {
             bool isArrow = keyAndNodeId.Value == rightArrow || keyAndNodeId.Value == leftArrow;
-            ButtonImage main = new(PatternHelper.GetBytesForPattern(EnumHelper.GetEnumFromCharacter(keyAndNodeId.Value)), ColorForCharacters);
+            ButtonImage main = new(PatternHelper.GetBytesForPattern(PaternEnumHelper.GetEnumFromCharacter(keyAndNodeId.Value)), ColorForCharacters);
             //ButtonDisplay onPress = new(ColorForCharacters, EnumHelper.GetEnumFromCharacter(keyAndNodeId.Value));
             //ButtonDisplay onPress = isArrow ? initial : DefaultShowOnPress ?? initial;
             //if (CurrentCorrectCharId == keyAndNodeId.Value)

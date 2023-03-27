@@ -33,19 +33,21 @@ namespace BAP.DefaultMqttButtonProvider
         private ISubscriber<StandardButtonImageMessage> StandardButtonMessagePipe { get; set; }
         private ISubscriber<RestartButtonMessage> RestartButtonMessagePipe { get; set; }
         private ISubscriber<StatusButtonMessage> StatusButtonMessagePipe { get; set; }
+        private ISubscriber<EnableTestingModeMessage> EnableTestingModePipe { get; set; }
         //private ISubscriber<InternalCustomImageMessage> InternalCustomImagePipe { get; set; }
         private ISubscriber<TurnOffButtonMessage> TurnOffButtonMessagePipe { get; set; }
         private IPublisher<NodeChangeMessage> NodeChangeSender { get; set; } = default!;
         private IPublisher<ButtonPressedMessage> ButtonPressSender { get; set; } = default!;
         private ILayoutProvider LayoutProvider { get; init; }
 
-        public DefaultMqttBapButtonProvider(IConfiguration configuration, ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, IPublisher<ButtonPressedMessage> buttonPressSender, ILayoutProvider layoutProvider)
+        public DefaultMqttBapButtonProvider(IConfiguration configuration, ILogger<DefaultMqttBapButtonProvider> logger, IPublisher<NodeChangeMessage> nodeChangeSender, ISubscriber<StandardButtonImageMessage> standardButtonMessagePipe, ISubscriber<RestartButtonMessage> restartButtonMessagePipe, ISubscriber<StatusButtonMessage> statusButtonMessagePipe, ISubscriber<TurnOffButtonMessage> turnOffButtonMessagePipe, ISubscriber<EnableTestingModeMessage> enableTestingModePipe, IPublisher<ButtonPressedMessage> buttonPressSender, ILayoutProvider layoutProvider)
         {
             _logger = logger;
             StandardButtonMessagePipe = standardButtonMessagePipe;
             RestartButtonMessagePipe = restartButtonMessagePipe;
             StatusButtonMessagePipe = statusButtonMessagePipe;
             TurnOffButtonMessagePipe = turnOffButtonMessagePipe;
+            EnableTestingModePipe = enableTestingModePipe;
             mqttIpAddress = configuration.GetValue<string>("MosquittoAddress") ?? "";
             NodeChangeSender = nodeChangeSender;
             ButtonPressSender = buttonPressSender;
@@ -60,6 +62,7 @@ namespace BAP.DefaultMqttButtonProvider
             StatusButtonMessagePipe.Subscribe(async (x) => await GetStatusFromButttons(x.NodeId)).AddTo(bag);
             TurnOffButtonMessagePipe.Subscribe(async (x) => await TurnOffButton(x.NodeId)).AddTo(bag);
             RestartButtonMessagePipe.Subscribe(async (x) => await RestartAButton(x.NodeId)).AddTo(bag);
+            EnableTestingModePipe.Subscribe(async (x) => await EnableTestingMode(x.NodeId)).AddTo(bag);
             //InternalCustomImagePipe.Subscribe(async (x) => await SendInternalCustomImage(x.NodeId, x.CustomImage)).AddTo(bag);
             subscriptions = bag.Build();
 
@@ -199,11 +202,19 @@ namespace BAP.DefaultMqttButtonProvider
             return await SendPublic("status", true);
         }
 
+        private async Task<bool> EnableTestingMode(string nodeId)
+        {
+            return await SendPrivate(nodeId, "testing", true);
+
+        }
+
         private async Task<bool> RestartAllButtons()
         {
             ConnectedNodes = new ConcurrentDictionary<string, bool>();
             return await SendPublic("restart", true);
         }
+
+
 
         private async Task<bool> RestartAButton(string nodeId)
         {

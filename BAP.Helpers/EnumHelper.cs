@@ -1,160 +1,144 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using BAP.Types;
 
 namespace BAP.Helpers
 {
-    public static class EnumHelper
+
+    public static class EnumHelpers<T>
     {
-        public static int GetNumberFromEnum(Patterns pattern)
+
+        public static bool DoesEnumHaveDuplicates()
         {
-            switch (pattern)
+            var enums = (T[])Enum.GetValues(typeof(T));
+            List<int> enumInts = new List<int>();
+            foreach (int i in Enum.GetValues(typeof(T)))
             {
-                case Patterns.Number0: return 0;
-                case Patterns.Number1: return 1;
-                case Patterns.Number2: return 2;
-                case Patterns.Number3: return 3;
-                case Patterns.Number4: return 4;
-                case Patterns.Number5: return 5;
-                case Patterns.Number6: return 6;
-                case Patterns.Number7: return 7;
-                case Patterns.Number8: return 8;
-                case Patterns.Number9: return 9;
-                default:
-                    throw new Exception($"Invalid pattern. It must be one of the number patterns but {pattern.ToString()} was passed in.");
+                enumInts.Add(i);
             }
+            return !(enums.Count() == enumInts.Distinct().Count());
+        }
+        public static IList<T> GetValues(Enum value)
+        {
+            var enumValues = new List<T>();
+
+            foreach (FieldInfo fi in value.GetType().GetFields(BindingFlags.Static | BindingFlags.Public))
+            {
+                enumValues.Add((T)Enum.Parse(value.GetType(), fi.Name, false));
+            }
+            return enumValues;
         }
 
-        public static Patterns GetPatternFromNumber(int number)
+        public static Dictionary<int, string> ToDictionary()
         {
-            if (number == 0)
+            if (!typeof(T).IsEnum)
             {
-                return Patterns.Number0;
+                throw new ArgumentException("Type must be an enum");
             }
-            if (number < 99)
+            Dictionary<int, string> values = new Dictionary<int, string>();
+            foreach (var item in Enum.GetValues(typeof(T)).Cast<T>().ToList())
             {
-                return (Patterns)number;
+                if (item != null)
+                {
+                    values.Add((int)(object)item, GetDisplayValue(item));
+                }
             }
-            return Patterns.NoPattern;
+            return values;
         }
-        public static Patterns GetEnumFromCharacter(char character)
-        {
-            //todo This needs all the characters represented by the keyboard
-            switch (character)
-            {
-                case '0': return Patterns.Number0;
-                case '1': return Patterns.Number1;
-                case '2': return Patterns.Number2;
-                case '3': return Patterns.Number3;
-                case '4': return Patterns.Number4;
-                case '5': return Patterns.Number5;
-                case '6': return Patterns.Number6;
-                case '7': return Patterns.Number7;
-                case '8': return Patterns.Number8;
-                case '9': return Patterns.Number9;
-                case 'A': return Patterns.LetterA;
-                case 'B': return Patterns.LetterB;
-                case 'C': return Patterns.LetterC;
-                case 'D': return Patterns.LetterD;
-                case 'E': return Patterns.LetterE;
-                case 'F': return Patterns.LetterF;
-                case 'G': return Patterns.LetterG;
-                case 'H': return Patterns.LetterH;
-                case 'I': return Patterns.LetterI;
-                case 'J': return Patterns.LetterJ;
-                case 'K': return Patterns.LetterK;
-                case 'L': return Patterns.LetterL;
-                case 'M': return Patterns.LetterM;
-                case 'N': return Patterns.LetterN;
-                case 'O': return Patterns.LetterO;
-                case 'P': return Patterns.LetterP;
-                case 'Q': return Patterns.LetterQ;
-                case 'R': return Patterns.LetterR;
-                case 'S': return Patterns.LetterS;
-                case 'T': return Patterns.LetterT;
-                case 'U': return Patterns.LetterU;
-                case 'V': return Patterns.LetterV;
-                case 'W': return Patterns.LetterW;
-                case 'X': return Patterns.LetterX;
-                case 'Y': return Patterns.LetterY;
-                case 'Z': return Patterns.LetterZ;
-                case 'a': return Patterns.LowercaseLetterA;
-                case 'b': return Patterns.LowercaseLetterB;
-                case 'c': return Patterns.LowercaseLetterC;
-                case 'd': return Patterns.LowercaseLetterD;
-                case 'e': return Patterns.LowercaseLetterE;
-                case 'f': return Patterns.LowercaseLetterF;
-                case 'g': return Patterns.LowercaseLetterG;
-                case 'h': return Patterns.LowercaseLetterH;
-                case 'i': return Patterns.LowercaseLetterI;
-                case 'j': return Patterns.LowercaseLetterJ;
-                case 'k': return Patterns.LowercaseLetterK;
-                case 'l': return Patterns.LowercaseLetterL;
-                case 'm': return Patterns.LowercaseLetterM;
-                case 'n': return Patterns.LowercaseLetterN;
-                case 'o': return Patterns.LowercaseLetterO;
-                case 'p': return Patterns.LowercaseLetterP;
-                case 'q': return Patterns.LowercaseLetterQ;
-                case 'r': return Patterns.LowercaseLetterR;
-                case 's': return Patterns.LowercaseLetterS;
-                case 't': return Patterns.LowercaseLetterT;
-                case 'u': return Patterns.LowercaseLetterU;
-                case 'v': return Patterns.LowercaseLetterV;
-                case 'w': return Patterns.LowercaseLetterW;
-                case 'x': return Patterns.LowercaseLetterX;
-                case 'y': return Patterns.LowercaseLetterY;
-                case 'z': return Patterns.LowercaseLetterZ;
-                case '→': return Patterns.RightArrow;
-                case '←': return Patterns.LeftArrow;
-                case 'ñ': return Patterns.LowerCaseNWithTilde;
-                case 'á': return Patterns.LowerCaseAWithAque;
-                case 'é': return Patterns.LowerCaseEWithAque;
-                case 'í': return Patterns.LowerCaseIWithAque;
-                case 'ó': return Patterns.LowerCaseOWithAque;
-                case 'ú': return Patterns.LowerCaseUwithAque;
-                case 'ü': return Patterns.LowerCaseUwithDoubleDots;
-                case '!': return Patterns.ExclamationPoint;
 
-                default:
-                    throw new Exception($"Invalid character of {character} was passed in. it must be somethign mapped to a pattern");
-            }
-        }
-        public static string GetCharacterFromEnum(Patterns pattern)
+        public static List<T> ToList()
         {
-            switch (pattern)
+            return Enum.GetValues(typeof(T)).Cast<T>().ToList();
+        }
+
+        public static T Parse(string value)
+        {
+            return (T)Enum.Parse(typeof(T), value, true);
+        }
+
+        public static IList<string> GetNames(Enum value)
+        {
+            return value.GetType().GetFields(BindingFlags.Static | BindingFlags.Public).Select(fi => fi.Name).ToList();
+        }
+
+        public static IList<string> GetDisplayValues(Enum value)
+        {
+            return GetNames(value).Select(obj => GetDisplayValue(Parse(obj))).ToList();
+        }
+
+
+
+        public static string LookupResource(Type resourceManagerProvider, string resourceKey)
+        {
+            foreach (PropertyInfo staticProperty in resourceManagerProvider.GetProperties(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
             {
-                case Patterns.LetterA: return "A";
-                case Patterns.LetterB: return "B";
-                case Patterns.LetterC: return "C";
-                case Patterns.LetterD: return "D";
-                case Patterns.LetterE: return "E";
-                case Patterns.LetterF: return "F";
-                case Patterns.LetterG: return "G";
-                case Patterns.LetterH: return "H";
-                case Patterns.LetterI: return "I";
-                case Patterns.LetterJ: return "J";
-                case Patterns.LetterK: return "K";
-                case Patterns.LetterL: return "L";
-                case Patterns.LetterM: return "M";
-                case Patterns.LetterN: return "N";
-                case Patterns.LetterO: return "O";
-                case Patterns.LetterP: return "P";
-                case Patterns.LetterQ: return "Q";
-                case Patterns.LetterR: return "R";
-                case Patterns.LetterS: return "S";
-                case Patterns.LetterT: return "T";
-                case Patterns.LetterU: return "U";
-                case Patterns.LetterV: return "V";
-                case Patterns.LetterW: return "W";
-                case Patterns.LetterX: return "X";
-                case Patterns.LetterY: return "Y";
-                case Patterns.LetterZ: return "Z";
-                default:
-                    throw new Exception($"Invalid pattern of {pattern} was passed in. It must be between pattern representing a letter between A and Z");
+                if (staticProperty.PropertyType == typeof(System.Resources.ResourceManager))
+                {
+                    var propValue = staticProperty.GetValue(null, null);
+                    if (propValue != null)
+                    {
+                        System.Resources.ResourceManager resourceManager = (System.Resources.ResourceManager)propValue;
+                        string? name = resourceManager.GetString(resourceKey);
+                        if (name != null)
+                        {
+                            return name;
+                        }
+                    }
+
+                }
             }
+
+            return resourceKey; // Fallback with the key name
+        }
+
+
+
+        public static string GetDisplayValue(T value)
+        {
+            try
+            {
+                if (value != null)
+                {
+                    var fieldInfo = value.GetType().GetField(value?.ToString() ?? "");
+                    if (fieldInfo != null)
+                    {
+                        DisplayAttribute[]? descriptionAttributes = fieldInfo.GetCustomAttributes(
+                        typeof(DisplayAttribute), false) as DisplayAttribute[];
+                        if (descriptionAttributes != null)
+                        {
+                            if (descriptionAttributes.Length > 0 && descriptionAttributes[0].ResourceType != null)
+                                return LookupResource(descriptionAttributes[0].ResourceType, descriptionAttributes[0].Name);
+
+                            if (descriptionAttributes != null && descriptionAttributes.Length > 0)
+                            {
+                                if (descriptionAttributes[0].Name != null)
+                                {
+                                    return descriptionAttributes[0].Name;
+                                }
+                                else
+                                {
+                                    return value?.ToString() ?? "";
+                                }
+                            }
+
+                        }
+
+
+                    }
+
+                }
+            }
+
+            catch (Exception)
+            {
+                return value?.ToString() ?? "";
+            }
+            return value?.ToString() ?? "";
         }
     }
 }
+

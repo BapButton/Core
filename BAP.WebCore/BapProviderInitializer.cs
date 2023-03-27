@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace BAP.WebCore
         // the scoped service, MyDbContext
         private readonly IServiceProvider _serviceProvider;
         private DbAccessor _dba;
-        public BapProviderInitializer(IServiceProvider serviceProvider, DbAccessor dbAccessor)
+        public BapProviderInitializer(IServiceProvider serviceProvider, DbAccessor dbAccessor, LoadedAddonHolder loadedAddonHolder)
         {
             _serviceProvider = serviceProvider;
             _dba = dbAccessor;
@@ -36,9 +37,8 @@ namespace BAP.WebCore
                         _dba.AddActiveProvider(provider.GetType(), false);
                     }
                 }
-
             }
-
+            await _dba.AddAnyNewMenuItems(addonHolder.MainMenuItems.Select(t => (t.UniqueId, t.ShowByDefault)).ToList());
 
         }
 

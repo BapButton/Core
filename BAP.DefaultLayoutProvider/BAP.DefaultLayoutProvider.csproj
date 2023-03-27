@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BAP.Types" Version="1.22.0-beta" />
+    <PackageReference Include="BAP.Types" Version="1.24.0-beta" />
     <PackageReference Include="MessagePipe" Version="1.7.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.3" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">

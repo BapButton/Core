@@ -140,15 +140,13 @@ namespace BAP.WebCore
             List<GameDetail> results = new();
             foreach (Type type in assembly.GetLoadableTypes())
             {
-                //Console.WriteLine($"Checking if {type.Name} has components");
+             
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
-                    //Console.WriteLine($"It does have components. Now to check for the GamePage Attribute");
-                    //This needs to also check for the Custom attribute to indicate what it is for.
+              
                     var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
                     if (gameAttribute != null)
                     {
-                        //Console.WriteLine($"Yep it has a Game Page Attribute");
                         results.Add(new GameDetail() { Description = gameAttribute.Description, Name = gameAttribute.Name, UniqueId = gameAttribute.UniqueId, DynamicComponentToLoad = type! });
                     }
                 }

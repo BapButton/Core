@@ -47,6 +47,10 @@ namespace BAP.TestUtilities.Components
         {
             msgSender.TurnOffAButton(nodeId);
         }
+        private void EnableTestingMode(string nodeId)
+        {
+            msgSender.EnableLocalTestingModeForButton(nodeId);
+        }
         private void IdentifyNode(string nodeId)
         {
             BapColor bc = new BapColor(0, 255, 0);

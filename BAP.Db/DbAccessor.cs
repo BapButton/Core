@@ -98,11 +98,16 @@ namespace BAP.Db
         public async Task<bool> AddAnyNewMenuItems(List<(string uniqueId, bool showByDefault)> menuItemDetails)
         {
             using ButtonContext db = _contextFactory.CreateDbContext();
-            HashSet<string> currentMenuItems = (await db.MenuItemStatuses.Select(t => t.MenuItemUniqueId).ToListAsync()).ToHashSet();
+            List<MenuItemStatus> menuItemStatuses = await db.MenuItemStatuses.ToListAsync();
+            HashSet<string> currentMenuItems = (menuItemStatuses.Select(t => t.MenuItemUniqueId).ToList()).ToHashSet();
             List<string> newItems = menuItemDetails.Select(t => t.uniqueId).Except(currentMenuItems).ToList();
             if (newItems.Count > 0)
             {
-                int currentMaxOrder = await db.MenuItemStatuses.MaxAsync(t => t.Order);
+                int currentMaxOrder = 0;
+                if (currentMenuItems.Any())
+                {
+                    currentMaxOrder = menuItemStatuses.Select(t => t.Order).Max();
+                }
                 foreach (var item in newItems)
                 {
                     currentMaxOrder++;
@@ -144,7 +149,7 @@ namespace BAP.Db
         public async Task<List<string>> GetUniqueIdsOfActiveMenuItems()
         {
             using ButtonContext db = _contextFactory.CreateDbContext();
-            return await db.MenuItemStatuses.Where(t => t.ShowInMainMenu).Select(t => t.MenuItemUniqueId).ToListAsync();
+            return await db.MenuItemStatuses.Where(t => t.ShowInMainMenu).OrderBy(t => t.Order).Select(t => t.MenuItemUniqueId).ToListAsync();
         }
 
         public List<string> AddActiveProvider(Type providerType, bool deactivateOtherProvider)
