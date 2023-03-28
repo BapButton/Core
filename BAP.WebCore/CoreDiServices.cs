@@ -183,7 +183,6 @@ namespace BAP.WebCore
                     services.AddTransient(typeof(IBapMessageSender), messageSender);
                     services.AddTransient(messageSender);
                 }
-                Console.WriteLine("Next up we check for Games");
                 var gamePages = AddonLoader.ComponentsWithBapGamePageAttribute(assembly);
                 addonHolder.AllGames.AddRange(gamePages);
                 var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
