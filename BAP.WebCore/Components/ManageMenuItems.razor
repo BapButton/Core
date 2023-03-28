@@ -1,0 +1,46 @@
+﻿@using Blazored.FluentValidation;
+@using Microsoft.AspNetCore.Components.Forms
+
+<h1>Main Menu Items</h1>
+
+<MudGrid>
+    @foreach (var item in Items.OrderBy(t => t.status.Order).Select((value, i) => (value, i)))
+    {
+        <MudItem xs="12" sm="9" md="6" lg="4" xl="3">
+
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@item.value.menuItemDetail.DisplayedLabel</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        @if (item.i > 0)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowUpward" Color="Color.Default" OnClick="() => MoveItemUp(item.value.menuItemDetail.UniqueId)" />
+                        }
+                        @if (item.i + 1 < Items.Count)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowDownward" Color="Color.Default" OnClick="() => MoveItemDown(item.value.menuItemDetail.UniqueId)" />
+                        }
+                    </CardHeaderActions>
+                </MudCardHeader>
+
+                <MudCardContent>
+                    <MudText>@item.value.menuItemDetail.MouseOver</MudText>
+                    <MudCardActions>
+                        @if (item.value.status.ShowInMainMenu)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Check" Color="Color.Success" OnClick="() => MarkItemToNotShowInMenu(item.value.menuItemDetail.UniqueId)" />
+                        }
+                        else
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Check" Color="Color.Transparent" OnClick="() => MarkItemToShowInMenu(item.value.menuItemDetail.UniqueId)" />
+                        }
+                        <MudLink Href="@item.value.menuItemDetail.Path"><MudIcon Icon="@Icons.Material.Filled.Pageview" /></MudLink>
+                    </MudCardActions>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+

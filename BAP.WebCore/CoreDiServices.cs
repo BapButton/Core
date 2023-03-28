@@ -210,7 +210,7 @@ namespace BAP.WebCore
             foreach (var provider in addonHolder.BapProviders)
             {
                 Type? providerType = null;
-                var recentProvider = dba.GetRecentlyActiveProvider(provider.ProviderInterfaceType.FullName).FirstOrDefault();
+                var recentProvider = dba.GetRecentlyActiveProvider(provider?.ProviderInterfaceType?.FullName ?? "").FirstOrDefault();
                 if (recentProvider != null)
                 {
                     providerType = provider.Providers.FirstOrDefault(t => t.UniqueId == recentProvider)?.BapProviderType;

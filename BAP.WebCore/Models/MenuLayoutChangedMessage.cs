@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace BAP.WebCore.Models
 {
-    internal class MenuLayoutChangedMessage
+    public class MenuLayoutChangedMessage
     {
+        public MenuLayoutChangedMessage(bool changed = true)
+        {
+            Changed = changed;
+        }
         bool Changed { get; set; }
     }
 }

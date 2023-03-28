@@ -19,7 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BAP.Types" Version="1.24.0-beta" />
+		<PackageReference Include="BAP.Types" Version="1.25.0-beta" />
 		<PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
 		<PackageReference Include="MessagePipe" Version="1.7.4" />
 		<PackageReference Include="MessagePipe.Analyzer" Version="1.7.4">
@@ -51,6 +51,12 @@
 		<ProjectReference Include="..\BAP.Db\BAP.Db.csproj" />
 		<ProjectReference Include="..\BAP.DefaultGameProvider\BAP.DefaultGameProvider.csproj" />
 		<ProjectReference Include="..\BAP.Helpers\BAP.Helpers.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Components\ManageMenuItems.razor">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	  </Content>
 	</ItemGroup>
 
 </Project>

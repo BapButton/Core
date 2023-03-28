@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace BAP.WebCore.Components
 {
-    [MenuItem("Manage Content", "Add or remove Games or Menu Items", true, "cbf9fb4e-edbb-4474-b1a7-811f7f5e8c18")]
+    
     public partial class ProviderManager : ComponentBase, IDisposable
     {
         private CancellationTokenSource cancelation { get; set; } = default!;

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore.Update.Internal;
 using System.Buffers;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Internal;
+using System.Xml;
 
 namespace BAP.Db
 {
@@ -26,7 +27,7 @@ namespace BAP.Db
             return _contextFactory.CreateDbContext();
         }
 
-        //Todo - It seems like the DB context should get injected probably from a a factory.
+
         public async Task<FirmwareInfo> GetLatestFirmwareInfo()
         {
             using ButtonContext db = _contextFactory.CreateDbContext();
@@ -144,6 +145,52 @@ namespace BAP.Db
                 return true;
             }
             return false;
+        }
+
+        public async Task<List<MenuItemStatus>> GetMenuItemStatusesAsync()
+        {
+            using ButtonContext db = _contextFactory.CreateDbContext();
+            return await db.MenuItemStatuses.ToListAsync();
+        }
+
+        public async Task MoveMenuItemUp(string uniqueId)
+        {
+            using ButtonContext db = _contextFactory.CreateDbContext();
+            List<MenuItemStatus> menuItems = await db.MenuItemStatuses.OrderBy(t => t.Order).ToListAsync();
+            MenuItemStatus? itemToAdjust = menuItems.FirstOrDefault(t => t.MenuItemUniqueId.Equals(uniqueId));
+            if (itemToAdjust != null)
+            {
+                int originalOrder = itemToAdjust.Order;
+                int placeInLine = menuItems.IndexOf(itemToAdjust);
+                if (placeInLine > 0)
+                {
+                    MenuItemStatus itemToSwap = menuItems[placeInLine - 1];
+                    itemToAdjust.Order = itemToSwap.Order;
+                    itemToSwap.Order = originalOrder;
+                    await db.SaveChangesAsync();
+                }
+
+            }
+        }
+
+        public async Task MoveMenuItemDown(string uniqueId)
+        {
+            using ButtonContext db = _contextFactory.CreateDbContext();
+            List<MenuItemStatus> menuItems = await db.MenuItemStatuses.OrderBy(t => t.Order).ToListAsync();
+            MenuItemStatus? itemToAdjust = menuItems.FirstOrDefault(t => t.MenuItemUniqueId.Equals(uniqueId));
+            if (itemToAdjust != null)
+            {
+                int originalOrder = itemToAdjust.Order;
+                int placeInLine = menuItems.IndexOf(itemToAdjust);
+                if (placeInLine < menuItems.Count)
+                {
+                    MenuItemStatus itemToSwap = menuItems[placeInLine + 1];
+                    itemToAdjust.Order = itemToSwap.Order;
+                    itemToSwap.Order = originalOrder;
+                    await db.SaveChangesAsync();
+                }
+
+            }
         }
 
         public async Task<List<string>> GetUniqueIdsOfActiveMenuItems()

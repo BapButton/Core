@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using BAP.Types;
 using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,14 +40,17 @@ namespace BAP.TestUtilities.Components
         [Inject]
         ISubscriber<LayoutChangeMessage> layoutChangePipe { get; set; } = default!;
 
-        MockButtonProvider Core { get; set; } = default!;
+        MockButtonProvider? Core { get; set; }
 
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             //This is not good. 
-            Core = (MockButtonProvider)ButtonProvider!;
+            if(ButtonProvider.GetType() == typeof(MockButtonProvider))
+            {
+                Core = (MockButtonProvider)ButtonProvider;
+            }
             var bag = DisposableBag.CreateBuilder();
             gameStateChangedPipe.Subscribe(async (x) => await Updates(x)).AddTo(bag);
             buttonPressedPipe.Subscribe(async (x) => await ButtonPressed(x)).AddTo(bag);
@@ -81,7 +85,11 @@ namespace BAP.TestUtilities.Components
 
         protected async Task AddButton()
         {
-            await Core.AddNode();
+            if(Core != null)
+            {
+                await Core.AddNode();
+            }
+            
         }
         public void Dispose()
         {

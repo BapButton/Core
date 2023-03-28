@@ -5,6 +5,7 @@ using MessagePipe;
 using Microsoft.AspNetCore.Components;
 using BAP.Types;
 using BAP.Helpers;
+using System.Collections;
 
 [MenuItem("Layout", "Setup Layout for buttons", false, "0aca4ec6-6631-47ca-b54b-c52ea1ba53ec")]
 public partial class LayoutSetup : ComponentBase, IDisposable
@@ -125,11 +126,11 @@ public partial class LayoutSetup : ComponentBase, IDisposable
         foreach (ButtonPosition bp in buttonLayout.ButtonPositions)
         {
             BapColor? rgb = StandardColorPalettes.Default[bp.RowId];
+
             MsgSender.SendImage(bp.ButtonId, new ButtonImage(PatternHelper.GetBytesForPattern((Patterns)bp.ColumnId), rgb));
-
-
         }
     }
+
 
     async Task Updates(GameEventMessage message)
     {

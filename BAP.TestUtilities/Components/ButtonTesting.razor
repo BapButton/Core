@@ -5,33 +5,38 @@
 <h3>Test out your games</h3>
 
 <p>Last Message: @lastButtonMessage</p>
-<div style="margin:40px">
-    <button class="btn btn-primary" @onclick="AddButton">Add Button</button>
-</div>
-<div>
+@if(Core != null)
+{
+    <div style="margin:40px">
+        <button class="btn btn-primary" @onclick="AddButton">Add Button</button>
+    </div>
+    <div>
 
-    @if (LayoutProvider.CurrentButtonLayout != null)
-    {
-        @foreach (var row in LayoutProvider.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
+        @if (LayoutProvider.CurrentButtonLayout != null)
+        {
+            @foreach (var row in LayoutProvider.CurrentButtonLayout.ButtonPositions.GroupBy(t => t.RowId).OrderBy(t => t.Key))
+            {
+                <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
+                    @foreach (var button in row.OrderBy(t => t.ColumnId))
+                    {
+                        <MockButton HideButtonsWhenGameActive="@HideButtonsWhenGameActive" NodeId="@button.ButtonId"></MockButton>
+                    }
+                </MudPaper>
+            }
+        }
+        else
         {
             <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
-                @foreach (var button in row.OrderBy(t => t.ColumnId))
+                @foreach (var item in Core.GetConnectedButtons().OrderBy(t => t))
                 {
-
-                    <MockButton HideButtonsWhenGameActive="@HideButtonsWhenGameActive" NodeId="@button.ButtonId"></MockButton>
-
+                    <MockButton NodeId="@item"></MockButton>
                 }
             </MudPaper>
         }
-    }
-    else
-    {
-        <MudPaper Class="d-flex flex-row flex-grow-1 gap-4" Elevation="0">
-            @foreach (var item in Core.GetConnectedButtons().OrderBy(t => t))
-            {
-                <MockButton NodeId="@item"></MockButton>
-            }
-        </MudPaper>
-    }
 
-</div>
+    </div>
+}
+else
+{
+    <MudText>Mock Button Provider is not selected. Please select it in the Manage Providers section and reboot before proceeding.</MudText>
+}
