@@ -211,7 +211,7 @@ public abstract class KeyboardBase : IKeyboardProvider
             await Task.Delay(turnOnInMillis);
             _logger.LogTrace($"Done Delaying");
         }
-        _logger.LogTrace($"There are {} keyboard values to show");
+        _logger.LogTrace($"There are {ValuesToDisplay} keyboard values to show");
         foreach (var keyAndNodeId in KeyboardValues)
         {
             bool isArrow = keyAndNodeId.Value == rightArrow || keyAndNodeId.Value == leftArrow;
