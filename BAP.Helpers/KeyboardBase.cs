@@ -94,7 +94,7 @@ public abstract class KeyboardBase : IKeyboardProvider
 
     private void LayoutKeyboard()
     {
-
+        _logger.LogTrace($"Laying out the Keyboard in memory");
         int currentButtonCount = NodeIdsToUse.Count;
         bool reachedEndOfArray = true;
 
@@ -176,6 +176,7 @@ public abstract class KeyboardBase : IKeyboardProvider
             if (showRightArrow) { numberToAdd--; }
             CurrentPlaceInArray = CurrentPlaceInArray + numberToAdd;
         }
+        _logger.LogTrace($"Keyboard layout done. There are {KeyboardValues.Count} items in the layout");
     }
 
     private string GetNodeIdByChar(char valueToLookup)
@@ -201,26 +202,20 @@ public abstract class KeyboardBase : IKeyboardProvider
 
     public virtual async void ShowKeyboard(int turnOnInMillis = 0)
     {
+        _logger.LogTrace($"Showing the Keyboard with a delay of {turnOnInMillis}");
         Enable();
+        _logger.LogTrace($"Keyboard is enabled is now set to {_isEnabled}");
         if (turnOnInMillis > 0)
         {
+            _logger.LogTrace($"Delaying {turnOnInMillis} before showing keyboard");
             await Task.Delay(turnOnInMillis);
+            _logger.LogTrace($"Done Delaying");
         }
-        //I should really check if all of the buttons are in use and then use general command;
+        _logger.LogTrace($"There are {} keyboard values to show");
         foreach (var keyAndNodeId in KeyboardValues)
         {
             bool isArrow = keyAndNodeId.Value == rightArrow || keyAndNodeId.Value == leftArrow;
-            ButtonImage main = new(PatternHelper.GetBytesForPattern(PaternEnumHelper.GetEnumFromCharacter(keyAndNodeId.Value)), ColorForCharacters);
-            //ButtonDisplay onPress = new(ColorForCharacters, EnumHelper.GetEnumFromCharacter(keyAndNodeId.Value));
-            //ButtonDisplay onPress = isArrow ? initial : DefaultShowOnPress ?? initial;
-            //if (CurrentCorrectCharId == keyAndNodeId.Value)
-            //{
-            //    onPress = ShowOnCorrectPress ?? DefaultShowOnPress ?? initial;
-            //}
-            //if (onPress.TurnOffAfterMillis == 0)
-            //{
-            //    onPress.TurnOffAfterMillis = 500;
-            //}
+            ButtonImage main = new(PatternHelper.GetBytesForPattern(PatternEnumHelper.GetEnumFromCharacter(keyAndNodeId.Value)), ColorForCharacters);
             MsgSender.SendImage(keyAndNodeId.Key, main);
         }
 
@@ -313,7 +308,6 @@ public abstract class KeyboardBase : IKeyboardProvider
 
     public Task<bool> InitializeAsync()
     {
-
         Reset();
         return Task.FromResult(true);
 

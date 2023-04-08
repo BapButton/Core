@@ -9,7 +9,7 @@ namespace BAP.Helpers
 {
 
 
-    public static class PaternEnumHelper
+    public static class PatternEnumHelper
     {
         public static int GetNumberFromEnum(Patterns pattern)
         {
