@@ -17,7 +17,7 @@ using BAP.Db;
 
 namespace BAP.Web.Controller
 {
-    
+
     [ApiController]
     public class FirmwareController : ControllerBase
     {
@@ -32,6 +32,23 @@ namespace BAP.Web.Controller
             _dba = dbAccessor;
         }
 
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status304NotModified)]
+        [Route("api/[controller]/DownloadVersion/{versionId}")]
+        public async Task<ActionResult> DownloadVersion(string versionId)
+        {
+            FirmwareInfo? correctFirmware = (await _dba.GetAllFirmwareInfo()).FirstOrDefault(t => t.FirmwareVersion == versionId);
+            if (correctFirmware == null)
+            {
+                return this.StatusCode(StatusCodes.Status404NotFound);
+            }
+            var path = correctFirmware.FileName;
+            var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+            return File(stream, "application/octet-stream", "firmware.bin");
+
+        }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]

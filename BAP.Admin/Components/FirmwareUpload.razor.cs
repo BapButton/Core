@@ -44,6 +44,17 @@ namespace BAP.Admin.Components
             editContext.NotifyFieldChanged(FieldIdentifier.Create(() => fileUpload.Firmware));
         }
 
+        private async void DeleteFirmware(string versionId)
+        {
+            await dba.DeleteFirmware(versionId);
+            allUploads = await dba.GetAllFirmwareInfo();
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
+        }
+
+
         private async Task OnSubmit()
         {
 

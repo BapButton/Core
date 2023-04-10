@@ -42,6 +42,20 @@ namespace BAP.Db
 
         }
 
+
+        public async Task<bool> DeleteFirmware(string versionId)
+        {
+            using ButtonContext db = _contextFactory.CreateDbContext();
+            FirmwareInfo? firmwareInfo = await db.FirmwareInfos.FirstOrDefaultAsync(t => t.FirmwareVersion == versionId);
+            if (firmwareInfo != null)
+            {
+                db.FirmwareInfos.Remove(firmwareInfo);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<GameFavorite> AddGameFavorite(string unqueId)
         {
             using ButtonContext db = _contextFactory.CreateDbContext();

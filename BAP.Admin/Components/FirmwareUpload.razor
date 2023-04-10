@@ -60,14 +60,9 @@
         {
             @uf
         }
+        <MudButton OnClick="() => DeleteFirmware(uploadInfo.FirmwareVersion)">Delete</MudButton>
+        <MudLink Target="_blank" Href=@($"/api/firmware/DownloadVersion/{uploadInfo.FirmwareVersion}")>Download</MudLink>
     </p>
 }
 
-@code
-{
-
-
-
-
-}
 

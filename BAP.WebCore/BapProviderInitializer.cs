@@ -29,6 +29,7 @@ namespace BAP.WebCore
             foreach (var providerInterface in addonHolder.BapProviders)
             {
                 var provider = (IBapProvider)_serviceProvider.GetRequiredService(providerInterface.ProviderInterfaceType);
+                Console.WriteLine($"Got {provider.GetType().Name} for Interface {providerInterface.Name}. Initializing now.");
                 await provider.InitializeAsync();
                 if (providerInterface?.ProviderInterfaceType?.FullName != null)
                 {
