@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Blazored.FluentValidation;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Options;
 
 namespace BAP.Admin.Components
 {
@@ -17,6 +18,8 @@ namespace BAP.Admin.Components
     {
         private List<FirmwareInfo> allUploads = new List<FirmwareInfo>();
         private CancellationTokenSource cancelation { get; set; } = default!;
+        [Inject]
+        private IOptionsSnapshot<BapSettings> settings { get; set; } = default!;
         [Inject]
         DbAccessor dba { get; set; } = default!;
         private bool displayProgress { get; set; }
@@ -57,8 +60,10 @@ namespace BAP.Admin.Components
 
         private async Task OnSubmit()
         {
+            string folderName = Path.Combine(settings.Value.AddonSaveLocation, "firmware");
+            Directory.CreateDirectory(folderName);
+            string newFirmwareFileName = Path.Combine(settings.Value.AddonSaveLocation, "firmware", fileUpload.Version.Replace('.', '_') + ".bin");
 
-            string newFirmwareFileName = Path.Combine("data", "firmware", "firmware" + fileUpload.Version.Replace('.', '_') + ".bin");
             //Check ifthe file currently exists. If not generate an empty model.
 
 
