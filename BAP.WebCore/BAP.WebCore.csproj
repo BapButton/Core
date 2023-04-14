@@ -37,7 +37,7 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="MudBlazor" Version="5.1.4" />
+		<PackageReference Include="MudBlazor" Version="6.2.2" />
 		<PackageReference Include="NLog" Version="5.1.2" />
 		<PackageReference Include="NLog.Web.AspNetCore" Version="5.2.2" />
 		<PackageReference Include="NuGet.Client" Version="4.2.0" />
