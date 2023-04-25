@@ -140,10 +140,10 @@ namespace BAP.WebCore
             List<GameDetail> results = new();
             foreach (Type type in assembly.GetLoadableTypes())
             {
-             
+
                 if (typeof(IComponent).IsAssignableFrom(type))
                 {
-              
+
                     var gameAttribute = type.GetCustomAttribute<GamePageAttribute>();
                     if (gameAttribute != null)
                     {
@@ -198,13 +198,13 @@ namespace BAP.WebCore
             try
             {
                 return assembly.GetTypes();
-            }
+        }
             catch (ReflectionTypeLoadException e)
             {
-                Console.WriteLine($"For the Assembly {assembly.GetName()} we had to fall backto getting just some of the types.");
+                Console.WriteLine($"Failed to Load {assembly.GetName()}");
                 Console.WriteLine($"The error is {e.Message} with inner exception {e.InnerException?.Message ?? ""}");
-                return e.Types.Where(t => t != null)!;
+                return new List<Type>();
             }
-        }
+}
     }
 }

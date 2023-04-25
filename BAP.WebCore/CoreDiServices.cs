@@ -83,6 +83,15 @@ namespace BAP.WebCore
                 {
                     Console.WriteLine("Directory failed to be created.");
                 }
+                var packageInfo = Directory.CreateDirectory(bapSettings?.PackagePath() ?? "");
+                if (info.Exists)
+                {
+                    Console.WriteLine($"Yep. Package Path {info.FullName} exists");
+                }
+                else
+                {
+                    Console.WriteLine("Package Path  failed to be created.");
+                }
             }
             else
             {
@@ -132,7 +141,7 @@ namespace BAP.WebCore
             }
 
             LoadedAddonHolder addonHolder = new();
-            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, bapSettings?.AddonSaveLocation ?? "");
+            addonHolder.AllAddonAssemblies = AddonLoader.GetAllAddinAssemblies(services, bapSettings?.PackagePath() ?? "");
             Console.WriteLine($"There are {addonHolder.AllAddonAssemblies.Count} Addon Assemblies");
             addonHolder.AllCompiledAssembies = AssemblyScanner.GetAllDependentAssemblies();
             Console.WriteLine($"There are {addonHolder.AllCompiledAssembies.Count} Compiled Assemblies");
@@ -159,47 +168,53 @@ namespace BAP.WebCore
             }
             foreach (var assembly in addonHolder.AllLoadedAssemblies)
             {
-                foreach (var bapProviderInterface in addonHolder.BapProviders)
+                try
                 {
-                    var providers = AddonLoader.GetTypesThatImpementsInterface(bapProviderInterface.ProviderInterfaceType, assembly);
-                    foreach (var provider in providers)
+                    foreach (var bapProviderInterface in addonHolder.BapProviders)
                     {
-                        var providerInfo = (BapProviderAttribute?)Attribute.GetCustomAttribute(provider, typeof(BapProviderAttribute));
-
-                        bapProviderInterface.Providers.Add(new()
+                        var providers = AddonLoader.GetTypesThatImpementsInterface(bapProviderInterface.ProviderInterfaceType, assembly);
+                        foreach (var provider in providers)
                         {
-                            BapProviderType = provider,
-                            Description = providerInfo?.Description ?? provider?.Name ?? string.Empty,
-                            Name = providerInfo?.Name ?? provider?.Name ?? string.Empty,
-                            UniqueId = providerInfo?.UniqueId ?? provider?.FullName ?? string.Empty,
+                            var providerInfo = (BapProviderAttribute?)Attribute.GetCustomAttribute(provider, typeof(BapProviderAttribute));
+
+                            bapProviderInterface.Providers.Add(new()
+                            {
+                                BapProviderType = provider,
+                                Description = providerInfo?.Description ?? provider?.Name ?? string.Empty,
+                                Name = providerInfo?.Name ?? provider?.Name ?? string.Empty,
+                                UniqueId = providerInfo?.UniqueId ?? provider?.FullName ?? string.Empty,
 
 
-                        });
+                            });
+                        }
                     }
-                }
-                var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
-                foreach (var messageSender in messageSenders)
-                {
-                    services.AddTransient(typeof(IBapMessageSender), messageSender);
-                    services.AddTransient(messageSender);
-                }
-                var gamePages = AddonLoader.ComponentsWithBapGamePageAttribute(assembly);
-                addonHolder.AllGames.AddRange(gamePages);
-                var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
-                foreach (var diSetup in diSetups)
-                {
-                    if (diSetup.IsClass)
+                    var messageSenders = AddonLoader.GetTypesThatImpementsInterface<IBapMessageSender>(assembly);
+                    foreach (var messageSender in messageSenders)
                     {
-                        IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup?)Activator.CreateInstance(diSetup);
-                        if (dependencyInjectionSetup != null)
+                        services.AddTransient(typeof(IBapMessageSender), messageSender);
+                        services.AddTransient(messageSender);
+                    }
+                    var gamePages = AddonLoader.ComponentsWithBapGamePageAttribute(assembly);
+                    addonHolder.AllGames.AddRange(gamePages);
+                    var diSetups = AddonLoader.GetTypesThatImpementsInterface<IDependencyInjectionSetup>(assembly);
+                    foreach (var diSetup in diSetups)
+                    {
+                        if (diSetup.IsClass)
                         {
-                            dependencyInjectionSetup.AddItemsToDi(services);
+                            IDependencyInjectionSetup? dependencyInjectionSetup = (IDependencyInjectionSetup?)Activator.CreateInstance(diSetup);
+                            if (dependencyInjectionSetup != null)
+                            {
+                                dependencyInjectionSetup.AddItemsToDi(services);
+                            }
+
                         }
 
                     }
-
                 }
-
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed while trying to load assembly {assembly.FullName}. The error is {ex.Message}");
+                }
             }
             //This is a non dynamic component. But it's what I got for now.
             services.AddSingleton(addonHolder);

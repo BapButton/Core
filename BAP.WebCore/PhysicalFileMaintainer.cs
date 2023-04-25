@@ -39,8 +39,10 @@ namespace BAP.WebCore
     public class PhysicalFileMaintainer
     {
         private HashSet<string> allowedNonStaticAssetExtensions = new() { "dll", "pdb" };
+
         ILogger<PhysicalFileMaintainer> _logger;
         BapSettings _bapSettings { get; set; }
+        string PackageSaveFolder => _bapSettings.PackagePath();
         private string frameworkVersion = "net7.0";
         private const string pendingDeleteFileName = "delete.txt";
         private const string pendingRenameFileName = "rename.txt";
@@ -49,7 +51,10 @@ namespace BAP.WebCore
         {
             _bapSettings = bapSettings.Value;
             _logger = logger;
+            Directory.CreateDirectory(bapSettings.Value.PackagePath());
         }
+
+
         /// <summary>
         /// This cleans up packages that are pending deletion or rename. 
         /// This should only be run on boot before packages have been loaded. 
@@ -64,7 +69,7 @@ namespace BAP.WebCore
             }
             foreach (var package in packageInfos.Where(t => t.IsMarkedForRename))
             {
-                string newDirectoryFullPath = Path.Combine(_bapSettings.AddonSaveLocation, File.ReadLines(Path.Combine(package.FullPath, pendingRenameFileName)).First());
+                string newDirectoryFullPath = Path.Combine(PackageSaveFolder, File.ReadLines(Path.Combine(package.FullPath, pendingRenameFileName)).First());
 
                 Directory.Move(package.FullPath, newDirectoryFullPath);
                 File.Delete(Path.Combine(newDirectoryFullPath, pendingRenameFileName));
@@ -177,7 +182,8 @@ namespace BAP.WebCore
         public async Task<List<PackageInfo>> GetPackages(bool skipVersionCheck = false)
         {
             var packageInfos = new List<PackageInfo>();
-            var directories = Directory.GetDirectories(_bapSettings.AddonSaveLocation);
+
+            var directories = Directory.GetDirectories(PackageSaveFolder);
             foreach (var directory in directories)
             {
                 packageInfos.Add(await GetPackageInfo(directory, skipVersionCheck));
@@ -199,7 +205,15 @@ namespace BAP.WebCore
             var package = packages.FirstOrDefault(t => t.Id == packageId);
             if (package != null)
             {
-                MarkDirectoryForDeletion(package.FullPath);
+                if (package.NotYetLoaded)
+                {
+                    Directory.Delete(package.FullPath, true);
+                }
+                else
+                {
+                    MarkDirectoryForDeletion(package.FullPath);
+                }
+
             }
             return false;
         }
@@ -245,7 +259,7 @@ namespace BAP.WebCore
         private async Task<string> CleanupFoldersIfNeeded(string packageName)
         {
             bool renameNeeded = false;
-            string newDirectoryName = Path.Combine(_bapSettings.AddonSaveLocation, packageName);
+            string newDirectoryName = Path.Combine(PackageSaveFolder, packageName);
             var packageList = await GetPackages(skipVersionCheck: true);
             bool packageAlreadyExists = packageList.Any(t => t.Id == packageName);
             bool packageAlreadyWaitingToDelete = packageList.Any(t => t.IsMarkedForDeletion && t.Id == packageName);
@@ -297,6 +311,7 @@ namespace BAP.WebCore
             using ZipArchive archive = new(nugetStream);
             ExtractNuget(archive, newDirectoryName, true);
             await NugetHelper.DownloadAllDependencies(packageId, nuGetVersion, this, newDirectoryName);
+
 
             return await GetPackages();
         }

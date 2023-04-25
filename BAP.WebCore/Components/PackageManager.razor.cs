@@ -82,7 +82,15 @@ namespace BAP.WebCore.Components
         private async Task UpdatePackage(string packageId)
         {
             CurrentPackages.First(t => t.Id == packageId).IsUpdating = true;
-            await NugetHelper.InstallPackageAsync(PhysicalFileMaintainer, packageId);
+            try
+            {
+                await NugetHelper.InstallPackageAsync(PhysicalFileMaintainer, packageId);
+            }
+            catch (Exception ex)
+            {
+                await PhysicalFileMaintainer.MarkPackageForDeletion(packageId);
+            }
+            //Need to write a message about why it failed.
             CurrentPackages = await PhysicalFileMaintainer.GetPackages();
         }
         private async Task DeletePackage(string packageId)

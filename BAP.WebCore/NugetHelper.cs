@@ -124,15 +124,18 @@ namespace BAP.WebCore
                 CancellationToken.None);
 
             // Find the best version for each package
+
             var resolverContext = new PackageResolverContext(
-                dependencyBehavior: DependencyBehavior.Lowest,
-                targetIds: new[] { packageId },
-                requiredPackageIds: Enumerable.Empty<string>(),
-                packagesConfig: Enumerable.Empty<PackageReference>(),
-                preferredVersions: Enumerable.Empty<PackageIdentity>(),
-                availablePackages: packages,
-                new List<PackageSource>() { Repo.PackageSource },
-                NullLogger.Instance);
+            dependencyBehavior: DependencyBehavior.Lowest,
+            targetIds: new[] { packageId },
+            requiredPackageIds: Enumerable.Empty<string>(),
+            packagesConfig: Enumerable.Empty<PackageReference>(),
+            preferredVersions: Enumerable.Empty<PackageIdentity>(),
+            availablePackages: packages,
+            new List<PackageSource>() { Repo.PackageSource },
+            NullLogger.Instance);
+
+
 
             var resolver = new PackageResolver();
             var resolvedPackages = resolver.Resolve(resolverContext, CancellationToken.None);
